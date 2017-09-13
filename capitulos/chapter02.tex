@@ -1,1 +1,86 @@
-\chapter{The Second Chapter}
+\chapter{Materiais e Métodos}
+
+\section{Considerações}
+\label{sec:considerations}
+
+Ao longo deste capítulo, se usará n para se referir à quantidade de elementos
+fornecidas ao nosso modelo, cada entrada é i é um vetor $x_i \in \mathcal{R}^m$.
+Para cada i associaremos duas variáveis $t_i$ e $y_i$ que se referem ao valor
+esperado e ao valor obtido através do treinamento, respectivamente. 
+
+\section{Contextualização}
+\label{sec:methods}
+
+Os problemas tratados por \textit{Machine Learning} classificam-se de forma
+geral em três tipos:
+
+\begin{itemize}
+	\item Aprendizado supervisionado: nesse caso tem-se os elementos de entrada e
+	para cada um desses elementos, tem-se associado um rótulo $t_i$. Nesse caso o modelo
+	deve ser treinado com base nos elementos dados para que se possa prever o rótulo %não consegui pensar numa tradução boa pra label%
+	de uma nova entrada;
+	\item Aprendizado não-supervisionado: nesse caso tem-se apenas os elementos de entrada. 
+	O objetivo deste tipo de problema é tentar modelar uma distribuição ou estrutura comum
+	entre os dados para que se possa entendê-los melhor;
+	\item Aprendizado semi-supervisionado: nesse último caso alguns elementos possuem um rótulo
+	associado. Problemas desse tipo aplicam técnicas gtanto de aprendizado supervisionado como
+	de não-supervisionado.
+\end{itemize}
+
+Neste trabalho será tratado um problema de aprendizado supervisionado que é o da classificação.
+
+Na classificação temos k classes e cada elemento i da entrada é associado a uma classe $t_i = \{1..k\}$.
+O objetivo do problema da classificação é dado entrada $X = (x_1, x_2, \ldots, x_n)$ 
+e $t = (t_1, \ldots, t_n)$ treinar um modelo capaz de prever classes para um x qualquer.
+
+Há diversos algoritmos na literatura que se propõem a resolver o problema da classificação.
+Bishop (2006)\cite{bishop2006} enuncia diversos dos algoritmos comumente utilizados para a
+classificação, cada algoritmo possui seus prós e contras e utiliza diferentes abordagens.
+
+Para este trabalho escolheu-se implementar os algoritmos \textit{Logistic Regression} e
+\textit{Supor Vector Machines}, que será chamado simplesmente de SVM por facilidade.
+
+Tanto para o \textit{Logistic Regression} quanto SVM será explicado a princípio o problema
+será inicialmente abordado a partir da classificação binária e, a partir dela, será descrito
+como estender para o problema com mais de duas classes, que será é o caso deste trabalho.
+
+\section{Logistic Regression}
+\label{sec:logreg} 
+
+Para classificar um dado elemento x entre as possíveis classes $C_1$ e $C_2$, é utilizado
+um discriminante linear da forma $y(x) = w^Tx + w_0$ sendo w o vetor de pesos associado.
+A classe atribuída a um vetor x é baseado no sinal de $y(x)$, se $y(x) \ge 0$ ele é designado
+à classe $C^1$, caso contrário é designado à classe $C^2$.
+
+Nesse caso, diz-se que uma superfície de decisão é definida pelo hiperplano $y(x) = 0$ onde
+sua posição é determinada pelo elemento $w_0$ que chamaremos de viés. Uma vez que tanto nosso
+vetor de pesos w quanto nossos vetores x do conjunto de treino possuem m elementos, iremos criar
+vetores novos $w' = (w_0, w), x' = (1, x)$.
+
+O nosso modelo será construído de forma probabilística, uma vez que o objetivo será obter um vetor
+w de modo que possamos estimar as probabilidades condicionais $P(C^1 | x)$ e consequentemente
+$P(C^2 | x) = 1 - P(C^1 | x)$, isto é, a probabilidade de um vetor x pertencer à uma determinada 
+classe. 
+
+Para utilizarmos nosso discriminante $y(x)$ para atribuir as probabilidades, utiliza-se a função
+sigmóide definida por:
+
+\begin{center}
+	\begin{equation}
+		\sigma(a) = \frac{1}{1 + exp(-a)}
+	\end{equation}
+\end{center}
+
+Com $exp$ sendo a função exponencial. Aplicando ao nosso modelo obtêm-se a expressão:
+
+\begin{center}
+	\begin{equation}
+		P(C^1 | x) = y(x) = \sigma(w^Tx)
+	\end{equation}
+\end{center}
+
+Importante notar que apesar de utilizarmos o vetor x nas equações, é possível aplicarmos uma
+transformação linear $\phi : \mathcal{R}^m \rightarrow \mathcal{R}^d$ à entrada x para obtermos
+$\phi(x)$. O uso de transformação linear no nosso conjunto de entrada nos permite transformar o 
+domínio para que se obtenha uma separação melhor entre as classes ou até mesmo fazer a redução
+da dimensão do domínio.

@@ -3,13 +3,21 @@
 \usepackage[T1]{fontenc}
 \usepackage[brazilian]{babel}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	urlcolor=red,
+	linktoc=all
+}
 \begin{document}
 
 \author{Lucas Romão Silva\\[1ex]
 	\small Prof Dr. Roberto Hirata Jr.
 }
 \title{Análise de Sentimentos Aplicada à Política}
+
 
 
 \frontmatter
@@ -22,5 +30,8 @@
 
 \backmatter
 % bibliography, glossary and index would go here.
+
+\bibliographystyle{plain}
+\bibliography{references.bib}{}
 
 \end{document}
