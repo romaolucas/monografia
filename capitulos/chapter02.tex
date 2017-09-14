@@ -52,6 +52,8 @@ um discriminante linear da forma $y(x) = w^Tx + w_0$ sendo w o vetor de pesos as
 A classe atribuída a um vetor x é baseado no sinal de $y(x)$, se $y(x) \ge 0$ ele é designado
 à classe $C^1$, caso contrário é designado à classe $C^2$.
 
+No caso da classificação binária, usamos que $t_n \in \{0, 1\}$
+
 Nesse caso, diz-se que uma superfície de decisão é definida pelo hiperplano $y(x) = 0$ onde
 sua posição é determinada pelo elemento $w_0$ que chamaremos de viés. Uma vez que tanto nosso
 vetor de pesos w quanto nossos vetores x do conjunto de treino possuem m elementos, iremos criar
@@ -84,3 +86,65 @@ transformação linear $\phi : \mathcal{R}^m \rightarrow \mathcal{R}^d$ à entra
 $\phi(x)$. O uso de transformação linear no nosso conjunto de entrada nos permite transformar o 
 domínio para que se obtenha uma separação melhor entre as classes ou até mesmo fazer a redução
 da dimensão do domínio.
+
+Com essa equação em mãos, nosso objetivo é minimizar o erro na classificação dos dados. Tomamos
+como erro o negativo do logaritmo da verosimilhança de nossa função que é dada por:
+
+\begin{center}
+	\begin{equation}
+		E(w) = - \sum_{i = 1}^{n} p(t | w) = 
+		- \sum_{i = 1}^{n} \{ t_nln(y_n) + (1 - t_n) ln(1 - y_n) \}
+	\end{equation}
+\end{center}
+
+A fim de minimizar o erro, utiliza-se métodos de otimização linear (note que por mais que se use uma
+transformação linear $\phi$ sobre x nosso problema ainda é linear sobre w).
+
+Dois métodos são comumente	usados: método do gradiente e método de Newton-Raphson.
+Esses métodos são utilizados tanto para o caso da classificação binária
+quanto o caso da classificação com $k > 2$. A diferença entre um problema e outro será abordada
+com mais especificidade a seguir.
+
+Uma dúvida natural que surge ao ter que resolver um problema de otimização é o caso de parar o
+procedimento em um mínimo local ao invés de um mínimo local da função.	Entretanto, temos que nossa
+função $E(w)$ é côncava, isto é, $E(\lambda w + (1 - \lambda ) w') = \lambda E(w) 
+	+ (1 - \lambda ) w'$
+ $\forall w, w' \in R^m, \lambda \in [0, 1]$, tal propriedade nos garante que existe um único minizador.
+ 
+
+\subsection{Método do Gradiente}
+
+Para este método, minimiza-se a função objetivo, no caso $E(w)$ utilizando apenas o gradiente
+da função junto de um passo $\alpha$. Com ambos valores em mãos, o valor w é atualizado usando
+a equação:
+
+\begin{center}
+	\begin{equation}
+		w^{ ( novo )} = w^{ (antigo) }  + \alpha \nabla E(w)
+	\end{equation}
+\end{center}
+
+Com $\nabla E(w)$ sendo o gradiente do vetor de pesos. O gradiente é calculado usando o fato de que
+a derivada da função sigmóide com respeito a um vetor a é dada por:
+
+\begin{center}
+	\begin{equation}
+	\label{eq:sigmoid_derivative}
+		\frac{d \sigma}{d a} = \sigma (1 - \sigma )
+	\end{equation}
+\end{center}
+
+Usando \ref{eq:sigmoid_derivative} tem-se a seguinte equação para o gradiente:
+
+\begin{center}
+	\begin{equation}
+		\nabla E(w) = X^T(y - t)
+	\end{equation}
+\end{center}
+
+Onde $y_n = P(C^1 | x_n) = \sigma(w^Tx)$ e $t_n$ tal qual assumido no começo da seção.
+
+O algoritmo de atualização do vetor de pesos descrito a seguir vale tanto para o método
+do gradiente quanto para o de Newton-Raphson, portanto para o segundo será focado apenas nas
+diferenças entre os dois.
+
