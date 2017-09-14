@@ -4,7 +4,7 @@
 \label{sec:considerations}
 
 Ao longo deste capítulo, se usará n para se referir à quantidade de elementos
-fornecidas ao nosso modelo, cada entrada é i é um vetor $x_i \in \mathcal{R}^m$.
+fornecidas ao nosso modelo, cada entrada é i é um vetor $x_i \in \mathbb{R}^m$.
 Para cada i associaremos duas variáveis $t_i$ e $y_i$ que se referem ao valor
 esperado e ao valor obtido através do treinamento, respectivamente. 
 
@@ -112,7 +112,7 @@ função $E(w)$ é côncava, isto é, $E(\lambda w + (1 - \lambda ) w') = \lambd
  $\forall w, w' \in R^m, \lambda \in [0, 1]$, tal propriedade nos garante que existe um único minizador.
  
 
-\subsection{Método do Gradiente}
+\subsection{Método do Gradiente}\label{subsec:grad_descent}
 
 Para este método, minimiza-se a função objetivo, no caso $E(w)$ utilizando apenas o gradiente
 da função junto de um passo $\alpha$. Com ambos valores em mãos, o valor w é atualizado usando
@@ -137,7 +137,7 @@ a derivada da função sigmóide com respeito a um vetor a é dada por:
 Usando \ref{eq:sigmoid_derivative} tem-se a seguinte equação para o gradiente:
 
 \begin{center}
-	\begin{equation}
+	\begin{equation}\label{eq:gradient}
 		\nabla E(w) = X^T(y - t)
 	\end{equation}
 \end{center}
@@ -148,3 +148,102 @@ O algoritmo de atualização do vetor de pesos descrito a seguir vale tanto para
 do gradiente quanto para o de Newton-Raphson, portanto para o segundo será focado apenas nas
 diferenças entre os dois.
 
+
+\begin{algorithm}[H]
+	\caption{Logistic Regression usando método do gradiente}
+	\begin{algorithmic}[1]
+		\REQUIRE Matriz $ X \in \mathbb{R}^{n \times m} $, 
+		vetor de rótulos $t \in \{0, 1\}^n$
+		\ENSURE Vetor de pesos $w \in \mathbb{R}^m$
+		\STATE $iteracao \leftarrow 0$
+		\STATE $w \leftarrow 0$
+		\WHILE{ $|E(w)^{ (iteracao) } - E(w)^{ (iteracao - 1) } | \ge \epsilon$ \AND
+		$iteracao < maxIteracoes$ } \label{lst:line:condition}
+			\STATE $y \leftarrow (\sigma(w^Tx_1), \sigma(w^Tx_2), \ldots, \sigma(w^Tx_n))^T$
+			\STATE $\nabla E(w) \leftarrow X^T(y - t)$
+			\STATE $w \leftarrow w - \alpha \nabla E(w)$
+			\STATE $E(w)^{ (iteracao) } \leftarrow 
+			- \sum_{i = 1}^{n} \{ t_nln(y_n) + (1 - t_n) ln(1 - y_n) \}$
+			\STATE $iteracao \leftarrow iteracao + 1$
+		\ENDWHILE
+	\end{algorithmic}
+\end{algorithm}
+
+Importante notar que em~\ref{lst:line:condition} tem-se duas condições de paradas do algoritmo que
+são o número de iterações e a diferença da diminuição da função objetivo for menor do que
+um dado $\epsilon$. Tais condições são chamadas de condições de convergência e nos garantem
+que chegamos a um valor suficientemente próximo do ótimo, uma vez que atingir este valor
+pode exigir um número muito alto de iterações, o que traz um custo computacional.
+ Na implementação do algoritmo, escolheu-se um valores
+padrão para $\epsilon$ e $maxIteracoes$ como $10^{-4}$ e $200$ respectivamente.
+
+A quantidade de iterações necessárias para a convergência é influenciada fortemente pela
+escolha de $\alpha$. Um valor pequeno para $\alpha$ acarretaria em muitas iterações até
+a convergência ao passo que um valor muito grande pode fazer com que se pare muito longe
+do valor ótimo.
+
+
+\subsection{Método de Newton-Raphson}\lable{subsec:newton-raphson}
+
+Vimos em \ref{subsec:grad_descent} que o método do gradiente apesar de implementação
+simples pode levar muito tempo para resolver o problema.
+
+O método de Newton-Raphson acaba convergindo mais rápido do que o método do gradiente,
+contudo ao custo de uma maior complexidade devido à necessidade de calcular outros
+elementos.
+
+A atualização agora é feita seguindo a equação
+
+\begin{center}
+	\begin{equation}\label{eq:newton-raphson}
+		w^{ (novo) } = w^{ (antigo) } - H^{-1} \nabla E(w)
+	\end{equation}
+\end{center}
+
+Onde H é a matriz Hessiano da função erro, que é calculado usando $H = \nabla \nabla E(w)
+= X^TRX$ onde R é uma matriz diagonal $n \times n$ onde as entradas da diagonal principal
+valem $R_{kk} = y_k(1 - y_k)$. Substituindo os valores de H e usando
+\ref{eq:gradient} em \ref{eq:newton-raphson} obtemos
+
+
+\begin{equation}
+\begin{split}
+w^{ (novo) } & = w^{ (antigo) } - (X^T R X)^{-1} \nabla E(w) \\
+	& = (X^T R X)^{-1}[(X^T R X)w^{ (antigo) } - X^T(y - t)]  
+\end{split}
+\end{equation}
+
+\subsection{Extensão para o caso de várias classes}
+
+Diversas abordagens podem ser usadas para resolver o problema multiclasse, no
+caso será usado diversos discriminantes $y_k$ com $k = \{1, \ldots K\}$ com K
+sendo o total de classes. Assim nosso vetor w agora é uma matriz
+$W \in \mathbb{R}^{m \times k}$. 
+
+Quanto à codificação do vetor de rótulos, 
+segue-se a codificação dada em Bishop (2006)\cite{Bishop2006} de $1-K$,
+na codificação tem-se que $t_n \in \{0, 1\}^k$ com $t_{nk} = 1$ se o elemento
+n pertencer à classe k e 0 nas demais entradas. 
+
+Quanto a função de probabilidade que desejamos estimar, utiliza-se a função
+\textit{softmax} que é dada pela equação:
+
+\begin{center}
+	\begin{equation}
+		P(C^k | x_n) = y_{nk} = \frac{exp(w_k^Tx_n)}{\sum_j exp(w_j^Tx_n)} 
+	\end{equation}
+\end{center}
+
+Que nos dá verossimilhança e consequentemente a seguinte função de erro, tomada
+usando o negativo do logaritmo da verossimilhança.
+
+\begin{center}
+	\begin{align*}
+				P(T | w_1, \ldots, w_k) &= \prod_{i = 1}^{n} \prod_{j = 1}^{k} P(C^j | x_i)^{t_{ij}} = \prod_{i = 1}^{n} \prod_{j = 1}^{k} y_{ij}^{t_{ij}} \\
+		E(W) &= - \sum_{i = 1}^{n} \sum_{j = 1}^{k} t_{ij} ln(y_{ij})	
+	\end{align*}
+\end{center}
+
+Novamente nesse caso pode-se encontrar o valor de W que minimize $E(W)$ usando os
+dois métodos discutidos em \ref{subsec:grad_descent} e \ref{subsec:newton-raphson},
+porém agora temos.
