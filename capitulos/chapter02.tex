@@ -246,4 +246,13 @@ usando o negativo do logaritmo da verossimilhança.
 
 Novamente nesse caso pode-se encontrar o valor de W que minimize $E(W)$ usando os
 dois métodos discutidos em \ref{subsec:grad_descent} e \ref{subsec:newton-raphson},
-porém agora temos.
+porém agora temos que a derivada com respeito a cada $w_k^Tx$ vale:
+
+\begin{center}
+	\begin{equation}\label{eq:softmax_derivative}
+		\frac{\partial y_k}{\partial (w_j^Tx)} = y_k(\mathbb{1}_{k == j} - y_j)
+	\end{equation}
+\end{center}
+
+Nosso valor de W pode ser interpretado tanto como uma matriz $m \times k$ como um
+único vetor $1 x m*k$ onde 
