@@ -5,8 +5,13 @@
 
 Ao longo deste capítulo, se usará n para se referir à quantidade de elementos
 fornecidas ao nosso modelo, cada entrada é i é um vetor $x_i \in \mathbb{R}^m$.
+A entrada será referida como X a efeitos de conta e assim cada entrada será 
+dada como $X_i$ nesse caso.
 Para cada i associaremos duas variáveis $t_i$ e $y_i$ que se referem ao valor
-esperado e ao valor obtido através do treinamento, respectivamente. 
+esperado e ao valor obtido através do treinamento, respectivamente.
+
+A notação $\mathds{1}_{i == j}$ é uma função indicadora que vale 1 se i é
+igual a j e 0 caso contrário.
 
 \section{Contextualização}
 \label{sec:methods}
@@ -183,7 +188,8 @@ a convergência ao passo que um valor muito grande pode fazer com que se pare mu
 do valor ótimo.
 
 
-\subsection{Método de Newton-Raphson}\lable{subsec:newton-raphson}
+\subsection{Método de Newton-Raphson}
+\label{subsec:newton-raphson}
 
 Vimos em \ref{subsec:grad_descent} que o método do gradiente apesar de implementação
 simples pode levar muito tempo para resolver o problema.
@@ -221,7 +227,7 @@ sendo o total de classes. Assim nosso vetor w agora é uma matriz
 $W \in \mathbb{R}^{m \times k}$. 
 
 Quanto à codificação do vetor de rótulos, 
-segue-se a codificação dada em Bishop (2006)\cite{Bishop2006} de $1-K$,
+segue-se a codificação dada em Bishop (2006)\cite{bishop2006} de $1-K$,
 na codificação tem-se que $t_n \in \{0, 1\}^k$ com $t_{nk} = 1$ se o elemento
 n pertencer à classe k e 0 nas demais entradas. 
 
@@ -250,9 +256,45 @@ porém agora temos que a derivada com respeito a cada $w_k^Tx$ vale:
 
 \begin{center}
 	\begin{equation}\label{eq:softmax_derivative}
-		\frac{\partial y_k}{\partial (w_j^Tx)} = y_k(\mathbb{1}_{k == j} - y_j)
+		\frac{\partial y_k}{\partial (w_j^Tx)} = y_k(\mathds{1}_{k == j} - y_j)
 	\end{equation}
 \end{center}
 
 Nosso valor de W pode ser interpretado tanto como uma matriz $m \times k$ como um
-único vetor $1 x m*k$ onde 
+único vetor $1 \times mk$ onde $W = (w_1, w_2, \ldots, w_k)$.
+
+Usando essa representação, podemos calcular o vetor gradiente onde a derivada
+com respeito a cada $w_j$ é dada pela equação:
+
+\begin{center}
+	\begin{equation}
+		\nabla_{w_j} E(W) = X^T(Y_j - T_j)
+	\end{equation}
+\end{center}
+
+Com $Y_j$ e $T_j$ correspondendo, respectivamente, às j-ésimas colunas de Y e T.
+
+Com o gradiente em mãos já temos o que é necessário para o método do gradiente e a
+atualização seria feita da forma $W^{ (novo) } = W^{ (antigo) } - \alpha \nabla E(W)$.
+
+Para aplicarmos o método de Newton-Raphson, seria necessário computarmos o Hessiano que
+nesse caso seria uma matriz $m*k \times m*k$ com cada bloco $j, i$ contendo uma matriz
+$m \times m$ calculada pela equação:
+
+\begin{center}
+	\begin{equation}
+		\nabla_{w_i} \nabla_{w_j} E(W) = - \sum_{k = 1}^n y_{ki}( \mathds{1}_{i == j} - y_{kj})
+		X_k^TX_k
+	\end{equation}
+\end{center} 
+
+Onde $X_k$ é a k-ésima linha de X. Com essas equações em mãos nossa atualização de
+W seria feita usando a fórmula $W^{ (novo) } = W^{ (antigo) } - H^{-1}\nabla E(W)$.
+
+A classificação de um novo x é feita a partir
+do cálculo de $P(C^k | x) = y_k(x), \forall k = \{1, \ldots, k\}$.
+
+A classe de x é dada pelo k que tiver a maior probabilidade sobre os demais.
+
+
+\section{Suport Vector Machine}
