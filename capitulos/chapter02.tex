@@ -52,24 +52,19 @@ como estender para o problema com mais de duas classes, que será é o caso dest
 \section{Logistic Regression}
 \label{sec:logreg} 
 
-Para classificar um dado elemento x entre as possíveis classes $C_1$ e $C_2$, é utilizado
-um discriminante linear da forma $y(x) = w^Tx + w_0$ sendo w o vetor de pesos associado.
-A classe atribuída a um vetor x é baseado no sinal de $y(x)$, se $y(x) \ge 0$ ele é designado
-à classe $C^1$, caso contrário é designado à classe $C^2$.
+O nosso modelo será construído de forma probabilística, isto é, a partir de um 
+discriminante linear $w^Tx + w_0$ atribuiremos uma probabilidade de um elemento x
+pertencer à classe $C^1$ e, consequentemente a probabilidade de pertencer à classe
+$C^2$ é dada por $1 - P(C^1 | x)$. O termo $w_0$ é chamado de viés, e para efeito
+das contas que serão feitas consideraremos vetores w' e x' da forma $x' = (x, 1)$,
+$w'= (w, w_0)$ note entretanto que os chamaremos daqui pra frente simplesmente de w e x.
 
-No caso da classificação binária, usamos que $t_n \in \{0, 1\}$
+No caso da classificação binária, usaremos que $t_n \in \{0, 1\}$ onde $t_n = 1$ se o
+elemento pertence à classe $C^1$ e $t_n = 0$ se pertence à classe $C^2$.
 
-Nesse caso, diz-se que uma superfície de decisão é definida pelo hiperplano $y(x) = 0$ onde
-sua posição é determinada pelo elemento $w_0$ que chamaremos de viés. Uma vez que tanto nosso
-vetor de pesos w quanto nossos vetores x do conjunto de treino possuem m elementos, iremos criar
-vetores novos $w' = (w_0, w), x' = (1, x)$.
+A classificação de um elemento será a classe a qual ele tem maior probabilidade de pertencer.
 
-O nosso modelo será construído de forma probabilística, uma vez que o objetivo será obter um vetor
-w de modo que possamos estimar as probabilidades condicionais $P(C^1 | x)$ e consequentemente
-$P(C^2 | x) = 1 - P(C^1 | x)$, isto é, a probabilidade de um vetor x pertencer à uma determinada 
-classe. 
-
-Para utilizarmos nosso discriminante $y(x)$ para atribuir as probabilidades, utiliza-se a função
+Para utilizarmos nosso discriminante para atribuir as probabilidades, utiliza-se a função
 sigmóide definida por:
 
 \begin{center}
@@ -77,6 +72,9 @@ sigmóide definida por:
 		\sigma(a) = \frac{1}{1 + exp(-a)}
 	\end{equation}
 \end{center}
+
+A função sigmóide é usada para obter a probilidade por ter a propriedade de mapear
+todo o conjunto dos números reais dentro do intervalo $[0, 1]$.
 
 Com $exp$ sendo a função exponencial. Aplicando ao nosso modelo obtêm-se a expressão:
 
@@ -298,3 +296,41 @@ A classe de x é dada pelo k que tiver a maior probabilidade sobre os demais.
 
 
 \section{Suport Vector Machine}
+
+Assim como fizemos com o logistic regression, começaremos com a definição
+para o caso binário e depois iremos estender para mais de uma classe. Nesse caso
+nossas classes serão $t_n \in \{-1, 1\}$ onde $t_n = 1$ se x pertence à classe $C^1$ e
+$t_n = -1$ se x pertence à classe $C^2$.
+
+No algoritmo SVM a classificação é feita a partir de um discriminante linear
+da forma 
+
+\begin{center}
+	\begin{equation}\label{eq:svm-discriminant}
+		y(x) = w^Tx + w_0
+	\end{equation}
+\end{center}
+
+Tal y é chamado de hiperplano de decisão e a classificação é baseada no sinal de
+y. Se $y(x) > 0$, x é atribuído à classe $C^1$, caso contrário é atribuído à classe
+$C^2$.
+
+Porém ao invés de procurarmos um w que separe perfeitamente todas as classes (que
+não necessariamente existe), nosso objetivo é maximizar a margem do discriminante
+linear, isto é, a menor distância de um ponto ao hiperplano.
+
+Deduzir aqui a função objetivo original
+
+Iremos supor que não necessariamente nossa entrada não é linearmente separável, 
+isto é, não existe um hiperplano que separe perfeitamente as duas classes. Assim
+iremos permitir que alguns valores estejam classificados incorretamente, para isso
+será necessário suavizarmos nossa margem através da introdução de variáveis
+
+
+Nossa função objetivo então é 
+
+\begin{center}
+	\begin{equation}
+		C\sum_{i = 1}^n\xi_i + \frac{1}{2}||w||^2
+	\end{equation}
+\end{center}
