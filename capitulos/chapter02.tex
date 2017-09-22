@@ -43,7 +43,7 @@ Bishop (2006)\cite{bishop2006} enuncia diversos dos algoritmos comumente utiliza
 classificação, cada algoritmo possui seus prós e contras e utiliza diferentes abordagens.
 
 Para este trabalho escolheu-se implementar os algoritmos \textit{Logistic Regression} e
-\textit{Supor Vector Machines}, que será chamado simplesmente de SVM por facilidade.
+\textit{Support Vector Machines}, que será chamado simplesmente de SVM por facilidade.
 
 Tanto para o \textit{Logistic Regression} quanto SVM será explicado a princípio o problema
 será inicialmente abordado a partir da classificação binária e, a partir dela, será descrito
@@ -295,7 +295,7 @@ do cálculo de $P(C^k | x) = y_k(x), \forall k = \{1, \ldots, k\}$.
 A classe de x é dada pelo k que tiver a maior probabilidade sobre os demais.
 
 
-\section{Suport Vector Machine}
+\section{Support Vector Machine}
 
 Assim como fizemos com o logistic regression, começaremos com a definição
 para o caso binário e depois iremos estender para mais de uma classe. Nesse caso
@@ -307,7 +307,7 @@ da forma
 
 \begin{center}
 	\begin{equation}\label{eq:svm-discriminant}
-		y(x) = w^Tx + w_0
+		y(x) = w^Tx + b
 	\end{equation}
 \end{center}
 
@@ -317,20 +317,147 @@ $C^2$.
 
 Porém ao invés de procurarmos um w que separe perfeitamente todas as classes (que
 não necessariamente existe), nosso objetivo é maximizar a margem do discriminante
-linear, isto é, a menor distância de um ponto ao hiperplano.
-
-Deduzir aqui a função objetivo original
-
-Iremos supor que não necessariamente nossa entrada não é linearmente separável, 
-isto é, não existe um hiperplano que separe perfeitamente as duas classes. Assim
-iremos permitir que alguns valores estejam classificados incorretamente, para isso
-será necessário suavizarmos nossa margem através da introdução de variáveis
-
-
-Nossa função objetivo então é 
+linear, isto é, a menor distância de um ponto ao hiperplano. A distância de um ponto ao
+hiperplano é dado pela fórmula
 
 \begin{center}
 	\begin{equation}
-		C\sum_{i = 1}^n\xi_i + \frac{1}{2}||w||^2
+		\frac{[t_n(w^Tx_n + b)]}{||w||}
 	\end{equation}
 \end{center}
+ 
+Na descrição inicial do problema vamos tratar o caso com o conjunto X linearmente separável, 
+o que indica que é possível obter um hiperplano que separe sem erro todas as classes para, em
+seguida, tratarmos o caso real que é o do conjunto que não é linearmente separável.
+O fato de o conjunto ser linearmente separável nos garante que $t_ny(x_n) >0 \forall n$.
+
+
+\begin{center}
+	\begin{equation}
+		\argmax_{x, b} \left\{ \frac{1}{||w||} min_n [t_n(w^Tx_n + b)] \right\}
+	\end{equation}
+\end{center}
+
+
+Podemos ajustar w e b de forma a termos que $t_n(w^Tx_n + b) = 1$ para o ponto mais
+próximo da margem e $t_n(w^Tx_n + b) \ge 1, \forall n$. Com esse reajuste temos que nosso
+problema de encontrar um vetor de pesos de margem maximizada seria de maximizar 
+$\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
+
+\begin{center}
+	\begin{equation}
+		\begin{array}{ll@{}ll}
+				\argmin_{w, b} & ||w||^2 &\\
+				\textbf{sujeito a}& t_k(w^Tx_k + b), &&k = 1, \ldots ,n 
+		\end{array}
+	\end{equation}
+\end{center}
+
+Agora iremos supor que não necessariamente nossa entrada não é linearmente separável, 
+isto é, não existe um hiperplano que separe perfeitamente as duas classes. Assim
+iremos permitir que alguns valores estejam classificados incorretamente, para isso
+será necessário suavizarmos nossa margem penalizando cada uma das entradas incorretamente
+classificadas. Cortes e Vapnik (1995)\cite{cortesVapnik1995} descrevem a penalização
+através da introdução de variváveis de folga $\xi_n \ge 0$ para cada elemento de X.
+Um elemento corretamente classificado teŕa $\xi_n = 0$, os demais pontos têm
+ $\xi_n = |t_n - y(x_n)|$.
+ 
+Com isso nossa restrição de $t_ny(x_n) \ge 1$ é modificada e tem-se 
+$t_ny(x_n) \ge 1 - \xi_n \forall n$.
+
+O valor de $\xi_n$ assim nos indica três possíveis casos:
+
+\begin{itemize}
+	\item Se $\xi_n = 0$, $x_n$ está corretamente classificado e se encontra
+	ou na margem ou do lado correto dela.
+	\item Se $0 < \xi_n \le 1$, $x_n$ está corretamente classificado e se encontra
+	entre a margem e o hiperplano.
+	\item Se $\xi_n > 1$, $x_n$ não está classificado corretamente.
+\end{itemize}
+
+A função objetivo agora precisa conter os valores de $\xi$ e para isso colocamos
+uma constante $C > 0$ que define a compensação entre a penalização das variáveis de
+folga e a margem. Com isso temos o seguinte problema de otimização quadrática:
+
+\begin{center}
+	\begin{equation}
+		\begin{array}{ll@{}ll}
+			\argmin_{w, b, \xi} & C\sum_{i = 1}^n\xi_i + \frac{1}{2}||w||^2 &\\
+			\text{sujeito a}& t_k(w^Tx_k + b) \ge 1 - \xi_k, && k = 1, \ldots, n
+		\end{array}
+	\end{equation}
+\end{center}
+
+Para implementar o SVM basta então resolver o problema de otimização quadrática
+acima. Isto é feito seguindo os seguintes passos
+
+\begin{enumerate}
+	\item Introduz-se multiplicadores de Lagrange $\alpha_n$ e $\mu_n$ e obtem-se o 
+	Lagrangiano com as restrições
+		\begin{dgroup}
+			\begin{dmath}
+				L(w, b, \xi) = \frac{1}{2}||w||^2 + C\sum_{i = 1}^n\xi_i - \sum_{i = 1}^n \alpha_i\{t_i(w^Tx_i + b) - 1 + \xi_i\} - \sum_{i = 1}^n \mu_i \xi_i
+			\end{dmath}
+			\begin{dmath}
+				\alpha_n \ge 0
+			\end{dmath}
+			\begin{dmath}
+				t_ny(x_n) - 1 + \xi_n \ge 0
+			\end{dmath}
+			\begin{dmath}
+				\alpha_n\{t_n(w^Tx_n + b) - 1 + \xi_n\} = 0
+			\end{dmath}
+			\begin{dmath}
+				\mu_n \ge 0
+			\end{dmath}
+			\begin{dmath}
+				\mu_n \xi_n = 0
+			\end{dmath}
+		\end{dgroup}
+	\item Derivamos o lagrangiano com respeito a w, b e $\xi$ e igualamos a 0 para obtermos 
+	os valores ótios para essas variáveis e, assim obtemos os seguintes valores:
+		\begin{gather}
+				\frac{\partial L}{\partial w} = 0 \Rightarrow w = \sum_{i = 1}^n \alpha_i t_i x_i \\
+				\frac{\partial L}{\partial b} = 0 \Rightarrow \sum_{i = 1}^n \alpha_i t_i  = 0 \\
+				\frac{\partial L}{\partial \xi} = 0 \Rightarrow \alpha_n = C - \mu_n 
+		\end{gather} 
+	\item Com isso em mãos, resolve-se não o problema primal e sim o dual (utiliza-se aqui o fato 
+	de que se as condições mencionadas no item anterior são satisfeitas, tem-se que vale
+	a dualidade forte e o valor ótimo de ambas as funções coincide). O dual é dado pelo problema
+		\begin{center}
+			\begin{equation}
+				\begin{aligned}	
+				& \underset{\alpha}{\text{min}}
+				& & \tilde{L}(\alpha) = \sum_{i = 1}^n \alpha_i - 1/2 \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i\alpha_j t_i t_j k(x_i, x_j) \\
+				& \text{sujeito a}
+				& & 0 \le \alpha_i \le C, i = 1, \ldots, n \\
+				&&& \sum_{i = 1}^n \alpha_i t_i = 0 
+				\end{aligned}
+			\end{equation}
+		\end{center}
+	No problema a cima é importante destacar a expressão $k(x_i, x_j)$, essa expressão é um
+	\textit{Kernel} que é uma função onde $k(x, x') = \phi(x)^T\phi(x')$ com $\phi$ sendo
+	alguma transformação linear. Tal qual no caso da regressão logística, essas
+	transformações são usadas para mudar o domínio da entrada x.
+	\item Acha-se o valor de b usando a fórmula:
+		\begin{center}
+			\begin{equation}
+				b = \frac{1}{N_{\mathcal{M}}} \sum_{n \in \mathcal{M}} \left( t_n - \sum_{m \in \mathcal{S}} \alpha_m t_m k(x_n, x_m) \right)
+			\end{equation}
+		\end{center}
+	Com $\mathcal{M}$ sendo o conjunto de pontos que satisfazem $0 < \alpha_n < C$ e 
+	$\mathcal{S}$ o conjunto de vetores de suporte (pontos que possuem $\alpha_n > 0$ e,
+	consequentemente, contribuem para a classificação do modelo).
+\end{enumerate}
+
+Uma vez resolvido o problema dual e encontrado valor de b, podemos classificar um novo
+x usando o sinal do discriminante $y(x)$ dado por
+\begin{center}
+	\begin{equation}
+		y(x) = \sum_{i = 1}^n \alpha_i t_i k(x, x_i) + b = \sum_{n \in \mathcal{S}} \alpha_n t_n l(x, x_n) + b
+	\end{equation}
+\end{center}
+
+\subsection{Extensão ao caso de multiclasses}
+
+Diversas abordagens são possíveis para o caso de multiclasses.
