@@ -460,4 +460,39 @@ x usando o sinal do discriminante $y(x)$ dado por
 
 \subsection{Extensão ao caso de multiclasses}
 
-Diversas abordagens são possíveis para o caso de multiclasses.
+Diversas abordagens são possíveis para o caso de multiclasses. A escolhida entre elas
+foi o método intuitivo chamado \textit{One-versus-all} (OVA). Nesse método é construído
+K classificadores, com K sendo o número de classes. Cada classificador $y_k$ define uma
+superfície de decisão que separa a classe k das demais (por isso o nome \textit{One-versus-all}).
+Um novo x tem sua classe dada pela que o classificador $y_k$ tem maior valor, isto é
+
+\begin{center}
+	\begin{equation}
+		y(x) = \argmax_{k} y_k(x)
+	\end{equation}
+\end{center}
+
+Portanto a classificação multiclasses se utiliza de todos os recursos já apresentados no caso
+binário o que torna simples a construção do classificador.
+
+Na imagem abaixo é mostrado a ideia por trás do método OVA.
+
+\begin{tikzpicture}
+\draw[step=1cm,light-gray,very thin] (-2,-2) grid (6,6);
+\draw[thick,->] (-2,-2) -- (5.5,-2) node[anchor=north west] {$x_1$};
+\draw[thick,->] (-2,-2) -- (-2,5.5) node[anchor=south east] {$x_2$};
+
+% classe 1
+\draw (0, 0) node[cross, blue] {};
+\draw (0, .5) node[cross, blue] {};
+\draw (.5, 0) node[cross, blue] {};
+\draw (1.5, .5) node[cross, blue] {};
+\draw (.5, 1.5) node[cross, blue] {};
+
+% classe 2
+\draw[line width=.5mm, green] (3,0) circle (1ex);
+\draw[line width=.5mm, green] (3,3) circle (1ex);
+\draw[line width=.5mm, green] (3.5,0) circle (1ex);
+\draw[line width=.5mm, green] (3.5,3.5) circle (1ex);
+\draw[line width=.5mm, green] (2,3) circle (1ex);
+\end{tikzpicture}
