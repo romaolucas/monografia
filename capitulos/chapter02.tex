@@ -3,10 +3,11 @@
 \section{Considerações}
 \label{sec:considerations}
 
-Ao longo deste capítulo, se usará n para se referir à quantidade de elementos
-fornecidas ao nosso modelo, cada entrada é i é um vetor $x_i \in \mathbb{R}^m$.
-A entrada será referida como X a efeitos de conta e assim cada entrada será 
-dada como $X_i$ nesse caso.
+Ao longo deste capítulo usaremos n para se referir à quantidade de elementos
+do conjunto de entrada, cada entrada é i é um vetor $x_i \in \mathbb{R}^m$.
+O conjunto de entrada entrada será referida como X
+ durante as descrições do algoritmo e assim cada entrada será 
+dada tanto como $X_i$ como $x_i$.
 Para cada i associaremos duas variáveis $t_i$ e $y_i$ que se referem ao valor
 esperado e ao valor obtido através do treinamento, respectivamente.
 
@@ -73,10 +74,10 @@ sigmóide definida por:
 	\end{equation}
 \end{center}
 
-A função sigmóide é usada para obter a probilidade por ter a propriedade de mapear
+A função sigmóide é usada devido à sua propriedade de mapear
 todo o conjunto dos números reais dentro do intervalo $[0, 1]$.
 
-Com $exp$ sendo a função exponencial. Aplicando ao nosso modelo obtêm-se a expressão:
+Aplicando ao nosso modelo obtêm-se a expressão:
 
 \begin{center}
 	\begin{equation}
@@ -86,9 +87,9 @@ Com $exp$ sendo a função exponencial. Aplicando ao nosso modelo obtêm-se a ex
 
 Importante notar que apesar de utilizarmos o vetor x nas equações, é possível aplicarmos uma
 transformação linear $\phi : \mathcal{R}^m \rightarrow \mathcal{R}^d$ à entrada x para obtermos
-$\phi(x)$. O uso de transformação linear no nosso conjunto de entrada nos permite transformar o 
-domínio para que se obtenha uma separação melhor entre as classes ou até mesmo fazer a redução
-da dimensão do domínio.
+$\phi(x)$ e usá-lo no lugar de x. O uso de transformação linear no nosso conjunto
+de entrada nos permite transformar o domínio para que se obtenha uma separação
+melhor entre as classes ou até mesmo fazer a redução da dimensão do domínio.
 
 Com essa equação em mãos, nosso objetivo é minimizar o erro na classificação dos dados. Tomamos
 como erro o negativo do logaritmo da verosimilhança de nossa função que é dada por:
@@ -106,7 +107,7 @@ transformação linear $\phi$ sobre x nosso problema ainda é linear sobre w).
 Dois métodos são comumente	usados: método do gradiente e método de Newton-Raphson.
 Esses métodos são utilizados tanto para o caso da classificação binária
 quanto o caso da classificação com $k > 2$. A diferença entre um problema e outro será abordada
-com mais especificidade a seguir.
+com mais detalhes a seguir.
 
 Uma dúvida natural que surge ao ter que resolver um problema de otimização é o caso de parar o
 procedimento em um mínimo local ao invés de um mínimo local da função.	Entretanto, temos que nossa
@@ -145,7 +146,8 @@ Usando \ref{eq:sigmoid_derivative} tem-se a seguinte equação para o gradiente:
 	\end{equation}
 \end{center}
 
-Onde $y_n = P(C^1 | x_n) = \sigma(w^Tx)$ e $t_n$ tal qual assumido no começo da seção.
+Com $y = (y_1, \ldots, y_n)$ e $t = (t_1, \ldots, t_n)$ onde
+$y_n = P(C^1 | x_n) = \sigma(w^Tx)$ e $t_n$ tal qual assumido no começo da seção.
 
 O algoritmo de atualização do vetor de pesos descrito a seguir vale tanto para o método
 do gradiente quanto para o de Newton-Raphson, portanto para o segundo será focado apenas nas
@@ -176,14 +178,14 @@ Importante notar que em~\ref{lst:line:condition} tem-se duas condições de para
 são o número de iterações e a diferença da diminuição da função objetivo for menor do que
 um dado $\epsilon$. Tais condições são chamadas de condições de convergência e nos garantem
 que chegamos a um valor suficientemente próximo do ótimo, uma vez que atingir este valor
-pode exigir um número muito alto de iterações, o que traz um custo computacional.
+pode exigir um número muito alto de iterações o que acarreta em grande custo computacional.
  Na implementação do algoritmo, escolheu-se um valores
 padrão para $\epsilon$ e $maxIteracoes$ como $10^{-4}$ e $200$ respectivamente.
 
 A quantidade de iterações necessárias para a convergência é influenciada fortemente pela
-escolha de $\alpha$. Um valor pequeno para $\alpha$ acarretaria em muitas iterações até
-a convergência ao passo que um valor muito grande pode fazer com que se pare muito longe
-do valor ótimo.
+escolha de $\alpha$, pois as escolha de um valor pequeno para $\alpha$ acarretaria
+em muitas iterações para convergir ao passo que um valor muito grande pode fazer
+com que o algoritmo pare num valor distante do ótimo.
 
 
 \subsection{Método de Newton-Raphson}
@@ -222,7 +224,8 @@ w^{ (novo) } & = w^{ (antigo) } - (X^T R X)^{-1} \nabla E(w) \\
 Diversas abordagens podem ser usadas para resolver o problema multiclasse, no
 caso será usado diversos discriminantes $y_k$ com $k = \{1, \ldots K\}$ com K
 sendo o total de classes. Assim nosso vetor w agora é uma matriz
-$W \in \mathbb{R}^{m \times k}$. 
+$W \in \mathbb{R}^{m \times k}$. Outra representação que usaremos para o algoritmo
+será $W = (w_1, \ldots, w_k)$ com $w_i \in \mathbb{R}^{1 \times mk}$.
 
 Quanto à codificação do vetor de rótulos, 
 segue-se a codificação dada em Bishop (2006)\cite{bishop2006} de $1-K$,
@@ -238,8 +241,8 @@ Quanto a função de probabilidade que desejamos estimar, utiliza-se a função
 	\end{equation}
 \end{center}
 
-Que nos dá verossimilhança e consequentemente a seguinte função de erro, tomada
-usando o negativo do logaritmo da verossimilhança.
+Que nos dá verossimilhança e a seguinte função de erro, obtida
+tomando o negativo do logaritmo da verossimilhança.
 
 \begin{center}
 	\begin{align*}
@@ -258,10 +261,7 @@ porém agora temos que a derivada com respeito a cada $w_k^Tx$ vale:
 	\end{equation}
 \end{center}
 
-Nosso valor de W pode ser interpretado tanto como uma matriz $m \times k$ como um
-único vetor $1 \times mk$ onde $W = (w_1, w_2, \ldots, w_k)$.
-
-Usando essa representação, podemos calcular o vetor gradiente onde a derivada
+Usando essa representação de W como um vetor, podemos calcular o vetor gradiente onde a derivada
 com respeito a cada $w_j$ é dada pela equação:
 
 \begin{center}
@@ -311,14 +311,14 @@ da forma
 	\end{equation}
 \end{center}
 
-Tal y é chamado de hiperplano de decisão e a classificação é baseada no sinal de
+Tal y é chamado de superfície de decisão e a classificação é baseada no sinal de
 y. Se $y(x) > 0$, x é atribuído à classe $C^1$, caso contrário é atribuído à classe
 $C^2$.
 
 Porém ao invés de procurarmos um w que separe perfeitamente todas as classes (que
 não necessariamente existe), nosso objetivo é maximizar a margem do discriminante
-linear, isto é, a menor distância de um ponto ao hiperplano. A distância de um ponto ao
-hiperplano é dado pela fórmula
+linear, isto é, a menor distância de um ponto à superfície. A distância de um ponto à
+superfície é dado pela fórmula
 
 \begin{center}
 	\begin{equation}
@@ -327,7 +327,7 @@ hiperplano é dado pela fórmula
 \end{center}
  
 Na descrição inicial do problema vamos tratar o caso com o conjunto X linearmente separável, 
-o que indica que é possível obter um hiperplano que separe sem erro todas as classes para, em
+o que indica que é possível obter uma superfície que separe sem erro todas as classes para, em
 seguida, tratarmos o caso real que é o do conjunto que não é linearmente separável.
 O fato de o conjunto ser linearmente separável nos garante que $t_ny(x_n) >0 \forall n$.
 
@@ -354,7 +354,7 @@ $\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
 \end{center}
 
 Agora iremos supor que não necessariamente nossa entrada não é linearmente separável, 
-isto é, não existe um hiperplano que separe perfeitamente as duas classes. Assim
+isto é, não existe uma superfície de decisão que separe perfeitamente as duas classes. Assim
 iremos permitir que alguns valores estejam classificados incorretamente, para isso
 será necessário suavizarmos nossa margem penalizando cada uma das entradas incorretamente
 classificadas. Cortes e Vapnik (1995)\cite{cortesVapnik1995} descrevem a penalização
@@ -371,7 +371,7 @@ O valor de $\xi_n$ assim nos indica três possíveis casos:
 	\item Se $\xi_n = 0$, $x_n$ está corretamente classificado e se encontra
 	ou na margem ou do lado correto dela.
 	\item Se $0 < \xi_n \le 1$, $x_n$ está corretamente classificado e se encontra
-	entre a margem e o hiperplano.
+	entre a margem e a superfície.
 	\item Se $\xi_n > 1$, $x_n$ não está classificado corretamente.
 \end{itemize}
 
@@ -475,5 +475,32 @@ Um novo x tem sua classe dada pela que o classificador $y_k$ tem maior valor, is
 Portanto a classificação multiclasses se utiliza de todos os recursos já apresentados no caso
 binário o que torna simples a construção do classificador.
 
-Na imagem abaixo é mostrado a ideia por trás do método OVA.
+Na imagem abaixo é mostrado a ideia por trás do método OVA nele a classe $C^1$ é dada pelos círculos,
+$C^2$ pelos triângulos e $C^3$ pelas cruzes.
+As figuras em vermelho em cada classificador são os pontos onde $t_n = -1$.
 
+\begin{figure}[ht] 
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.75\linewidth]{multiclass_original} 
+    \caption{Classes originais} 
+    \vspace{4ex}
+  \end{subfigure}%% 
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.75\linewidth]{multiclass_ova1} 
+    \caption{Classificador para a classe 1} 
+    \vspace{4ex}
+  \end{subfigure} 
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.75\linewidth]{multiclass_ova2} 
+    \caption{Classificador para a classe 2} 
+  \end{subfigure}%%
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.75\linewidth]{multiclass_ova3} 
+    \caption{Classificaodr para a classe 3} 
+  \end{subfigure} 
+
+\end{figure}
