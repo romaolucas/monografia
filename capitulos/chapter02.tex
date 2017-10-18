@@ -504,3 +504,46 @@ As figuras em vermelho em cada classificador são os pontos onde $t_n = -1$.
   \end{subfigure} 
 
 \end{figure}
+
+\section{Análise de Sentimentos}
+
+O campo de análise de sentimentos, também conhecido como mineração de opinião é uma área da
+ciência da computação que analisa as opiniões, sentimentos e atitudes das pessoas em relação
+a uma entidade \citep{bingliu2012}. Uma entidade pode ser definida como o sujeito ao qual está
+se observando as opiniões, seja ela uma pessoa, instituição ou produto.
+
+A área possui uma diversa gama de aplicações, dentre elas, a área de classificação de sentimentos
+que através do uso de informações subjetivas contidas num texto avalia qual a opinião relacionada
+ao mesmo. 
+
+Para realizar a extração das informações do texto, existe uma etapa de pré-processamento na qual
+cada texto é transformado num vetor numérico para então ser processado por algum algoritmo de
+classificação. Neste trabalho foi escolhido usar o modelo \textit{bag of words}. No modelo, 
+é construída uma matriz de entrada onde cada linha i representa um documento (texto sobre o qual
+quer extrair a opinião) e as colunas representam a frequência de um termo, por termo entende-se como
+as palavras que compõe os textos e o conjunto de todos os termos do texto é chamado de \textit{corpus}.
+A frequência pode ser medidas simples como a quantidade de vezes em que um termo j aparece no documento
+i ou se o termo j aparece no documento i (nesse caso cada vetor de entrada seria um vetor binário) bem
+como pode ser uma medida mais complexa como tf-idf (\textit{term frequency - inverse document frequency}).
+A relação entre os métodos de computar a frequência e o desempenho dos algoritmos de classificação serão
+exibidas no capítulo seguinte.
+
+O método tf-idf baseia-se na frequência de cada termo ponderada pela frequência inversa no documento,
+que é usada para mensurar o quão importante um termo é em um documento (por exemplo a palavra "um" em
+um conjunto de textos em português aparece várias vezes, apesar de ter uma baixa importância).
+Ele pode ser calculado pelas expressões:
+
+\begin{center}
+	\begin{dgroup}
+		\begin{dmath}
+			TF(t) = \frac{\text{\# de aparições de t no documento}}{\text{total de termos no documento}} 
+		\end{dmath}
+		\begin{dmath}
+			IDF(t) = log \left(  \frac{\text{Total de documentos}}{\text{\# de documentos que contenham t}} \right) 
+		\end{dmath}	    
+		\begin{dmath}
+			TF-IDF(t) = TF(t)*IDF(t)
+		\end{dmath} 	    
+	\end{dgroup}
+\end{center}
+
