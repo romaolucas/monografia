@@ -1,4 +1,4 @@
-\chapter{Materiais e Métodos}
+\chapter{\textit{Machine Learning} e Análise de Sentimentos}
 
 \section{Considerações}
 \label{sec:considerations}
@@ -509,19 +509,33 @@ As figuras em vermelho em cada classificador são os pontos onde $t_n = -1$.
 
 O campo de análise de sentimentos, também conhecido como mineração de opinião é uma área da
 ciência da computação que analisa as opiniões, sentimentos e atitudes das pessoas em relação
-a uma entidade \citep{bingliu2012}. Uma entidade pode ser definida como o sujeito ao qual está
+a uma entidade (Bing Liu, 2012)\citep{bingliu2012}. Uma entidade pode ser definida como o sujeito ao qual está
 se observando as opiniões, seja ela uma pessoa, instituição ou produto.
 
 A área possui uma diversa gama de aplicações, dentre elas, a área de classificação de sentimentos
 que através do uso de informações subjetivas contidas num texto avalia qual a opinião relacionada
-ao mesmo. 
+ao mesmo.
+
+\subsection{Obtendo um vetor de \textit{features}}
+\label{subsec:featurization}
 
 Para realizar a extração das informações do texto, existe uma etapa de pré-processamento na qual
 cada texto é transformado num vetor numérico para então ser processado por algum algoritmo de
-classificação. Neste trabalho foi escolhido usar o modelo \textit{bag of words}. No modelo, 
+classificação. Neste trabalho foi escolhido usar o modelo \textit{bag of words} (BOW). No modelo, 
 é construída uma matriz de entrada onde cada linha i representa um documento (texto sobre o qual
-quer extrair a opinião) e as colunas representam a frequência de um termo, por termo entende-se como
-as palavras que compõe os textos e o conjunto de todos os termos do texto é chamado de \textit{corpus}.
+quer extrair a opinião) e as colunas representam a frequência de um termo, o conjunto de todos os textos é chamado de \textit{corpus}.
+
+Uma alternativa ao BOW seria o modelo de N-grama, nele os termos não são apenas as palavras, mas
+um conjunto de n palavras juntas, o que traz mais informação pelo fato de juntar substantivo e verbo, substantivo e adjetivo, por exemplo, entretanto acaba gerando um vetor de \textit{features}
+ainda maior que, consequentemente, faz com que os algoritmos demorem mais para convergir.
+A escolha pelo BOW foi tida baseada no compromisso entre desempenho e performance do algoritmo.
+
+Antes de obter um vetor numérico, é feito um pré-processamento no documento removendo artigos, 
+adicionando espaços antes e depois de pontuações e transformando em um vetor de tokens. Uma
+vez que foi obtido o vetor de \textit{tokens}, é removido todo elemento que seja apenas espaço e pontuação.
+Em seguida, monta-se uma nova \textit{string} juntando todas as \textit{tokens} usando espaços
+para então montar um vetor de frequência a partir do novo \textit{corpus}.
+
 A frequência pode ser medidas simples como a quantidade de vezes em que um termo j aparece no documento
 i ou se o termo j aparece no documento i (nesse caso cada vetor de entrada seria um vetor binário) bem
 como pode ser uma medida mais complexa como tf-idf (\textit{term frequency - inverse document frequency}).
@@ -546,4 +560,84 @@ Ele pode ser calculado pelas expressões:
 		\end{dmath} 	    
 	\end{dgroup}
 \end{center}
+
+O procedimento de obtenção dos vetores de \textit{features} a partir do novo \textit{corpus} pode
+ser realizado utilizando as bibliotecas \texttt{scikit-learn} e \texttt{nltk} do Python.
+
+\subsection{Análise de \textit{Tweets}}
+
+Aqui entro na parte que quero falar.
+
+\subsection{Classificação Manual da Opinião}
+
+Com o conjunto de dados obtido em \ref{subsec:featurization}, podemos aplicar os algoritmos 
+descritos no começo do capítulo. Entretanto como também mencionado no começo deste capítulo,
+problemas de aprendizado supervisionado exigem que o conjunto de dados seja composto não só dos
+dados, mas também do valor esperado para cada entrada. No caso da classificação da opinião de
+textos, tal opinião deve ser primeiro atribuída manualmente para que, com posse dessas opiniões,
+seja possível treinar os algoritmos.
+
+Para facilitar a etapa de classificação manual, foi desenvolvido um sistema online onde cada usuário
+informa a quantidade de \textit{tweets} que se deseja classificar e consegue classificá-los de forma
+mais simples. Deu-se a essa ferramenta o nome de CLAM (de Classificador Manual).
+
+O desenvolvimento do CLAM foi motivado pela ausência de ferramentas no Brasil que permitem a
+colaboração nessa etapa de classificação manual (uma ferramenta comumente usada é o \textit{Amazon
+Mechanical Turk}, porém na época do desenvolvimento do CLAM não estava disponível no Brasil)
+em conjunto com a falta de ferramentas gratuitas de 
+uma forma geral, uma vez que até que a maioria das ferramentas existentes são pagas (vide o 
+próprio \textit{Amazon Mechanical Turk}). Por isso priorizou-se construir um código simples
+para que fosse fácil a modificiação da base do sistema por colaboradores externos,
+que fosse de fácil uso para o usuário final e também de fácil hospedagem do sistema
+em alguma plataforma como Heroku e Firebase.
+
+O código é de domínio público e está disponível no link:
+ \url{https://github.com/romaolucas/manual-classifier-helper}
+
+O projeto foi desenvolvido usando a linguagem Python em conjunto do \textit{framework} web
+Django por já possuir diversas ferramentas integradas não só de gerenciamento do sistema, bem como
+modelagem do banco de dados e sistema de migração para que possa modificar os modelos de dados já
+existentes sem precisar realizar um acesso direto à base de dados além de possuir um conjunto
+de bibliotecas que facilitam o processo de importação de dados em csv e vasta quantidade de 
+tutoriais de como desenvolver uma aplicação usando Django.
+
+Para a modelagem de dados construiu-se dois modelos: um para \textit{tweets} e outro para
+as opiniões.
+Na modelagem, considerou-se que cada usuário irá classificar apenas textos que não 
+possuem uma classificação, não só para evitar ter que lidar com opiniões divergentes em um texto,
+mas também para garantir um maior número de dados para o treinamento. Uma possível melhoria
+do sistema seria a possibilidade de mais usuários avaliarem um mesmo conjunto de textos para
+garantir um consenso na hora de associar uma opinião a um texto.
+
+O CLAM possui o seguinte fluxo para a classificação:
+
+\begin{enumerate}
+	\item Informa a quantidade de \textit{tweets} que se deseja classificar
+	\item O usuário é levado a uma página com os n \textit{tweets} para classificar.
+	Enquanto o campo da opinião é obrigatório, existe um campo optativo para informar
+	se o dado \textit{tweet} é irônico ou não, uma vez que textos com ironia atrapalham
+	o treinamento por conter palavras positivas sendo usadas de maneira negativa e vice-versa.
+	\item Uma vez classificados, o usuário é levado a uma página onde é possível ver todos
+	os \textit{tweets} já classificados e também gerar um arquivo csv contendo todos aqueles
+	que não foram marcados como irônicos.
+\end{enumerate}
+
+Para um usuário que deseja hospedar a plataforma e usá-la para si, existe também o admin onde
+é possível importar \textit{tweets} para serem classificados.
+
+Abaixo é descrito o fluxo para a importação de novos dados no admin.
+
+\begin{enumerate}
+	\item Realiza o login no sistema utilizando seu usuário e senha de administrador.
+	\item Seleciona a parte de Tweets na tela principal.
+	\item Uma vez na parte de visualizar todos os \textit{tweets} já armazenados na base de dados,
+	seleciona a opção de importar no canto superior direito.
+	\item Na página que segue, basta informar um arquivo .csv, .xls (formato do excel) ou .json
+	contendo nessa ordem: o id do \textit{tweet} (fornecido pelo Twitter), usuário que escreveu, 
+	texto, espaço vazio para representar o id que será preenchido automaticamente na hora de 
+	importar no banco de dados.
+	\item Caso todos os dados sejam fornecidos corretamente, será passado a uma nova página para
+	confirmar se deseja importar e, por fim, será redirecionado à pagina que contém todos os
+	\textit{tweets}.
+\end{enumerate}
 
