@@ -516,6 +516,56 @@ A área possui uma diversa gama de aplicações, dentre elas, a área de classif
 que através do uso de informações subjetivas contidas num texto avalia qual a opinião relacionada
 ao mesmo.
 
+Classificação de sentimentos teve um crescimento devido à expansão da Web 2.0 que fez com que
+as pessoas manifestassem suas opiniões e sentimentos através de blogs, fóruns, redes sociais
+e páginas de reviews de produtos que, consequentemente fez com que empresas e pessoas de interesse
+tivessem um acesso mais aberto e fácil a essas opiniões. O fácil acesso às opiniões dos usuários
+junto com o grande volume delas tornou a análise manual um processo muito custoso, tornando
+necessário recorrer a métodos automatizados para a análise e sumarização desses dados que
+acabou por fim impulsionando estudos na área. (Petcovic e Ringsquandl, 2013)
+
+Bing Liu, 2012\cite{bingliu2012} divide as formas de classificar sentimentos 
+em um documento pode se dividir em quatro formas:
+\begin{itemize}
+	\item Entidade:  um produto, pessoa sobre o qual o texto se refere, seja direta ou indiretamente.
+	Nessa tarefa procura-se analisar se a opinião do texto em torno de uma entidade é positiva ou
+	não.
+	\item Aspecto: características sobre uma entidade. Por exemplo se temos uma entidade que é um
+	produto, aspectos de um produto poderiam ser material ou preço. Nessa forma procura-se avaliar
+	a opinião acerca de cada um dos aspectos.
+	\item Sentença: esse tipo de análise trabalha com o sentimento associado a cada sentença de
+	um documento.
+	\item Documento: nesse caso analisa-se o sentimento associado a um documento como um todo, 
+	tratando de uma forma mais genérica em relação aos demais.
+\end{itemize}
+
+Comum a todas as formas de se analizar as opiniões de um documento é que o uso dos métodos
+para obter a opinião. Há duas abordagens para esse problema de classificação: a de aprendizado
+de máquina (que iremos utilizar nesse trabalho) que se consiste do uso de algoritmos de 
+classificação em conjunto com técnicas de processamento de texto (que será explicado nas próximas
+seções) e a abordagem com um dicionário léxico onde a análise é feita baseada na pontuação
+entre palavras positivas e negativas contidas no documento (Medhat et al., 2014).
+
+No caso desse trabalho, foi escolhido a análise em torno do documento / sentença (devido à estrutura
+dos \textit{tweets} tem-se que os documentos são, em sua maioria, compostos por apenas uma 
+sentença). 
+
+\subsection{Análise de \textit{Tweets} de política}
+
+Dentre os domínios de aplicação da classificação de sentimentos, escolheu-se como domínio o
+escopo político. Nesse caso, temos que as entidades nos documentos são constituídas por
+políticos e projetos de lei. E neste trabalho será analisado a análise de \textit{tweets}.
+
+O twitter desde as eleições presidenciais estadunidenses de 2008 mostrou influência
+na decisão das eleições evidenciado pela campanha online realizada pela equipe do
+candidato Barack Obama (Petcovic e Ringsquandl, 2013). Desde então, 
+a rede social tem sido usada não só para a campanha de políticos, mas também para a avaliação
+da opinião em relação às medidas tomadas por eles.
+
+A escolha dos \textit{tweets} foi feita tendo em vista o uso da rede social 
+para expressar opiniões sobre diversos assuntos, incluindo política.
+
+
 \subsection{Obtendo um vetor de \textit{features}}
 \label{subsec:featurization}
 
@@ -564,10 +614,6 @@ Ele pode ser calculado pelas expressões:
 O procedimento de obtenção dos vetores de \textit{features} a partir do novo \textit{corpus} pode
 ser realizado utilizando as bibliotecas \texttt{scikit-learn} e \texttt{nltk} do Python.
 
-\subsection{Análise de \textit{Tweets}}
-
-Aqui entro na parte que quero falar.
-
 \subsection{Classificação Manual da Opinião}
 
 Com o conjunto de dados obtido em \ref{subsec:featurization}, podemos aplicar os algoritmos 
@@ -612,14 +658,23 @@ garantir um consenso na hora de associar uma opinião a um texto.
 O CLAM possui o seguinte fluxo para a classificação:
 
 \begin{enumerate}
-	\item Informa a quantidade de \textit{tweets} que se deseja classificar
+	\item Informa a quantidade de \textit{tweets} que se deseja classificar.
+	\begin{figure}[H]
+		\includegraphics[scale=0.27]{clam_inicio}
+	\end{figure}
 	\item O usuário é levado a uma página com os n \textit{tweets} para classificar.
 	Enquanto o campo da opinião é obrigatório, existe um campo optativo para informar
 	se o dado \textit{tweet} é irônico ou não, uma vez que textos com ironia atrapalham
 	o treinamento por conter palavras positivas sendo usadas de maneira negativa e vice-versa.
+	\begin{figure}[H]
+		\includegraphics[scale=0.27]{clam_classificar}
+	\end{figure}
 	\item Uma vez classificados, o usuário é levado a uma página onde é possível ver todos
 	os \textit{tweets} já classificados e também gerar um arquivo csv contendo todos aqueles
 	que não foram marcados como irônicos.
+	\begin{figure}[H]
+		\includegraphics[scale=0.27]{clam_classificados}
+	\end{figure}
 \end{enumerate}
 
 Para um usuário que deseja hospedar a plataforma e usá-la para si, existe também o admin onde
@@ -629,13 +684,25 @@ Abaixo é descrito o fluxo para a importação de novos dados no admin.
 
 \begin{enumerate}
 	\item Realiza o login no sistema utilizando seu usuário e senha de administrador.
+	\begin{figure}[H]
+		\includegraphics[scale=0.27]{clam_login}
+	\end{figure}
 	\item Seleciona a parte de Tweets na tela principal.
+	\begin{figure}[H]
+		\includegraphics[scale=0.27]{clam_admin}
+	\end{figure}
 	\item Uma vez na parte de visualizar todos os \textit{tweets} já armazenados na base de dados,
 	seleciona a opção de importar no canto superior direito.
+	\begin{figure}[H]
+		\includegraphics[scale=0.27]{clam_tweets}
+	\end{figure}
 	\item Na página que segue, basta informar um arquivo .csv, .xls (formato do excel) ou .json
 	contendo nessa ordem: o id do \textit{tweet} (fornecido pelo Twitter), usuário que escreveu, 
 	texto, espaço vazio para representar o id que será preenchido automaticamente na hora de 
 	importar no banco de dados.
+	\begin{figure}[H]
+		\includegraphics[scale=0.2]{clam_importador}
+	\end{figure}
 	\item Caso todos os dados sejam fornecidos corretamente, será passado a uma nova página para
 	confirmar se deseja importar e, por fim, será redirecionado à pagina que contém todos os
 	\textit{tweets}.
