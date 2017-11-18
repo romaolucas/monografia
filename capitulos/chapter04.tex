@@ -8,23 +8,29 @@ Antes de mais nada, analisaremos a composição do nosso conjunto de dados e com
 a distribuição de classes. Na figura \ref{fig:classes} temos um histograma das classes associadas
 a cada tuíte.
 
-\begin{table}[H]\label{tab:distribution}
+\begin{table}[H]
 	\begin{center}
 		\begin{tabular}{| l | l |}
 			\hline
-			Positivo & 115 \\ 
+			Classe & Total \\
+			\hline
+			Positivo & 115 \\
+			\hline 
 			Negativo & 1248 \\ 
+			\hline
 			Neutro & 1223 \\ 
 			\hline
 		\end{tabular}
 	\end{center}
 	\caption*{Quantidade de tuítes pertencentes a cada classe}
+	\label{tab:distribution}
 \end{table}
 
 \begin{center}
-	\begin{figure}[H]\label{fig:classes}
+	\begin{figure}[H]
 		\includegraphics[scale=0.8]{fig_classes}
 		\caption{Histograma da frequência de tuítes}
+		\label{fig:classes}
 	\end{figure}
 \end{center}
 
@@ -103,7 +109,47 @@ caracterizados pela presença de \textit{hashtags}. Sejam elas declarando apoio 
 
 \section{Descrição dos experimentos}
 
-Para cada classificador, realizou-se experimentos tomando como base não só
+Realizou-se duas etapas de experimentos, uma primeira etapa utilizando todas as classes onde se
+observou que a baixa quantidade de elementos da classe positiva acabava por atrapalhar o desempenho
+geral dos algoritmos, em especial os que utilizavam a abordagem OVA para o caso de multiclasses.
+Com isso, decidiu-se descartar esses elementos e rodar uma nova sequência de experimentos 
+considerando apenas as classes negativa e neutra (que para efeito dos algoritmos será a classe 
+positiva) e, com isso, verificar a melhoria dos algoritmos nas métricas.
+
+Para ambas as etapas, procurou-se não só medir o desempenho dos algoritmos, mas também encontrar
+uma escolha certa de parâmetros para os mesmos que obtivesse a melhor performance (como a escolha
+do Kernel no caso do SVM ou a constante de regularização usada tanto no SVM quanto na regressão
+logística).
+
+Tais testes de escolha de parâmetro, caso feitos usando apenas a divisão do conjunto de dados entre
+conjunto de treino e conjunto de testes acabaria por dar uma escolha enviesada de parâmetros, uma
+vez que uma escolha de parâmetros que tenha bons números em determinado conjunto de testes não
+indica que ele possui uma boa generalização, isto é, apresentará uma boa precisão para novos dados.
+
+A fim de garantir maior generalização, utiliza-se um método de validação chamado de 
+validação cruzada, que se consiste de um modo de dividir o conjunto de dados e testá-lo com
+um conjunto de validação. Uma primeira abordagem da validação cruzada seria dividir nosso conjunto
+em três: um de treino, um de validação e outro de teste, assim testaríamos as escolhas de parâmetros
+no conjunto de treino e, por fim, mediríamos a performance do melhor no conjunto de teste.
+
+Outra abordagem seria ainda manter a divisão do conjunto de dados em conjunto de treino e teste
+porém realizar esse procedimento diversas vezes alternando as porções que irão corresponder a
+cada conjunto. Tal método é chamado de k-fold. No k-fold divide-se o conjunto total em k partições
+e, a cada iteração, é construído um conjunto de teste usando uma das partições enquanto as k-1
+serão o de treino. O procedimento de treinamento é realizado k vezes e, a escolha de parâmetros
+com melhor desempenho médio será a escolhida. A figura \ref{fig:kfold} mostra o funcionamento do
+método.
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[scale=0.8]{K-fold_cross_validation}
+	\end{center}		
+	\caption{Funcionamento do método k-fold da validação cruzada \\
+		fonte: \url{https://en.wikipedia.org/wiki/Cross-validation_(statistics)\#/media/File:K-fold_cross_validation_EN.jpg}}
+	\label{fig:kfold}
+\end{figure}
+
+
 
 \section{Métricas avaliadas}
 
