@@ -149,9 +149,51 @@ método.
 	\label{fig:kfold}
 \end{figure}
 
+\subsection{Parâmetros avaliados}
+
+\textbf{SVM}
+
+Para o SVM, textou-se o desempenho do algoritmo testando diferentes kernels e com diferentes
+parâmetros para cada um. Os seguintes kernels foram utilizados:
+
+\begin{itemize}
+	\item Kernel Linear: $K(x, y) = x^Ty$
+	\item Kernel RBF: $K(x, y) = exp(-\gamma||x - y||^2)$
+	\item Kernel Polinomial: $K(x, y) = (x^Ty + c)^d$
+\end{itemize}
+
+Em comum a todos os kernel, variou-se o parâmetro C do SVM utilizado para penalizar os valores
+mal classificados, variando-o entre $10^-3$ a $10^2$. Já para o RBF, varia-se o parâmetro $\gamma$
+com valores entre $10^-4$ e $10^4$. Por último para o polinomial, varia-se tanto o parâmetro d
+que determina o grau do polinômio (aqui variamos entre 3, 4 e 5) e o coeficiente que variamos
+entre 0 a $10^2$.
+
+\textbf{Regressão Logística}
+
+Para a regressão logística, adicionamos um parâmetro extra $\lambda$ que será usado para penalizar
+nosso vetor de pesos e assim, evitar \textit{overfitting}, que ocorre quando um modelo apresenta
+baixo erro no conjunto de treino, porém baixa generalização. Este parâmetro será variado de 
+$10^-3$ a $10^2$ também. Importante ressaltar que $\lambda$ só é aplicado nos índices
+de $1$ a $m + 1$ do vetor de pesos, com o valor do termo $w_0$ não sendo penalizado.
 
 
 \section{Métricas avaliadas}
 
-Para a realização dos experimentos, levou-se em consideração três métricas
+Para a realização dos experimentos, levou-se em consideração quatro métricas
 para avaliar a eficiência dos classificadores.
+
+\begin{itemize}
+	\item Acurácia: taxa calculada pela quantidade de dados corretamente classificados
+	sobre o total de dados. Quanto mais próximo de 1, melhor a precisão.
+	\item Precisão: taxa calculada pela expressão $\frac{tp}{tp + fp}$ onde tp corresponde
+	aos verdadeiro positivos, isto é, elementos corretamente classificados como da classe C
+	e fp são elementos erroneamente classificados na classe C. Quanto mais próximo de 1, melhor.
+	\item Recall: taxa calculada pela expressão $\frac{tp}{tp + fn}$ onde tp corresponde
+	aos verdadeiro positivos, como na precisão e fn corresponde
+	aos falso negativos, isto é, os elementos incorretamente classificados como não pertencentes
+	a uma classe C quando na verdade pertencem. Assim como a precisão, quanto mais próximo de
+	1, melhor.
+	\item Medida F: pode ser interpretado como uma média harmônica entre precisão e recall é dado
+	pela expressão: $2*\frac{precis*recall}{precis + recall}$. Assim como as demais medidas, quanto
+	mais próximo de 1, melhor o valor.
+\end{itemize}
