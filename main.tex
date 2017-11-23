@@ -14,6 +14,7 @@
 \usepackage{subcaption}
 \usepackage{natbib}
 \usepackage{caption}
+\usepackage{epigraph}
 % usado pra pseudo-codigo
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -30,21 +31,62 @@
 	urlcolor=red,
 	linktoc=all
 }
+
+\newenvironment{dedication}
+  {\clearpage           % we want a new page
+   \thispagestyle{empty}% no header and footer
+   \vspace*{\fill}% some space at the top 
+   \itshape             % the text is in italics
+   \raggedleft          % flush to the right margin
+  }
+  {\par % end the paragraph
+   \clearpage           % finish off the page
+  }
+
+\usepackage{etoolbox}
+    \makeatletter
+    \newlength\epitextskip
+    \pretocmd{\@epitext}{\em}{}{}
+    \apptocmd{\@epitext}{\em}{}{}
+    \patchcmd{\epigraph}{\@epitext{#1}\\}{\@epitext{#1}\\[\epitextskip]}{}{}
+    \makeatother
+
 \begin{document}
-
-\author{Lucas Romão Silva\\[1ex]
-	\small Prof Dr. Roberto Hirata Jr.
-}
-\title{Análise de Sentimentos Aplicada à Política}
-
 
 
 \frontmatter
-\maketitle
+\begin{titlepage}
+	\centering
+	{\scshape\LARGE Instituto de Matemática e Estatística \par}
+	\vspace{1cm}
+	{\scshape\Large Trabalho de Formatura Supervisionado\par}
+	\vspace{1.5cm}
+	{\huge\bfseries Análise de Sentimentos Aplicada à Política\par}
+	\vspace{2cm}
+	{\Large\itshape Lucas Romão Silva\par}
+	\vfill
+	Orientado por\par
+	Prof. Dr. Roberto Hirata Jr. 
+
+	\vfill
+
+% Bottom of the page
+	{\large \today\par}
+\end{titlepage}
+
+\begin{dedication}
+À minha mãe, Claudete Romão Silva
+\end{dedication}
+\include{./capitulos/thanks}
+\include{./capitulos/abstract}
+
+\vspace*{\fill}
+    \epigraph{A utopia está lá no horizonte. Me aproximo dois passos, ela se afasta dois passos. Caminho dez passos e o horizonte corre dez passos. Por mais que eu caminhe, jamais alcançarei. Para que serve a utopia? Serve para isso: para que eu não deixe de caminhar.}{Fernando Birri}
+
+
 \tableofcontents
 
 \mainmatter
-\include{./capitulos/abstract}
 \include{./capitulos/chapter01}
 \include{./capitulos/chapter02}
 \include{./capitulos/chapter03}
