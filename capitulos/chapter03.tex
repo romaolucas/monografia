@@ -547,14 +547,14 @@ seções) e a abordagem com um dicionário léxico onde a análise é feita base
 entre palavras positivas e negativas contidas no documento (Medhat et al., 2014) \citep{medhat2014}.
 
 No caso desse trabalho, foi escolhido a análise em torno do documento / sentença (devido à estrutura
-dos \textit{tweets} tem-se que os documentos são, em sua maioria, compostos por apenas uma 
+dos tuítes tem-se que os documentos são, em sua maioria, compostos por apenas uma 
 sentença). 
 
-\subsection{Análise de \textit{Tweets} de política}
+\subsection{Análise de tuítes de política}
 
 Dentre os domínios de aplicação da classificação de sentimentos, escolheu-se como domínio o
 escopo político. Nesse caso, temos que as entidades nos documentos são constituídas por
-políticos e projetos de lei. E neste trabalho será analisado a análise de \textit{tweets}.
+políticos e projetos de lei. E neste trabalho será analisado a análise de tuítes.
 
 O twitter desde as eleições presidenciais estadunidenses de 2008 mostrou influência
 na decisão das eleições evidenciado pela campanha online realizada pela equipe do
@@ -562,7 +562,7 @@ candidato Barack Obama (Petković e Ringsquandl, 2013)\citep{petkovic2013}. Desd
 a rede social tem sido usada não só para a campanha de políticos, mas também para a avaliação
 da opinião em relação às medidas tomadas por eles.
 
-A escolha dos \textit{tweets} foi feita tendo em vista o uso da rede social 
+A escolha foi feita tendo em vista o uso da rede social 
 para expressar opiniões sobre diversos assuntos, incluindo política.
 
 
@@ -624,7 +624,7 @@ textos, tal opinião deve ser primeiro atribuída manualmente para que, com poss
 seja possível treinar os algoritmos.
 
 Para facilitar a etapa de classificação manual, foi desenvolvido um sistema online onde cada usuário
-informa a quantidade de \textit{tweets} que se deseja classificar e consegue classificá-los de forma
+informa a quantidade de tuítes que se deseja classificar e consegue classificá-los de forma
 mais simples. Deu-se a essa ferramenta o nome de CLAM (de Classificador Manual).
 
 O desenvolvimento do CLAM foi motivado pela ausência de ferramentas no Brasil que permitem a
@@ -647,7 +647,7 @@ existentes sem precisar realizar um acesso direto à base de dados além de poss
 de bibliotecas que facilitam o processo de importação de dados em csv e vasta quantidade de 
 tutoriais de como desenvolver uma aplicação usando Django.
 
-Para a modelagem de dados construiu-se dois modelos: um para \textit{tweets} e outro para
+Para a modelagem de dados construiu-se dois modelos: um para tuítes e outro para
 as opiniões.
 Na modelagem, considerou-se que cada usuário irá classificar apenas textos que não 
 possuem uma classificação, não só para evitar ter que lidar com opiniões divergentes em um texto,
@@ -658,19 +658,19 @@ garantir um consenso na hora de associar uma opinião a um texto.
 O CLAM possui o seguinte fluxo para a classificação:
 
 \begin{enumerate}
-	\item Informa a quantidade de \textit{tweets} que se deseja classificar.
+	\item Informa a quantidade de tuítes que se deseja classificar.
 	\begin{figure}[H]
 		\includegraphics[scale=0.27]{clam_inicio}
 	\end{figure}
-	\item O usuário é levado a uma página com os n \textit{tweets} para classificar.
+	\item O usuário é levado a uma página com os n tuítes para classificar.
 	Enquanto o campo da opinião é obrigatório, existe um campo optativo para informar
-	se o dado \textit{tweet} é irônico ou não, uma vez que textos com ironia atrapalham
+	se o dado tuíte é irônico ou não, uma vez que textos com ironia atrapalham
 	o treinamento por conter palavras positivas sendo usadas de maneira negativa e vice-versa.
 	\begin{figure}[H]
 		\includegraphics[scale=0.27]{clam_classificar}
 	\end{figure}
 	\item Uma vez classificados, o usuário é levado a uma página onde é possível ver todos
-	os \textit{tweets} já classificados e também gerar um arquivo csv contendo todos aqueles
+	os tuítes já classificados e também gerar um arquivo csv contendo todos aqueles
 	que não foram marcados como irônicos.
 	\begin{figure}[H]
 		\includegraphics[scale=0.27]{clam_classificados}
@@ -678,7 +678,7 @@ O CLAM possui o seguinte fluxo para a classificação:
 \end{enumerate}
 
 Para um usuário que deseja hospedar a plataforma e usá-la para si, existe também o admin onde
-é possível importar \textit{tweets} para serem classificados.
+é possível importar tuítes para serem classificados.
 
 Abaixo é descrito o fluxo para a importação de novos dados no admin.
 
@@ -691,13 +691,13 @@ Abaixo é descrito o fluxo para a importação de novos dados no admin.
 	\begin{figure}[H]
 		\includegraphics[scale=0.27]{clam_admin}
 	\end{figure}
-	\item Uma vez na parte de visualizar todos os \textit{tweets} já armazenados na base de dados,
+	\item Uma vez na parte de visualizar todos os tuítes já armazenados na base de dados,
 	seleciona a opção de importar no canto superior direito.
 	\begin{figure}[H]
 		\includegraphics[scale=0.27]{clam_tweets}
 	\end{figure}
 	\item Na página que segue, basta informar um arquivo .csv, .xls (formato do excel) ou .json
-	contendo nessa ordem: o id do \textit{tweet} (fornecido pelo Twitter), usuário que escreveu, 
+	contendo nessa ordem: o id do tuíte (fornecido pelo Twitter), usuário que escreveu, 
 	texto, espaço vazio para representar o id que será preenchido automaticamente na hora de 
 	importar no banco de dados.
 	\begin{figure}[H]
@@ -705,6 +705,6 @@ Abaixo é descrito o fluxo para a importação de novos dados no admin.
 	\end{figure}
 	\item Caso todos os dados sejam fornecidos corretamente, será passado a uma nova página para
 	confirmar se deseja importar e, por fim, será redirecionado à pagina que contém todos os
-	\textit{tweets}.
+	tuítes.
 \end{enumerate}
 
