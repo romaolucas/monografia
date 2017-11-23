@@ -44,14 +44,17 @@
 \tableofcontents
 
 \mainmatter
+\include{./capitulos/abstract}
 \include{./capitulos/chapter01}
 \include{./capitulos/chapter02}
 \include{./capitulos/chapter03}
 \include{./capitulos/chapter04}
 
 \backmatter
-% bibliography, glossary and index would go here.
+\phantomsection
 
+% bibliography, glossary and index would go here.
+\addcontentsline{toc}{chapter}{Referências Bibliográficas}
 \bibliographystyle{unsrt}
 \bibliography{references.bib}{}
 
