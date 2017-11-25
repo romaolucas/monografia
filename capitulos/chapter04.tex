@@ -182,21 +182,22 @@ para avaliar a eficiência dos classificadores.
 
 \begin{itemize}
 	\item Acurácia: taxa calculada pela quantidade de dados corretamente classificados
-	sobre o total de dados. Quanto mais próximo de 1, melhor a precisão.
+	sobre o total de dados. Quanto mais próximo de 1, melhor.
 	\item Precisão: taxa calculada pela expressão $\frac{tp}{tp + fp}$ onde tp corresponde
 	aos verdadeiro positivos, isto é, elementos corretamente classificados como da classe C
-	e fp são elementos erroneamente classificados na classe C. Quanto mais próximo de 1, melhor.
+	e fp são elementos erroneamente classificados na classe C. Uma classe ter precisão alta
+	significa que possui um baixo número de amostras classificadas erroneamente nela.
 	\item Revocação: taxa calculada pela expressão $\frac{tp}{tp + fn}$ onde tp corresponde
 	aos verdadeiro positivos, como na precisão e fn corresponde
 	aos falso negativos, isto é, os elementos incorretamente classificados como não pertencentes
-	a uma classe C quando na verdade pertencem. Assim como a precisão, quanto mais próximo de
-	1, melhor.
+	a uma classe C quando na verdade pertencem. Uma alta revocação indica que muitos elementos
+	de determinada classe foram corretamente classificados como pertencentes a ela.
 	\item Medida F: pode ser interpretado como uma média harmônica entre precisão e revocação é dado
 	pela expressão: $2*\frac{precis*revocação}{precis + revocação}$. Assim como as demais medidas, quanto
 	mais próximo de 1, melhor o valor.
 \end{itemize}
 
-\section{Primeiro experimento}
+\section{Primeira rodada de experimentos}
 
 Nesse primeiro experimento, avaliou-se o desempenho dos classificadores desenvolvidos quanto dos
 já disponíveis pela biblioteca \texttt{scikit} a fim de comparar o desempenho das implementações.
@@ -205,7 +206,7 @@ que no caso foram vetor binário, vetor de frequência e vetor com os valores tf
 em \ref{subsec:featurization}. 
 Note que neste primeiro experimento, todos os dados foram tratados \textit{in-natura}, sem nenhum método de seleção de características ou qualquer abordagem semelhante a fim de melhorar o desempenho.
 
-\subsection{Algoritmos próprios}
+\subsection{Implementações próprias}
 
 Dos algoritmos desenvolvidos para este trabalho, por questão do tempo levado a cada rodada de testes
 acabou dificultando a execução de múltiplas interações do algoritmo, porém testou-se o SVM 
@@ -219,7 +220,7 @@ uma vetorização baseada na frequência dos termos, foi obtida uma acurácia m�
 	\centering
 	\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precision  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
          -1   &    0.47  &    1.00   &   0.64   &    306 \\
          \hline
@@ -290,7 +291,7 @@ seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline		
 		 -1     &  0.70  &    0.73   &   0.71   &    324 \\
 		  \hline
@@ -332,7 +333,7 @@ Deu os seguintes resultados no conjunto de testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
          -1   &    0.70  &    0.68   &   0.69   &    320 \\
          \hline
@@ -377,7 +378,7 @@ resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
          -1    &   0.66   &   0.76  &    0.71    &   310 \\
          \hline
@@ -415,7 +416,7 @@ resultados no conjunto de testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
 		 -1    &   0.68   &   0.73  &    0.71   &    305 \\
 		 \hline
@@ -460,7 +461,7 @@ testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
 		 -1    &   0.64   &   0.79   &   0.71   &    311 \\
 		 \hline
@@ -498,7 +499,7 @@ $\lambda = 1$ obtendo seguintes resultados no conjunto de testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  recall &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
 		 -1    &   0.66   &   0.75   &   0.70   &    312 \\
 		 \hline
@@ -537,3 +538,356 @@ de revocação de 0,08 que indica que 92\% das amostras positivas não são dete
 Motivado pelo baixo desempenho visto na classe positiva em todos os experimentos aliado à baixa
 quantidade de tuítes nessa classe, rodou-se mais experimentos, porém dessa vez usando apenas as
 outras classes.
+
+\section{Segunda rodada de experimentos}
+
+Nesta segunda rodada de experimentos, removeu-se os elementos pertencentes à classe positiva.
+Assim como na primeira rodada, testou-se diferentes escolhas de parâmetros para cada um dos
+algoritmos e testou-se com os dados \textit{in natura}. Como viu-se na primeira rodada de experimentos
+que havia pouca diferença entre a vetorização por frequência e presença do termo, optou-se por testar
+apenas usando frequência e tf-idf.
+
+\subsection{Implementações próprias}
+
+Para as implementações próprias do SVM, testou-se os kernels polinomial, linear e RBF alternando
+diversos parâmetros destes. Assim como na rodada anterior, só será mostrado aqui os melhores resultados
+obtidos. 
+
+\textbf{Frequência}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 0,1 & & 0,679 \\
+		\hline
+		Linear & $10^{10}$ & & 0,667 \\
+		\hline
+		RBF & 1 & $\gamma = 0,1$ & 0,698 \\
+		\hline
+		RBF & 10 & $\gamma = 0,1$ & 0,697 \\
+		\hline
+		Polinomial & 0,1 & $c = 10^{-4}$, $d = 3$ & 0,679 \\
+		\hline
+		Polinomial & 100 & $c = 10^{-4}$, $d = 5$ & 0,679 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Nesta rodada, escolheu-se usar o kernel RBF com $\gamma = 0,1$ e C = 1 que obteve 69,8\% de acurácia média. No
+conjunto de testes teve os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.73   &   0.62   &   0.67   &    343 \\
+		 \hline
+          0    &   0.60   &   0.71   &   0.65   &    275 \\
+		\hline
+		média / total   &    0.67   &   0.66   &   0.66   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados da regressão logística}
+	\begin{tabular}{l l}
+		\hline
+		$\lambda$ & Acurácia média \\
+		\hline
+		$10^{-5}$ & 0,637 \\
+		\hline
+		0,316 & 0,684 \\
+		\hline
+		$10^{4}$ & 0,544 \\
+	\end{tabular}
+\end{table}
+
+Utilizando então $\lambda = 0,316$ foi obtido 68,4\% de acurácia média e, ao utilizar
+o classificador no conjunto de testes teve os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.68   &   0.69   &   0.68   &    301 \\
+		 \hline
+          0    &   0.70   &   0.69   &   0.69   &    317 \\
+		\hline
+		média / total   &    0.69   &   0.69   &   0.69   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\textbf{Tf-Idf}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 0,1 & & 0,688 \\
+		\hline
+		Linear & 1 & & 0,697 \\
+		\hline
+		RBF & 1 & $\gamma = 1$ & 0,704 \\
+		\hline
+		RBF & $10^{9}$ & $\gamma = 1$ & 0,700 \\
+		\hline
+		Polinomial & 1 & $c = 10^{-4}$, $d = 3$ & 0,697 \\
+		\hline
+		Polinomial & 1 & $c = 10^{-4}$, $d = 5$ & 0,697 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Os melhores parâmetros para esta rodada de testes foi o kernel RBF com $\gamma$ e C valendo 1 que
+obteve acurácia média de 70,4\%. Utilizando estes parâmetros no conjunto de testes obteve-se os
+seguintes valores:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.69   &   0.79   &   0.74   &    305 \\
+		 \hline
+          0    &   0.76   &   0.65   &   0.71   &    313 \\
+		\hline
+		média / total   &    0.73   &   0.72   &   0.72   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados da regressão logística}
+	\begin{tabular}{l l}
+		\hline
+		$\lambda$ & Acurácia média \\
+		\hline
+		$10^{-5}$ & 0,662 \\
+		\hline
+		0,316 & 0,697 \\
+		\hline
+		$10^{4}$ & 0,585 \\
+	\end{tabular}
+\end{table}
+
+Assim como na rodada anterior, o melhor parâmetro foi $\lambda = 0,316$, porém desta vez obteve
+69,7\% de acurácia. Utilizando este parâmetro de regularização no conjunto de testes obteve-se
+os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.70   &   0.68   &   0.69   &    323 \\
+		 \hline
+          0    &   0.66   &   0.67   &   0.67   &    295 \\
+		\hline
+		média / total   &    0.68   &   0.68   &   0.68   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Por fim da rodada de testes com as implementações próprias dos classificadores, chegou
+a conclusão de que o algoritmo SVM em conjunto com a vetorização por tf-idf trouxe um bom
+compromisso entre acurácia, precisão e revocação tendo todas as suas médias acima de 70\%
+para todas as métricas sendo assim um classificador com alta probabilidade de trazer resultados
+relevantes para novos documentos. Além disso o procedimento de validação cruzada nos garante
+que o classificador possui capacidade de generalização, uma vez que realiza o treinamento e
+validação com conjuntos diferentes mais de uma vez.
+
+Interessante comentar que ao passo que a regressão logística não chegou a ter
+acurácia melhor em nenhuma vetorização, porém ao olharmos para os valores médios de precisão,
+revocação e medida f1 vemos que, com exceção da melhor versão do SVM, foi superior indicando
+que este algoritmo possui robustez ao trazer valores relevantes.
+
+\subsection{Implementações do \texttt{scitkit}}
+
+Para as implementações do \texttt{scikit}, realizou-se os experimentos da mesma forma que
+para o caso com três classes com a única diferença sendo os valores para $\gamma$ ao quao
+testou o kernel RBF.
+
+\textbf{Frequência}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 0,1 & & 0,699 \\
+		\hline
+		Linear & 1 & & 0,680 \\
+		\hline
+		RBF & 1 & $\gamma = 0,158$ & 0,713 \\
+		\hline
+		RBF & 10 & $\gamma = 0,158$ & 0,701 \\
+		\hline
+		Polinomial & 1 & $c = 5$, $d = 4$ & 0,698 \\
+		\hline
+		Polinomial & 100 & $c = 1$, $d = 4$ & 0,697 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Como melhor resultado tivemos o kernel RBF com $\gamma = 0,158$ com acurácia média
+de 71,3\%. Utilizando essa escolha de parâmetros no conjunto de testes, obteve-se
+os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.69   &   0.63   &   0.66   &    327 \\
+		 \hline
+          0    &   0.62   &   0.68   &   0.65   &    291 \\
+		\hline
+		média / total   &    0.66   &   0.66   &   0.66   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados da regressão logística}
+	\begin{tabular}{l l}
+		\hline
+		$\lambda$ & Acurácia média \\
+		\hline
+		$0,1$ & 0,693 \\
+		\hline
+		1 & 0,696 \\
+		\hline
+		1000 & 0,676 \\
+	\end{tabular}
+\end{table}
+
+Como resultado, obtivemos que o melhor valor para $\lambda$ era 1 que nos deu uma acurácia
+média de 69,6\% e para o conjunto de testes deu os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.65   &   0.68   &   0.66   &    300 \\
+		 \hline
+          0    &   0.68   &   0.65   &   0.67   &    318 \\
+		\hline
+		média / total   &    0.66   &   0.66   &   0.66   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+\textbf{Tf-idf}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 1 & & 0,702 \\
+		\hline
+		Linear & 10 & & 0,676 \\
+		\hline
+		RBF & 1 & $\gamma = 0,158$ & 0,710 \\
+		\hline
+		RBF & 100 & $\gamma = 0,00398$ & 0,702 \\
+		\hline
+		Polinomial & 0,1 & $c = 10$, $d = 5$ & 0,701 \\
+		\hline
+		Polinomial & 10 & $c = 10$, $d = 4$ & 0,702 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Como melhor escolha de parâmetros tivemos o kernel RBF com $\gamma = 0,158$ com 71\% de
+acurácia média. Testando no conjunto de testes obteve-se os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.68   &   0.75   &   0.71   &    326 \\
+		 \hline
+          0    &   0.68   &   0.61   &   0.65   &    292 \\
+		\hline
+		média / total   &    0.68   &   0.68   &   0.68   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados da regressão logística}
+	\begin{tabular}{l l}
+		\hline
+		$\lambda$ & Acurácia média \\
+		\hline
+		$0,1$ & 0,686 \\
+		\hline
+		1 & 0,688 \\
+		\hline
+		10 & 0,671 \\
+	\end{tabular}
+\end{table}
+
+
+Com isso temos que a melhor escolha para $\lambda$ é 1 que obteve 68,8\% de acurácia média.
+Utilizando este parâmetro para classificar o conjunto de testes, obteve-se os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+		\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		\hline
+		 -1    &   0.71   &   0.77   &   0.74   &    313 \\
+		 \hline
+          0    &   0.74   &   0.68   &   0.71   &    305 \\
+		\hline
+		média / total   &    0.73   &   0.72   &   0.72   &    618 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+As implementações do \texttt{scikit} apresentaram uma acurácia maior em relação às
+desenvolvidas, apesar de a diferença não ser expressiva. Interessante notar que,
+ao contrário das implementações próprias, o melhor classificador, no caso o SVM
+com kernel RBF e vetorização por frequência não obtiveram os melhores valores para
+todas as métricas avaliadas, uma vez que o melhor classificador em termos de
+precisão, revocação e pontuação f1 foi a regressão logística usando a vetorização
+com tf-idf, que por sua vez apresentou resultados acima de 70\%.
+
+Percebemos também que a vetorização por tf-idf acaba sendo melhor para as métricas
+de precisão, revocação e pontuação f1, pois todos os classificadores performaram
+melhor ao escolher essa vetorização. Isso se deve ao fato de o tf-idf de um termo
+dar maior ênfase aos termos característicos de um documento, facilitando a identificação
+de uma entrada que corresponda a um texto neutro ou a um negativo.
