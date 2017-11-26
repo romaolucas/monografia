@@ -192,7 +192,7 @@ para avaliar a eficiência dos classificadores.
 	aos falso negativos, isto é, os elementos incorretamente classificados como não pertencentes
 	a uma classe C quando na verdade pertencem. Uma alta revocação indica que muitos elementos
 	de determinada classe foram corretamente classificados como pertencentes a ela.
-	\item Medida F: pode ser interpretado como uma média harmônica entre precisão e revocação é dado
+	\item Pontuação F1: pode ser interpretado como uma média harmônica entre precisão e revocação é dado
 	pela expressão: $2*\frac{precis*revocação}{precis + revocação}$. Assim como as demais medidas, quanto
 	mais próximo de 1, melhor o valor.
 \end{itemize}
@@ -208,13 +208,35 @@ Note que neste primeiro experimento, todos os dados foram tratados \textit{in-na
 
 \subsection{Implementações próprias}
 
-Dos algoritmos desenvolvidos para este trabalho, por questão do tempo levado a cada rodada de testes
-acabou dificultando a execução de múltiplas interações do algoritmo, porém testou-se o SVM 
-utilizando um valor para $\gamma$ que apresentou bom desempenho na implementação do \texttt{scikit}.
-E a partir dele, mediu-se acurácia, precisão, revocação e f1-score para cada classe.
+Dos algoritmos desenvolvidos neste trabalho, testou-se o SVM variando o valor de C entre valores
+do intervalo $[10^{-2}, 10^5]$, kernels polinomial, RBF e linear. Para o kernel polinomial testou
+polinômios de grau 3, 4 e 5 e coeficientes 1, 10 e 100. Para o kernel RBF testou valores de $\gamma$
+dentro do intervalo $[10^{-9}, 10^3]$. Para cada escolha de vetorização, será colocado apenas os
+melhores resultados para cada kernel.
 
-Testou-se o kernel RBF com $\gamma = 10^{-4}$ e $C = 10$ utilizando
-uma vetorização baseada na frequência dos termos, foi obtida uma acurácia média de 46.8\%.
+\textbf{Frequência}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 0,1 & & 0,678 \\
+		\hline
+		Linear & 1 & & 0,651 \\
+		\hline
+		RBF & 1 & $\gamma = 0,1$ & 0,683 \\
+		\hline
+		RBF & $10^5$ & $\gamma = 4,64*10^{-7}$ & 0,678 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+A escolha de parâmetros que obteve maior classificação foi o kernel RBF com C = 1 e $\gamma = 0,1$
+com acurácia média de 68,3\%. Usando o classificador com estes parâmetros no conjunto de testes
+obteve-se o seguinte resultado:
 
 \begin{table}[H]
 	\centering
@@ -222,31 +244,155 @@ uma vetorização baseada na frequência dos termos, foi obtida uma acurácia m�
 		\hline
 		classe  	&	precisão  &  revocação &  f1\-score &  support \\
 		\hline
-         -1   &    0.47  &    1.00   &   0.64   &    306 \\
+         -1   &    0.65  &    0.66   &   0.66   &    306 \\
          \hline
-          0   &    0.00   &   0.00   &   0.00    &   312 \\
+          0   &    0.64   &   0.69   &   0.67    &   311 \\
           \hline
-          1   &    0.00   &   0.00   &   0.00    &    29 \\
+          1   &    1.00   &   0.03   &   0.06    &    30 \\
 		\hline
-		média / total   &    0.22   &   0.47   &   0.30   &    647 \\
+		média / total   &    0.67   &   0.65   &   0.64   &    647 \\
 		\hline
 	\end{tabular}
 \end{table}
 
-Pelos resultados do experimento, percebe-se que a implementação do SVM multiclasses usando a
-abordagem OVA priorizou a classe negativa dando maiores valores para ela constatado pelo valor do 
-revocação de -1, uma vez que quanto maior o valor maior as chances de recuperarmos um elemento
-de determinada classe. Interpretamos também, por outro lado, que o classificador desconsiderou as 
-demais classes, visto pelos valores das mesmas.
+\textbf{Vetor binário}
 
-Cre-se que é possível implementar melhorias no método OVA para que esse desbalanceio não seja tão
-drástico, ou até mesmo normalizar os valores de $y_k$ para cada classe k de modo que seja possível
-garantir que estão em faixas de valores próximos, pois um dos perigos dessa abordagem é que cada
-classificador gere valores de magnitudes diferentes uns dos outros e assim enviesando a comparação
-entre si.
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 0,146 & & 0,675 \\
+		\hline
+		Linear & 0,563 & & 0,658 \\
+		\hline
+		RBF & 2,154 & $\gamma = 0,1$ & 0,677 \\
+		\hline
+		RBF & 464,16 & $\gamma = 4,64*10^{-7}$ & 0,676 \\
+		\hline
+		Polinomial & 0,01 & $c = 1$, $d = 3$ & 0,641 \\
+		\hline
+		Polinomial & 0,01 & $c = 1$, $d = 3$ & 0,642 \\
+		\hline
+	\end{tabular}
+\end{table}
 
-Além disso, também existe mais espaço para melhorias no resultado utilizando outras escolhas de Kernel
-ou até mesmo escolha de outros valores para $\gamma$ usando o Kernel RBF.
+Como melhor escolha de parâmetros, tivemos o kernel RBF com C = 464,16 e $\gamma = 0,1$ com
+67,7\% de acurácia. Utilizando os parâmetros no conjunto de testes, obteve-se os seguintes
+resultados:
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		\hline
+         -1   &    0.69  &    0.72   &   0.70   &    307 \\
+         \hline
+          0   &    0.70   &   0.72   &   0.71    &   315 \\
+          \hline
+          1   &    1.00   &   0.08   &   0.15    &    25 \\
+		\hline
+		média / total   &    0.71   &   0.70   &   0.69   &    647 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\textbf{Tf-idf}
+
+\begin{table}[H]
+	\centering
+	\caption{Resultados para o SVM}
+	\begin{tabular}{l l l l}
+		\hline
+		Kernel & C & parâmetros & Acurácia média \\
+		\hline
+		Linear & 0,146 & & 0,651 \\
+		\hline
+		Linear & 0,563 & & 0,664 \\
+		\hline
+		RBF & 1778,279 & $\gamma = 2,15*10^{-4}$ & 0,667 \\
+		\hline
+		RBF & 26101,572 & $\gamma = 10^{-5}$ & 0,666 \\
+		\hline
+		Polinomial & 0,038 & $c = 1$, $d = 4$ & 0,660 \\
+		\hline
+		Polinomial & 0,147 & $c = 1$, $d = 3$ & 0,663 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Assim como as demais escolhas de vetorização, a melhor escolha de kernel foi o RBF.
+Com valor de C = 1778,279 e $\gamma = 2,15*10^{-4}$ conseguiu-se acurácia média de 66,7\%.
+Utilizando esse classificador no conjunto de testes, obtiveram-se os seguintes resultados:
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{l | l | l | l | l}
+		\hline
+		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		\hline
+         -1   &    0.68  &    0.73   &   0.70   &    322 \\
+         \hline
+          0   &    0.67   &   0.69   &   0.68    &   296 \\
+          \hline
+          1   &    1.00   &   0.03   &   0.07    &    29 \\
+		\hline
+		média / total   &    0.69   &   0.68   &   0.66   &    647 \\
+		\hline
+	\end{tabular}
+\end{table} 
+
+Pelos resultados dos experimentos, tivemos que a melhor escolha de classificador e vetorização
+foi o kernel RBF com vetorização por frequência com 68,3\% de acurácia. Ao observarmos as outras
+métricas, percebemos que os valores médios para precisão, revocação e pontuação f1 estão razoáveis,
+entretanto ao olharmos para os valores de revocação e pontuação f1 da classe positiva, vemos
+que estes são quase 0 ao passo que a precisão é 1. Isso indica que apenas poucos elementos foram
+colocados nesta classe corretamente e nenhum foi colocado incorretamente, porém a maioria dos
+elementos desta classe foram marcados nas demais classes.
+
+Tais valores para classe positiva são devidos à baixa quantidade de dados da mesma, o que acaba
+prejudicando o desempenho do classificador que separa esta classe das demais.
+
+Utilizou-se o melhor classificador para verificar alguns tuítes mal classificados e entender melhor
+o funcionamento do classificador.
+
+\begin{table}[H]
+	\centering	
+	\begin{tabular}{| p{0.8\linewidth} | l | l |}
+		\hline
+		Tuíte & Previsto & Real \\
+		O cara tá falando da terceirização anta. Eu sou contra essa reforma da previdência deste jeito, ela deve ser revista.A trabalhista eu apoio & -1 &  1 \\
+		\hline
+		Ops @MichelTemer não tem um papel com os trabalhadores e a lei da terceirização assim fala os especialistas imagina essa REFORMA PREVIDÊNCIA  http://pic.twitter.com/KjLa26TCwy &  -1 & 0 \\
+		\hline
+		A agenda do Lula para os próximos meses está lotada... de depoimentos em processos em que ele é réu. http://owl.li/F3Ij30flUaY & 0 & -1 \\
+		\hline
+		Contra reforma da Previdência e terceirização ... http://fb.me/18guG6FGR & 0 & -1 \\
+		\hline
+		Não podemos discutir a Reforma da Previdência sem discutir a Terceirização e outros elementos desse desmonte de direitos", Ruy (APLB)" & -1 & 0 \\
+		\hline
+		Muso inspirador da presidenta Dilma ! & 0 & 1 \\
+		\hline
+	\end{tabular}
+\end{table} 
+
+Para os tuítes negativos que foram erroneamente classificados, percebemos que o classificador os
+colocou na classe neutra pela maior presença de palavras encontradas em tuítes de notícias, no segundo
+caso percebe-se que há uma ambiguidade no tuíte e, enquanto foi classificado com negativo, poderia
+ter sido também classificado como neutro por outra pessoa.
+
+Na classe neutra, temos que em um há uma ambiguidade no tuíte e não possui informação suficiente
+para decidir sua opinião, porém no segundo caso pode-se dizer que o tuíte foi classificado corretamente
+pois o classificador levou em conta que chamou a reforma de previdência e a terceirização de desmonte
+de direitos, apesar de o tuíte em si apenas relatar o que foi dito.
+
+Para a classe positiva notou-se dois casos: em um a presença de um xingamento colocou o tuíte como
+opinião negativa e no outro caso o classificador interpretou o tuíte como uma simples constatação
+de fatos.
+
 
 \subsection{Implementações do \texttt{scikit}}
 
@@ -284,7 +430,7 @@ os valores encontrados para todas as formas de vetorização.
 \end{table}
 
 Importante ressaltar que em casos de empate, o primeiro melhor será selecionado, no caso o melhor
-foi o kernel linear com $C = 0.1$, utilizando esses valores no conjunto de testes obteve-se os 
+foi o kernel linear com $C = 0.1$, utilizando esses valores no conjunto de testes obtiveram-se os 
 seguintes resultados:
 
 \begin{table}[H]
@@ -371,7 +517,7 @@ Deu os seguintes resultados no conjunto de testes:
 \end{table}
 
 Assim como para o vetor de frequências, a melhor escolha de parâmetros encontrada na validação
-cruzada foi C = 0,1 e kernel linear. Executando no conjunto de testes obteve-se os seguintes
+cruzada foi C = 0,1 e kernel linear. Executando no conjunto de testes obtiveram-se os seguintes
 resultados:
 
 \begin{table}[H]
@@ -454,7 +600,7 @@ resultados no conjunto de testes:
 \end{table}
 
 Com essa vetorização, diferente das demais, os melhores parâmetros escolhidos foram kernel polinomial
-com coeficiente e grau 5. Utilizando esses valores, obteve-se o seguinte resultado no conjunto de
+com coeficiente e grau 5. Utilizando esses valores, obtiveram-se o seguinte resultado no conjunto de
 testes:
 
 \begin{table}[H]
@@ -529,8 +675,37 @@ obtemos resultados semelhantes para ambos os algoritmos, todavia ainda existe um
 com a vetorização por frequências tal como o SVM apresenta melhores resultados em relação à regressão
 logística, mesmo que com pouca diferença.
 
+Assim como o outro classificador, analisou-se os tuítes classificados incorretamente a fim de
+entender o funcionamento do classificador:
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| p{0.8\linewidth} | l | l |}
+		\hline
+		Tuíte & Previsto & Real \\
+		\hline
+		Lula ainda lidera as pesquisas oficiais em todo o Brasil & -1 & 0 \\
+		\hline
+		Sem querer ser chata, mas foi a Dilma quem começou com os Projetos de Reforma da Previdência e de Terceirização & -1 & 0 \\
+		\hline
+		simm, e irei, quero a reforma da previdência , a terceirização , reforma da CLT, tudo isso p o Brasil voltar a crescer :) & -1 & 1 \\
+		\hline
+		O cara tá falando da terceirização anta. Eu sou contra essa reforma da previdência deste jeito, ela deve ser revista.A trabalhista eu apoio & -1 & 1 \\
+		\hline
+		Temer não é santo,mas não entender o conceito que deu uma freada na beira do abismo que Lula Dilma estavam nos empurrando é DESINFORMAÇÃOhttps://twitter.com/Acppprovesi/status & 0 & -1 \\
+		\hline
+		Texto: Os alunos da FDCE se posicionam CONTRA a reforma da previdência , trabalhista e a terceirização ! Quem é de luta e... http://fb.me/1YA1jro5z & 0 & -1 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Observa-se na tabela, assim como para as implementações próprias, houve a classificação errada
+de tuítes positivos como negativos devida à presença de xingamentos no tuíte. Além disso tuítes
+negativos costumam ser classificados erroneamente como neutros pelo texto se assemelhar com uma
+constatação de um fato, mesmo que possua a presença de termos negativos.
+
 Comum a todos os experimentos foram resultados ruins associados à classe positiva. No caso do SVM
-obteve-se alta precisão em alguns casos, porém as taxas de revocação e f1-score foram baixas. Valores
+obtiveram-se alta precisão em alguns casos, porém as taxas de revocação e f1-score foram baixas. Valores
 baixos para revocação e f1-score podem ser interpretados como um sinal de que os classificadores
 são ruins para detectar opiniões positivas. A exemplo do melhor classificador, tem-se uma taxa
 de revocação de 0,08 que indica que 92\% das amostras positivas não são detectadas pelo algoritmo.
@@ -654,7 +829,7 @@ o classificador no conjunto de testes teve os seguintes resultados:
 \end{table}
 
 Os melhores parâmetros para esta rodada de testes foi o kernel RBF com $\gamma$ e C valendo 1 que
-obteve acurácia média de 70,4\%. Utilizando estes parâmetros no conjunto de testes obteve-se os
+obteve acurácia média de 70,4\%. Utilizando estes parâmetros no conjunto de testes obtiveram-se os
 seguintes valores:
 
 \begin{table}[H]
@@ -688,7 +863,7 @@ seguintes valores:
 \end{table}
 
 Assim como na rodada anterior, o melhor parâmetro foi $\lambda = 0,316$, porém desta vez obteve
-69,7\% de acurácia. Utilizando este parâmetro de regularização no conjunto de testes obteve-se
+69,7\% de acurácia. Utilizando este parâmetro de regularização no conjunto de testes obtiveram-se
 os seguintes resultados:
 
 \begin{table}[H]
@@ -716,7 +891,7 @@ validação com conjuntos diferentes mais de uma vez.
 
 Interessante comentar que ao passo que a regressão logística não chegou a ter
 acurácia melhor em nenhuma vetorização, porém ao olharmos para os valores médios de precisão,
-revocação e medida f1 vemos que, com exceção da melhor versão do SVM, foi superior indicando
+revocação e pontuação f1 vemos que, com exceção da melhor versão do SVM, foi superior indicando
 que este algoritmo possui robustez ao trazer valores relevantes.
 
 \subsection{Implementações do \texttt{scitkit}}
@@ -750,7 +925,7 @@ testou o kernel RBF.
 \end{table}
 
 Como melhor resultado tivemos o kernel RBF com $\gamma = 0,158$ com acurácia média
-de 71,3\%. Utilizando essa escolha de parâmetros no conjunto de testes, obteve-se
+de 71,3\%. Utilizando essa escolha de parâmetros no conjunto de testes, obtiveram-se
 os seguintes resultados:
 
 \begin{table}[H]
@@ -827,7 +1002,7 @@ média de 69,6\% e para o conjunto de testes deu os seguintes resultados:
 \end{table}
 
 Como melhor escolha de parâmetros tivemos o kernel RBF com $\gamma = 0,158$ com 71\% de
-acurácia média. Testando no conjunto de testes obteve-se os seguintes resultados:
+acurácia média. Testando no conjunto de testes obtiveram-se os seguintes resultados:
 
 \begin{table}[H]
 	\centering
@@ -861,7 +1036,7 @@ acurácia média. Testando no conjunto de testes obteve-se os seguintes resultad
 
 
 Com isso temos que a melhor escolha para $\lambda$ é 1 que obteve 68,8\% de acurácia média.
-Utilizando este parâmetro para classificar o conjunto de testes, obteve-se os seguintes resultados:
+Utilizando este parâmetro para classificar o conjunto de testes, obtiveram-se os seguintes resultados:
 
 \begin{table}[H]
 	\centering

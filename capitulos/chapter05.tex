@@ -1,0 +1,21 @@
+\chapter{Considerações finais}
+
+Ao fim das rodadas de experimentos, obteve-se um bom classificador
+para as classes mais presentes do nosso conjunto de dados que conciliava
+não só uma boa acurácia, mas também com um bom compromisso entre precisão e
+revocação. Futuras melhorias a serem feitas neste classificador seria utilizar
+seleção de características antes de treinar o modelo para assim mantermos apenas
+as \textit{features} mais relevantes para cada classe e não só melhorar a acurácia
+do estimador, mas também o tempo de convergência de cada modelo.
+
+Quanto ao problema com três classes é possível tentar melhorar a revocação e pontuação
+f1 para a classe positiva introduzindo mais dados dessa classe ao nosso conjunto de dados
+e dar um peso maior a elementos que pertençam a esta classe para assim garantir uma diminuição
+da taxa de falso negativos, entretanto é importante ressaltar que consequentemente diminuiria
+a precisão do algoritmo pois com mais elementos classificados como positivos, maior a chance
+de falso positivos.
+
+Percebeu-se ao longo deste trabalho que mais importante do que um bom entendimento
+do funcionamento de cada classificador é analisar melhor os dados e achar elementos
+mais relevantes para cada classe para assim conseguir melhorar a representação dos dados
+como um vetor de \textit{features} e, consequentemente, garantir melhores resultados.
