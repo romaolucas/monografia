@@ -1,5 +1,5 @@
 \documentclass[a4paper,12pt]{book}
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[brazilian]{babel}
 \usepackage{graphicx}
@@ -15,9 +15,11 @@
 \usepackage{natbib}
 \usepackage{caption}
 \usepackage{epigraph}
+\usepackage[toc,page]{appendix}
 % usado pra pseudo-codigo
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
+\renewcommand{\algorithmiccomment}[1]{\hfill$\triangleright$\textit{#1}}
 
 \graphicspath{{./imagens/}}
 
@@ -92,6 +94,9 @@
 \include{./capitulos/chapter03}
 \include{./capitulos/chapter04}
 \include{./capitulos/chapter05}
+
+\appendix
+\include{./capitulos/appendix01}
 
 \backmatter
 \phantomsection

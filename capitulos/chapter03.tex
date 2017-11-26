@@ -111,7 +111,7 @@ com mais detalhes a seguir.
 
 Uma dúvida natural que surge ao ter que resolver um problema de otimização é o caso de parar o
 procedimento em um mínimo local ao invés de um mínimo local da função.	Entretanto, temos que nossa
-função $E(w)$ é côncava, isto é, $E(\lambda w + (1 - \lambda ) w') = \lambda E(w) 
+função $E(w)$ é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq' \lambda E(w) 
 	+ (1 - \lambda ) w'$
  $\forall w, w' \in R^m, \lambda \in [0, 1]$, tal propriedade nos garante que existe um único minizador.
  
@@ -164,11 +164,11 @@ diferenças entre os dois.
 		\STATE $w \leftarrow 0$
 		\WHILE{ $|E(w)^{ (iteracao) } - E(w)^{ (iteracao - 1) } | \ge \epsilon$ \AND
 		$iteracao < maxIteracoes$ } \label{lst:line:condition}
-			\STATE $y \leftarrow (\sigma(w^Tx_1), \sigma(w^Tx_2), \ldots, \sigma(w^Tx_n))^T$
-			\STATE $\nabla E(w) \leftarrow X^T(y - t)$
-			\STATE $w \leftarrow w - \alpha \nabla E(w)$
+			\STATE $y \leftarrow (\sigma(w^Tx_1), \sigma(w^Tx_2), \ldots, \sigma(w^Tx_n))^T$ \COMMENT{aplica a função discriminante sobre cada entrada de X}
+			\STATE $\nabla E(w) \leftarrow X^T(y - t)$ \COMMENT{computa o gradiente da função}
+			\STATE $w \leftarrow w - \alpha \nabla E(w)$ \COMMENT{atualização do modelo}
 			\STATE $E(w)^{ (iteracao) } \leftarrow 
-			- \sum_{i = 1}^{n} \{ t_nln(y_n) + (1 - t_n) ln(1 - y_n) \}$
+			- \sum_{i = 1}^{n} \{ t_nln(y_n) + (1 - t_n) ln(1 - y_n) \}$ \COMMENT{recalcula o erro}
 			\STATE $iteracao \leftarrow iteracao + 1$
 		\ENDWHILE
 	\end{algorithmic}
@@ -209,7 +209,8 @@ A atualização agora é feita seguindo a equação
 Onde H é a matriz Hessiano da função erro, que é calculado usando $H = \nabla \nabla E(w)
 = X^TRX$ onde R é uma matriz diagonal $n \times n$ onde as entradas da diagonal principal
 valem $R_{kk} = y_k(1 - y_k)$. Substituindo os valores de H e usando
-\ref{eq:gradient} em \ref{eq:newton-raphson} obtemos
+\ref{eq:gradient} em \ref{eq:newton-raphson} obtemos a seguinte fórmula para a atualização
+do vetor de pesos:
 
 
 \begin{equation}
@@ -225,7 +226,7 @@ Diversas abordagens podem ser usadas para resolver o problema multiclasse, no
 caso será usado diversos discriminantes $y_k$ com $k = \{1, \ldots K\}$ com K
 sendo o total de classes. Assim nosso vetor w agora é uma matriz
 $W \in \mathbb{R}^{m \times k}$. Outra representação que usaremos para o algoritmo
-será $W = (w_1, \ldots, w_k)$ com $w_i \in \mathbb{R}^{1 \times mk}$.
+será como um vetor $W = (w_1, \ldots, w_k)$ com $w_i \in \mathbb{R}^{1 \times mk}$.
 
 Quanto à codificação do vetor de rótulos, 
 segue-se a codificação dada em Bishop (2006)\cite{bishop2006} de $1-K$,
@@ -287,12 +288,21 @@ $m \times m$ calculada pela equação:
 \end{center} 
 
 Onde $X_k$ é a k-ésima linha de X. Com essas equações em mãos nossa atualização de
-W seria feita usando a fórmula $W^{ (novo) } = W^{ (antigo) } - H^{-1}\nabla E(W)$.
+W seria feita usando a fórmula:
 
-A classificação de um novo x é feita a partir
-do cálculo de $P(C^k | x) = y_k(x), \forall k = \{1, \ldots, k\}$.
+\begin{center}
+	\begin{equation}
+		 W^{ (novo) } = W^{ (antigo) } - H^{-1}\nabla E(W)	
+	\end{equation}
+\end{center}
 
-A classe de x é dada pelo k que tiver a maior probabilidade sobre os demais.
+A classificação de um novo x é dada por: 
+
+\begin{center}
+	\begin{equation}	
+		\argmax_{k} P(C^k | x) = y_k(x)
+	\end{equation}
+\end{center}
 
 
 \section{Support Vector Machine}
@@ -363,7 +373,7 @@ Um elemento corretamente classificado teŕa $\xi_n = 0$, os demais pontos têm
  $\xi_n = |t_n - y(x_n)|$.
  
 Com isso nossa restrição de $t_ny(x_n) \ge 1$ é modificada e tem-se 
-$t_ny(x_n) \ge 1 - \xi_n \forall n$.
+$t_ny(x_n) \ge 1 - \xi_n$  $\forall n$.
 
 O valor de $\xi_n$ assim nos indica três possíveis casos:
 
@@ -427,7 +437,7 @@ acima. Isto é feito seguindo os seguintes passos
 		\begin{center}
 			\begin{equation}
 				\begin{aligned}	
-				& \underset{\alpha}{\text{max}}
+				& \argmax_{\alpha}
 				& & \tilde{L}(\alpha) = \sum_{i = 1}^n \alpha_i - 1/2 \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i\alpha_j t_i t_j k(x_i, x_j) \\
 				& \text{sujeito a}
 				& & 0 \le \alpha_i \le C, i = 1, \ldots, n \\
@@ -708,3 +718,5 @@ Abaixo é descrito o fluxo para a importação de novos dados no admin.
 	tuítes.
 \end{enumerate}
 
+No apêndice \ref{chap:clam} é descrito em detalhes como instalar e realizar as
+configurações iniciais do CLAM.
