@@ -3,9 +3,9 @@
 \section{Considerações}
 \label{sec:considerations}
 
-Ao longo deste capítulo usaremos n para se referir à quantidade de elementos
-do conjunto de entrada, cada entrada é i é um vetor $x_i \in \mathbb{R}^m$.
-O conjunto de entrada entrada será referida como X
+Ao longo deste capítulo será usada a letra n para se referir à quantidade de elementos
+do conjunto de entrada, a i-ésima entrada é dada pelo vetor $x_i \in \mathbb{R}^m$.
+O conjunto de entrada será referida como X
  durante as descrições do algoritmo e assim cada entrada será 
 dada tanto como $X_i$ como $x_i$.
 Para cada i associaremos duas variáveis $t_i$ e $y_i$ que se referem ao valor
@@ -29,15 +29,16 @@ geral em três tipos:
 	O objetivo deste tipo de problema é tentar modelar uma distribuição ou estrutura comum
 	entre os dados para que se possa entendê-los melhor;
 	\item Aprendizado semi-supervisionado: nesse último caso alguns elementos possuem um rótulo
-	associado. Problemas desse tipo aplicam técnicas gtanto de aprendizado supervisionado como
+	associado. Problemas desse tipo aplicam técnicas tanto de aprendizado supervisionado como
 	de não-supervisionado.
 \end{itemize}
 
 Neste trabalho será tratado um problema de aprendizado supervisionado que é o da classificação.
 
-Na classificação temos k classes e cada elemento i da entrada é associado a uma classe $t_i = \{1..k\}$.
+Na classificação temos K classes e cada elemento $x_i$ da entrada é associado a uma classe $t_i \in \{1..K\}$.
 O objetivo do problema da classificação é dado entrada $X = (x_1, x_2, \ldots, x_n)$ 
-e $t = (t_1, \ldots, t_n)$ treinar um modelo capaz de prever classes para um x qualquer.
+e $t = (t_1, \ldots, t_n)$ treinar um modelo capaz de prever classes para uma entrada
+qualquer.
 
 Há diversos algoritmos na literatura que se propõem a resolver o problema da classificação.
 Bishop (2006)\cite{bishop2006} enuncia diversos dos algoritmos comumente utilizados para a
@@ -47,25 +48,25 @@ Para este trabalho escolheu-se implementar os algoritmos \textit{Logistic Regres
 \textit{Support Vector Machines}, que será chamado simplesmente de SVM por facilidade.
 
 Tanto para o \textit{Logistic Regression} quanto SVM será explicado a princípio o problema
-será inicialmente abordado a partir da classificação binária e, a partir dela, será descrito
-como estender para o problema com mais de duas classes, que será é o caso deste trabalho.
+a partir da classificação binária e, a partir dela, será descrito
+como estender para o problema com mais de duas classes, que é o caso deste trabalho.
 
 \section{Logistic Regression}
 \label{sec:logreg} 
 
-O nosso modelo será construído de forma probabilística, isto é, a partir de um 
-discriminante linear $w^Tx + w_0$ atribuiremos uma probabilidade de um elemento x
+O modelo será construído de forma probabilística, isto é, a partir de um 
+discriminante linear $w^Tx + w_0$ é atribuída uma probabilidade de um elemento x
 pertencer à classe $C^1$ e, consequentemente a probabilidade de pertencer à classe
 $C^2$ é dada por $1 - P(C^1 | x)$. O termo $w_0$ é chamado de viés, e para efeito
-das contas que serão feitas consideraremos vetores w' e x' da forma $x' = (x, 1)$,
-$w'= (w, w_0)$ note entretanto que os chamaremos daqui pra frente simplesmente de w e x.
+das contas que serão feitas serão considerados vetores w' e x' da forma $x' = (x, 1)$,
+$w'= (w, w_0)$ note entretanto que serão chamados daqui pra frente simplesmente de w e x.
 
-No caso da classificação binária, usaremos que $t_n \in \{0, 1\}$ onde $t_n = 1$ se o
+No caso da classificação binária, tem-se que $t_n \in \{0, 1\}$ onde $t_n = 1$ se o
 elemento pertence à classe $C^1$ e $t_n = 0$ se pertence à classe $C^2$.
 
 A classificação de um elemento será a classe a qual ele tem maior probabilidade de pertencer.
 
-Para utilizarmos nosso discriminante para atribuir as probabilidades, utiliza-se a função
+Para utilizar o discriminante para atribuir as probabilidades, utiliza-se a função
 sigmóide definida por:
 
 \begin{center}
@@ -91,13 +92,29 @@ $\phi(x)$ e usá-lo no lugar de x. O uso de transformação linear no nosso conj
 de entrada nos permite transformar o domínio para que se obtenha uma separação
 melhor entre as classes ou até mesmo fazer a redução da dimensão do domínio.
 
-Com essa equação em mãos, nosso objetivo é minimizar o erro na classificação dos dados. Tomamos
-como erro o negativo do logaritmo da verosimilhança de nossa função que é dada por:
+Com essa equação em mãos, nosso objetivo é minimizar o erro na classificação dos dados.
+Para isso, iremos computar um estimador de máxima verossimilhança para a probabilidade
+$P(C^1 | x)$ que é dada pela expressão
 
 \begin{center}
 	\begin{equation}
-		E(w) = - \sum_{i = 1}^{n} p(t | w) = 
-		- \sum_{i = 1}^{n} \{ t_nln(y_n) + (1 - t_n) ln(1 - y_n) \}
+		p(t | w) = \prod_{k = 1}^n y_k^{t_k}(1 - y_k)^{1 - t_k}	
+	\end{equation}
+\end{center}
+
+Com $t = (t_1, \ldots, t_n)$ e $y_k = P(C^1 | x_k)$
+Maximizar a função de verossimilhança diretamente é um trabalho custoso uma vez que
+tem-se um produtório e funções exponenciais o que dificulta as derivações necessárias
+para a tarefa de maximização. Para resolver este problema será minimizada a função
+erro que corresponde ao negativo do logaritmo da verossimilhança, uma vez que
+o logaritmo transforma produtos em soma e obtém-se uma expressão mais fácil de se
+derivar e, consequentemente, minimizar. 
+A função de erro é dada pela equação 
+
+\begin{center}
+	\begin{equation}
+		E(w) = - \sum_{k = 1}^{n} p(t | w) = 
+		- \sum_{k = 1}^{n} \{ t_kln(y_k) + (1 - t_k) ln(1 - y_k) \}
 	\end{equation}
 \end{center}
 
@@ -109,26 +126,32 @@ Esses métodos são utilizados tanto para o caso da classificação binária
 quanto o caso da classificação com $k > 2$. A diferença entre um problema e outro será abordada
 com mais detalhes a seguir.
 
-Uma dúvida natural que surge ao ter que resolver um problema de otimização é o caso de parar o
-procedimento em um mínimo local ao invés de um mínimo local da função.	Entretanto, temos que nossa
+Uma dúvida natural que surge ao ter que resolver um problema de otimização é não
+obter um mínimizador global, entretanto, tem-se
 função $E(w)$ é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq' \lambda E(w) 
 	+ (1 - \lambda ) w'$
- $\forall w, w' \in R^m, \lambda \in [0, 1]$, tal propriedade nos garante que existe um único minizador.
+ $\forall w, w' \in R^m, \lambda \in [0, 1]$, e portanto tem-se que existe um único minimizador.
  
 
 \subsection{Método do Gradiente}\label{subsec:grad_descent}
 
 Para este método, minimiza-se a função objetivo, no caso $E(w)$ utilizando apenas o gradiente
-da função junto de um passo $\alpha$. Com ambos valores em mãos, o valor w é atualizado usando
+da função junto de uma constante $\alpha \in \mathcal{R}$ que é chamada de passo.
+A quantidade de iterações necessárias para a convergência é influenciada fortemente pela
+escolha de $\alpha$, pois a escolha de um valor pequeno para $\alpha$ acarretaria
+em muitas iterações para convergir ao passo que um valor muito grande pode fazer
+com que o algoritmo pare num valor distante do ótimo.
+
+Com ambos valores em mãos, o valor w é atualizado usando
 a equação:
 
 \begin{center}
 	\begin{equation}
-		w^{ ( novo )} = w^{ (antigo) }  + \alpha \nabla E(w)
+		w^{ ( novo )} = w^{ (antigo) }  + \alpha \nabla E(w)\text{,}
 	\end{equation}
 \end{center}
 
-Com $\nabla E(w)$ sendo o gradiente do vetor de pesos. O gradiente é calculado usando o fato de que
+com $\nabla E(w)$ sendo o gradiente do vetor de pesos. O gradiente é calculado usando o fato de que
 a derivada da função sigmóide com respeito a um vetor a é dada por:
 
 \begin{center}
@@ -176,23 +199,18 @@ diferenças entre os dois.
 
 Importante notar que em~\ref{lst:line:condition} tem-se duas condições de paradas do algoritmo que
 são o número de iterações e a diferença da diminuição da função objetivo for menor do que
-um dado $\epsilon$. Tais condições são chamadas de condições de convergência e nos garantem
-que chegamos a um valor suficientemente próximo do ótimo, uma vez que atingir este valor
+um dado $\epsilon$. Tais condições são chamadas de condições de convergência e garantem
+que chegamou-se a um valor suficientemente próximo do ótimo, uma vez que atingir este valor
 pode exigir um número muito alto de iterações o que acarreta em grande custo computacional.
- Na implementação do algoritmo, escolheu-se um valores
+ Na implementação do algoritmo, escolheu-se valores
 padrão para $\epsilon$ e $maxIteracoes$ como $10^{-4}$ e $200$ respectivamente.
-
-A quantidade de iterações necessárias para a convergência é influenciada fortemente pela
-escolha de $\alpha$, pois as escolha de um valor pequeno para $\alpha$ acarretaria
-em muitas iterações para convergir ao passo que um valor muito grande pode fazer
-com que o algoritmo pare num valor distante do ótimo.
 
 
 \subsection{Método de Newton-Raphson}
 \label{subsec:newton-raphson}
 
-Vimos em \ref{subsec:grad_descent} que o método do gradiente apesar de implementação
-simples pode levar muito tempo para resolver o problema.
+Viu-se em \ref{subsec:grad_descent} que o método do gradiente apesar de implementação
+simples pode levar muito tempo para convergir.
 
 O método de Newton-Raphson acaba convergindo mais rápido do que o método do gradiente,
 contudo ao custo de uma maior complexidade devido à necessidade de calcular outros
@@ -209,7 +227,7 @@ A atualização agora é feita seguindo a equação
 Onde H é a matriz Hessiano da função erro, que é calculado usando $H = \nabla \nabla E(w)
 = X^TRX$ onde R é uma matriz diagonal $n \times n$ onde as entradas da diagonal principal
 valem $R_{kk} = y_k(1 - y_k)$. Substituindo os valores de H e usando
-\ref{eq:gradient} em \ref{eq:newton-raphson} obtemos a seguinte fórmula para a atualização
+\ref{eq:gradient} em \ref{eq:newton-raphson} obtem-se a seguinte fórmula para a atualização
 do vetor de pesos:
 
 
@@ -223,17 +241,17 @@ w^{ (novo) } & = w^{ (antigo) } - (X^T R X)^{-1} \nabla E(w) \\
 \subsection{Extensão para o caso de várias classes}
 
 Diversas abordagens podem ser usadas para resolver o problema multiclasse, no
-caso será usado diversos discriminantes $y_k$ com $k = \{1, \ldots K\}$ com K
-sendo o total de classes. Assim nosso vetor w agora é uma matriz
-$W \in \mathbb{R}^{m \times k}$. Outra representação que usaremos para o algoritmo
-será como um vetor $W = (w_1, \ldots, w_k)$ com $w_i \in \mathbb{R}^{1 \times mk}$.
+caso serão usados diversos discriminantes $y_k$ com $k = \{1, \ldots K\}$ com K
+sendo o total de classes. Assim o vetor w agora é uma matriz
+$W \in \mathbb{R}^{m \times K}$. Outra representação que usaremos para o algoritmo
+será como um vetor $W = (w_1, \ldots, w_K)$ com $w_i \in \mathbb{R}^{1 \times mK}$.
 
 Quanto à codificação do vetor de rótulos, 
 segue-se a codificação dada em Bishop (2006)\cite{bishop2006} de $1-K$,
-na codificação tem-se que $t_n \in \{0, 1\}^k$ com $t_{nk} = 1$ se o elemento
+na codificação tem-se que $t_n \in \{0, 1\}^K$ com $t_{nk} = 1$ se o elemento
 n pertencer à classe k e 0 nas demais entradas. 
 
-Quanto a função de probabilidade que desejamos estimar, utiliza-se a função
+Quanto a função de probabilidade que deseja-se estimar, utiliza-se a função
 \textit{softmax} que é dada pela equação:
 
 \begin{center}
@@ -242,7 +260,7 @@ Quanto a função de probabilidade que desejamos estimar, utiliza-se a função
 	\end{equation}
 \end{center}
 
-Que nos dá verossimilhança e a seguinte função de erro, obtida
+Que dá verossimilhança e a seguinte função de erro, obtida
 tomando o negativo do logaritmo da verossimilhança.
 
 \begin{center}
@@ -252,7 +270,7 @@ tomando o negativo do logaritmo da verossimilhança.
 	\end{align*}
 \end{center}
 
-Novamente nesse caso pode-se encontrar o valor de W que minimize $E(W)$ usando os
+Novamente pode-se encontrar o valor de W que minimize $E(W)$ usando os
 dois métodos discutidos em \ref{subsec:grad_descent} e \ref{subsec:newton-raphson},
 porém agora temos que a derivada com respeito a cada $w_k^Tx$ vale:
 
@@ -262,7 +280,7 @@ porém agora temos que a derivada com respeito a cada $w_k^Tx$ vale:
 	\end{equation}
 \end{center}
 
-Usando essa representação de W como um vetor, podemos calcular o vetor gradiente onde a derivada
+Usando essa representação de W como um vetor, pode-se calcular o vetor gradiente onde a derivada
 com respeito a cada $w_j$ é dada pela equação:
 
 \begin{center}
@@ -273,10 +291,10 @@ com respeito a cada $w_j$ é dada pela equação:
 
 Com $Y_j$ e $T_j$ correspondendo, respectivamente, às j-ésimas colunas de Y e T.
 
-Com o gradiente em mãos já temos o que é necessário para o método do gradiente e a
+Com o gradiente em mãos tem-se o que é necessário para o método do gradiente e a
 atualização seria feita da forma $W^{ (novo) } = W^{ (antigo) } - \alpha \nabla E(W)$.
 
-Para aplicarmos o método de Newton-Raphson, seria necessário computarmos o Hessiano que
+Para aplicar o método de Newton-Raphson, seria necessário computar o Hessiano que
 nesse caso seria uma matriz $m*k \times m*k$ com cada bloco $j, i$ contendo uma matriz
 $m \times m$ calculada pela equação:
 
@@ -287,7 +305,7 @@ $m \times m$ calculada pela equação:
 	\end{equation}
 \end{center} 
 
-Onde $X_k$ é a k-ésima linha de X. Com essas equações em mãos nossa atualização de
+Onde $X_k$ é a k-ésima linha de X. Com essas equações em mãos a atualização de
 W seria feita usando a fórmula:
 
 \begin{center}
@@ -305,11 +323,39 @@ A classificação de um novo x é dada por:
 \end{center}
 
 
+\subsection{Evitando \textit{overfitting}}
+
+Tanto para o caso de classificação binária quanto para o de várias classes, corre-se o risco
+de que o modelo obtido após o treinamento performe muito bem no conjunto de dados fornecido
+a ele, porém possui uma generalização ruim. Esse efeito é chamado de \textit{overfitting}.
+Para evitar que ocorra \textit{overfitting}, adiciona-se uma penalização $\lambda ||W||^2$
+à função de erro. O valor escolhido para $\lambda$ é importante para obter-se um bom modelo.
+Um $\lambda$ pequeno corresponde a baixa penalização e consequentemente risco de 
+\textit{overfitting} ao passo que valores muito altos iriam acarretar em valores muito baixos
+para cada entrada de W.
+
+Utilizando a penalização, tem-se as seguintes funções de erro, gradiente e hessiano
+
+\begin{dgroup}
+	\begin{dmath}
+		E(W) = - \sum_{i = 1}^{n} \sum_{j = 1}^{k} t_{ij} ln(y_{ij}) + \frac{\lambda}{2} ||W||^2
+	\end{dmath}
+	\begin{dmath}
+		\nabla E(W) = X^T(Y_j - T_j) + \lambda ||W||
+	\end{dmath}
+	\begin{dmath}
+		\nabla_{w_i} \nabla_{w_j} E(W) = - \sum_{k = 1}^n y_{ki}( \mathds{1}_{i == j} - y_{kj})
+		X_k^TX_k + \lambda*I_{mK}
+	\end{dmath}
+\end{dgroup}
+
+Onde $I_{mK}$ é a matriz identidade com mK linhas e mK colunas.
+
 \section{Support Vector Machine}
 
-Assim como fizemos com a regressão logística, começaremos com a definição
+Assim como feito com a regressão logística, será dada a definição
 para o caso binário e depois iremos estender para mais de uma classe. Nesse caso
-nossas classes serão $t_n \in \{-1, 1\}$ onde $t_n = 1$ se x pertence à classe $C^1$ e
+as  classes serão $t_n \in \{-1, 1\}$ onde $t_n = 1$ se x pertence à classe $C^1$ e
 $t_n = -1$ se x pertence à classe $C^2$.
 
 No algoritmo SVM a classificação é feita a partir de um discriminante linear
@@ -325,8 +371,8 @@ Tal y é chamado de superfície de decisão e a classificação é baseada no si
 y. Se $y(x) > 0$, x é atribuído à classe $C^1$, caso contrário é atribuído à classe
 $C^2$.
 
-Porém ao invés de procurarmos um w que separe perfeitamente todas as classes (que
-não necessariamente existe), nosso objetivo é maximizar a margem do discriminante
+Porém ao invés de procurar um w que separe perfeitamente todas as classes (que
+não necessariamente existe), o objetivo é maximizar a margem do discriminante
 linear, isto é, a menor distância de um ponto à superfície. A distância de um ponto à
 superfície é dado pela fórmula
 
@@ -336,10 +382,10 @@ superfície é dado pela fórmula
 	\end{equation}
 \end{center}
  
-Na descrição inicial do problema vamos tratar o caso com o conjunto X linearmente separável, 
+Na descrição inicial do problema será tratado o caso em que o conjunto X linearmente separável, 
 o que indica que é possível obter uma superfície que separe sem erro todas as classes para, em
 seguida, tratarmos o caso real que é o do conjunto que não é linearmente separável.
-O fato de o conjunto ser linearmente separável nos garante que $t_ny(x_n) >0 \forall n$.
+O fato de o conjunto ser linearmente separável garante que $t_ny(x_n) >0 \forall n$.
 
 
 \begin{center}
@@ -349,8 +395,8 @@ O fato de o conjunto ser linearmente separável nos garante que $t_ny(x_n) >0 \f
 \end{center}
 
 
-Podemos ajustar w e b de forma a termos que $t_n(w^Tx_n + b) = 1$ para o ponto mais
-próximo da margem e $t_n(w^Tx_n + b) \ge 1, \forall n$. Com esse reajuste temos que nosso
+Pode-se ajustar w e b de forma a ter que $t_n(w^Tx_n + b) = 1$ para o ponto mais
+próximo da margem e $t_n(w^Tx_n + b) \ge 1, \forall n$. Com esse reajuste tem-se que o
 problema de encontrar um vetor de pesos de margem maximizada seria de maximizar 
 $\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
 
@@ -363,16 +409,16 @@ $\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
 	\end{equation}
 \end{center}
 
-Agora iremos supor que não necessariamente nossa entrada não é linearmente separável, 
+Agora suponha que a entrada não é linearmente separável, 
 isto é, não existe uma superfície de decisão que separe perfeitamente as duas classes. Assim
-iremos permitir que alguns valores estejam classificados incorretamente, para isso
-será necessário suavizarmos nossa margem penalizando cada uma das entradas incorretamente
+é permitido que alguns valores estejam classificados incorretamente, para isso
+será necessário suavizar a margem penalizando cada uma das entradas incorretamente
 classificadas. Cortes e Vapnik (1995)\cite{cortesVapnik1995} descrevem a penalização
 através da introdução de variváveis de folga $\xi_n \ge 0$ para cada elemento de X.
-Um elemento corretamente classificado teŕa $\xi_n = 0$, os demais pontos têm
+Um elemento corretamente classificado terá $\xi_n = 0$, os demais pontos têm
  $\xi_n = |t_n - y(x_n)|$.
  
-Com isso nossa restrição de $t_ny(x_n) \ge 1$ é modificada e tem-se 
+Com isso a restrição de $t_ny(x_n) \ge 1$ é modificada e tem-se 
 $t_ny(x_n) \ge 1 - \xi_n$  $\forall n$.
 
 O valor de $\xi_n$ assim nos indica três possíveis casos:
@@ -385,9 +431,9 @@ O valor de $\xi_n$ assim nos indica três possíveis casos:
 	\item Se $\xi_n > 1$, $x_n$ não está classificado corretamente.
 \end{itemize}
 
-A função objetivo agora precisa conter os valores de $\xi$ e para isso colocamos
+A função objetivo agora precisa conter os valores de $\xi$ e para isso coloca-se
 uma constante $C > 0$ que define a compensação entre a penalização das variáveis de
-folga e a margem. Com isso temos o seguinte problema de otimização quadrática:
+folga e a margem. Com isso tem-se o seguinte problema de otimização quadrática:
 
 \begin{center}
 	\begin{equation}
@@ -424,8 +470,8 @@ acima. Isto é feito seguindo os seguintes passos
 				\mu_n \xi_n = 0
 			\end{dmath}
 		\end{dgroup}
-	\item Derivamos o lagrangiano com respeito a w, b e $\xi$ e igualamos a 0 para obtermos 
-	os valores ótios para essas variáveis e, assim obtemos os seguintes valores:
+	\item Deriva-se o lagrangiano com respeito a w, b e $\xi$ e igualamos a 0 para obter 
+	os valores ótimos para essas variáveis e, assim obtemos os seguintes valores:
 		\begin{gather}
 				\frac{\partial L}{\partial w} = 0 \Rightarrow w = \sum_{i = 1}^n \alpha_i t_i x_i \\
 				\frac{\partial L}{\partial b} = 0 \Rightarrow \sum_{i = 1}^n \alpha_i t_i  = 0 \\
@@ -471,7 +517,7 @@ x usando o sinal do discriminante $y(x)$ dado por
 \subsection{Extensão ao caso de multiclasses}
 
 Diversas abordagens são possíveis para o caso de multiclasses. A escolhida entre elas
-foi o método intuitivo chamado \textit{One-versus-all} (OVA). Nesse método é construído
+foi o método intuitivo chamado \textit{One-versus-all} (OVA). Nesse método são construídos
 K classificadores, com K sendo o número de classes. Cada classificador $y_k$ define uma
 superfície de decisão que separa a classe k das demais (por isso o nome \textit{One-versus-all}).
 Um novo x tem sua classe dada pela que o classificador $y_k$ tem maior valor, isto é
@@ -535,12 +581,12 @@ necessário recorrer a métodos automatizados para a análise e sumarização de
 acabou por fim impulsionando estudos na área (Petković e Ringsquandl, 2013)\citep{petkovic2013}.
 
 Bing Liu (2012)\cite{bingliu2012} divide as formas de classificar sentimentos 
-em um documento pode se dividir em quatro formas:
+em um documento em quatro formas:
 \begin{itemize}
 	\item Entidade:  um produto, pessoa sobre o qual o texto se refere, seja direta ou indiretamente.
 	Nessa tarefa procura-se analisar se a opinião do texto em torno de uma entidade é positiva ou
 	não.
-	\item Aspecto: características sobre uma entidade. Por exemplo se temos uma entidade que é um
+	\item Aspecto: características sobre uma entidade. Por exemplo, se tem-se uma entidade que é um
 	produto, aspectos de um produto poderiam ser material ou preço. Nessa forma procura-se avaliar
 	a opinião acerca de cada um dos aspectos.
 	\item Sentença: esse tipo de análise trabalha com o sentimento associado a cada sentença de
@@ -549,9 +595,9 @@ em um documento pode se dividir em quatro formas:
 	tratando de uma forma mais genérica em relação aos demais.
 \end{itemize}
 
-Comum a todas as formas de se analizar as opiniões de um documento é que o uso dos métodos
+Comum a todas as formas de se analisar as opiniões de um documento é o uso dos métodos
 para obter a opinião. Há duas abordagens para esse problema de classificação: a de aprendizado
-de máquina (que iremos utilizar nesse trabalho) que se consiste do uso de algoritmos de 
+de máquina (que iremos utilizar nesse trabalho) que consiste no uso de algoritmos de 
 classificação em conjunto com técnicas de processamento de texto (que será explicado nas próximas
 seções) e a abordagem com um dicionário léxico onde a análise é feita baseada na pontuação
 entre palavras positivas e negativas contidas no documento (Medhat et al., 2014) \citep{medhat2014}.
@@ -564,7 +610,7 @@ sentença).
 
 Dentre os domínios de aplicação da classificação de sentimentos, escolheu-se como domínio o
 escopo político. Nesse caso, temos que as entidades nos documentos são constituídas por
-políticos e projetos de lei. E neste trabalho será analisado a análise de tuítes.
+políticos e projetos de lei. E neste trabalho serão analisados tuítes.
 
 O twitter desde as eleições presidenciais estadunidenses de 2008 mostrou influência
 na decisão das eleições evidenciado pela campanha online realizada pela equipe do
@@ -581,7 +627,7 @@ para expressar opiniões sobre diversos assuntos, incluindo política.
 
 Para realizar a extração das informações do texto, existe uma etapa de pré-processamento na qual
 cada texto é transformado num vetor numérico para então ser processado por algum algoritmo de
-classificação. Neste trabalho foi escolhido usar o modelo \textit{bag of words} (BOW). No modelo, 
+classificação. Neste trabalho foi escolhido o modelo \textit{bag of words} (BOW). No modelo, 
 é construída uma matriz de entrada onde cada linha i representa um documento (texto sobre o qual
 quer extrair a opinião) e as colunas representam a frequência de um termo, o conjunto de todos os textos é chamado de \textit{corpus}.
 
@@ -596,7 +642,7 @@ vez que foi obtido o vetor de \textit{tokens}, é removido todo elemento que sej
 Em seguida, monta-se uma nova \textit{string} juntando todas as \textit{tokens} usando espaços
 para então montar um vetor de frequência a partir do novo \textit{corpus}.
 
-A frequência pode ser medidas simples como a quantidade de vezes em que um termo j aparece no documento
+A frequência pode ser uma medida simples como a quantidade de vezes em que um termo j aparece no documento
 i ou se o termo j aparece no documento i (nesse caso cada vetor de entrada seria um vetor binário) bem
 como pode ser uma medida mais complexa como tf-idf (\textit{term frequency - inverse document frequency}).
 A relação entre os métodos de computar a frequência e o desempenho dos algoritmos de classificação serão
@@ -634,14 +680,14 @@ textos, tal opinião deve ser primeiro atribuída manualmente para que, com poss
 seja possível treinar os algoritmos.
 
 Para facilitar a etapa de classificação manual, foi desenvolvido um sistema online onde cada usuário
-informa a quantidade de tuítes que se deseja classificar e consegue classificá-los de forma
+informa a quantidade de tuítes que deseja classificar e consegue classificá-los de forma
 mais simples. Deu-se a essa ferramenta o nome de CLAM (de Classificador Manual).
 
 O desenvolvimento do CLAM foi motivado pela ausência de ferramentas no Brasil que permitem a
 colaboração nessa etapa de classificação manual (uma ferramenta comumente usada é o \textit{Amazon
 Mechanical Turk}, porém na época do desenvolvimento do CLAM não estava disponível no Brasil)
 em conjunto com a falta de ferramentas gratuitas de 
-uma forma geral, uma vez que até que a maioria das ferramentas existentes são pagas (vide o 
+uma forma geral, uma vez que a maioria das ferramentas existentes são pagas (vide o 
 próprio \textit{Amazon Mechanical Turk}). Por isso priorizou-se construir um código simples
 para que fosse fácil a modificiação da base do sistema por colaboradores externos,
 que fosse de fácil uso para o usuário final e também de fácil hospedagem do sistema
@@ -674,7 +720,7 @@ O CLAM possui o seguinte fluxo para a classificação:
 	\end{figure}
 	\item O usuário é levado a uma página com os n tuítes para classificar.
 	Enquanto o campo da opinião é obrigatório, existe um campo optativo para informar
-	se o dado tuíte é irônico ou não, uma vez que textos com ironia atrapalham
+	se o tuíte é irônico ou não, uma vez que textos com ironia atrapalham
 	o treinamento por conter palavras positivas sendo usadas de maneira negativa e vice-versa.
 	\begin{figure}[H]
 		\includegraphics[scale=0.27]{clam_classificar}
