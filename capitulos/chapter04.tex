@@ -1,5 +1,16 @@
 \chapter{Experimentos}
 
+Uma vez implementado os modelos de classificação, realizou-se experimentos sobre os tuítes
+classificados manualmente a fim de encontrar o melhor classificador. Além disso, decidiu-se
+comparar os resultados dos classificadores implementados neste trabalho com os já disponíveis
+na biblioteca \texttt{scikit} do Python para verificar obteria melhores resultados.
+
+Para todos os experimentos, variou-se diversos parâmetros (os parâmetros em questão são descritos
+em \ref{subsec:parameters}) a fim de encontrar a melhor combinação de parâmetros para cada 
+classificador. Essa variação foi feita utilizando a função \texttt{logspace} da biblioteca
+\texttt{numpy} que retorna valores igualmente espaçados (numa escala logarítimica) dentro do intervalo 
+especificado.
+
 \section{Análise exploratória}
 
 \subsection{Distribuição das classes}
@@ -55,7 +66,7 @@ A tabela abaixo mostra como exemplo alguns tuítes avaliados como neutro.
 		\hline
 		usuário & tuíte \\
 		\hline
-		Tica_Fernandes & Cidades têm protestos contra reforma da Previdência e terceirização http://g1.globo.com/politica/noticia/cidades-tem-protestos-contra-reforma-da-previdencia-e-terceirizacao.ghtml \\
+		Tica_Fernandes & Cidades têm protestos contra reforma da Previdência e terceirização http://g1.globo.com/politica/noticia/cidades-tem-protestos-contra-reforma-da-previdência-e-terceirizacao.ghtml \\
 		\hline
 		andrcolett & Transposição do rio São Francisco, reforma do ensino médio/ da previdência , operação carne fraca, terceirização ... Enem vai bombar esse ano \\
 		\hline
@@ -130,7 +141,7 @@ A fim de garantir maior generalização, utiliza-se um método de validação ch
 validação cruzada, que se consiste de um modo de dividir o conjunto de dados e testá-lo com
 um conjunto de validação. Uma primeira abordagem da validação cruzada seria dividir nosso conjunto
 em três: um de treino, um de validação e outro de teste, assim testaríamos as escolhas de parâmetros
-no conjunto de treino e, por fim, mediríamos a performance do melhor no conjunto de teste.
+no conjunto de validação e, por fim, mediríamos a performance do melhor no conjunto de teste.
 
 Outra abordagem seria ainda manter a divisão do conjunto de dados em conjunto de treino e teste
 porém realizar esse procedimento diversas vezes alternando as porções que irão corresponder a
@@ -150,10 +161,11 @@ método.
 \end{figure}
 
 \subsection{Parâmetros avaliados}
+\label{subsec:parameters}
 
 \textbf{SVM}
 
-Para o SVM, textou-se o desempenho do algoritmo testando diferentes kernels e com diferentes
+Para o SVM, testou-se o desempenho do algoritmo com diferentes kernels e com diferentes
 parâmetros para cada um. Os seguintes kernels foram utilizados:
 
 \begin{itemize}
@@ -209,7 +221,7 @@ Note que neste primeiro experimento, todos os dados foram tratados \textit{in-na
 \subsection{Implementações próprias}
 
 Dos algoritmos desenvolvidos neste trabalho, testou-se o SVM variando o valor de C entre valores
-do intervalo $[10^{-2}, 10^5]$, kernels polinomial, RBF e linear. Para o kernel polinomial testou
+do intervalo $[10^{-2}, 10^5]$, kernels polinomial, RBF e linear. Para o kernel polinomial foi utilizado
 polinômios de grau 3, 4 e 5 e coeficientes 1, 10 e 100. Para o kernel RBF testou valores de $\gamma$
 dentro do intervalo $[10^{-9}, 10^3]$. Para cada escolha de vetorização, será colocado apenas os
 melhores resultados para cada kernel.
@@ -385,7 +397,7 @@ caso percebe-se que há uma ambiguidade no tuíte e, enquanto foi classificado c
 ter sido também classificado como neutro por outra pessoa.
 
 Na classe neutra, temos que em um há uma ambiguidade no tuíte e não possui informação suficiente
-para decidir sua opinião, porém no segundo caso pode-se dizer que o tuíte foi classificado corretamente
+para avaliar sua polaridade, porém no segundo caso pode-se dizer que o tuíte foi classificado corretamente
 pois o classificador levou em conta que chamou a reforma de previdência e a terceirização de desmonte
 de direitos, apesar de o tuíte em si apenas relatar o que foi dito.
 
@@ -662,10 +674,10 @@ Observa-se que, para ambos os algoritmos tem-se que nenhum valor foi classificad
 positivo quando usou-se a vetorização através do valor tf-idf de cada termo, apesar de ainda
 apresentar desempenho médio aceitável. 
 
-Isso pode ser explicado de a vetorização usando tf-idf
+Isso se deve ao fato de vetorização por tf-idf
 leva-se em consideração a relevância das palavras na sentença como um todo e, possivelmente
 algumas palavras associadas a documentos positivos estão também associadas
-a documentos neutros portanto não possuem um valor tf-idf alto, aliado ao fato de o vocabulário
+a documentos neutros e, consequentemente, não possuem um valor tf-idf alto, aliado ao fato de o vocabulário
 ser montado levando em conta apenas as 5000 palavras com melhores pontuações ou presença, portanto
 algumas palavras explicitamente associadas a documentos positivos não compuseram o vetor de
 \textit{features}.
@@ -897,7 +909,7 @@ que este algoritmo possui robustez ao trazer valores relevantes.
 \subsection{Implementações do \texttt{scitkit}}
 
 Para as implementações do \texttt{scikit}, realizou-se os experimentos da mesma forma que
-para o caso com três classes com a única diferença sendo os valores para $\gamma$ ao quao
+para o caso com três classes com a única diferença sendo os valores para $\gamma$ ao qual
 testou o kernel RBF.
 
 \textbf{Frequência}

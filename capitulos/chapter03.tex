@@ -75,7 +75,7 @@ sigmóide definida por:
 	\end{equation}
 \end{center}
 
-A função sigmóide é usada devido à sua propriedade de mapear
+A função sigmoide é usada devido à sua propriedade de mapear
 todo o conjunto dos números reais dentro do intervalo $[0, 1]$.
 
 Aplicando ao nosso modelo obtêm-se a expressão:
@@ -131,7 +131,7 @@ obter um mínimizador global, entretanto, tem-se
 função $E(w)$ é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq' \lambda E(w) 
 	+ (1 - \lambda ) w'$
  $\forall w, w' \in R^m, \lambda \in [0, 1]$, e portanto tem-se que existe um único minimizador.
- 
+
 
 \subsection{Método do Gradiente}\label{subsec:grad_descent}
 
@@ -414,7 +414,7 @@ isto é, não existe uma superfície de decisão que separe perfeitamente as dua
 é permitido que alguns valores estejam classificados incorretamente, para isso
 será necessário suavizar a margem penalizando cada uma das entradas incorretamente
 classificadas. Cortes e Vapnik (1995)\cite{cortesVapnik1995} descrevem a penalização
-através da introdução de variváveis de folga $\xi_n \ge 0$ para cada elemento de X.
+através da introdução de variáveis de folga $\xi_n \ge 0$ para cada elemento de X.
 Um elemento corretamente classificado terá $\xi_n = 0$, os demais pontos têm
  $\xi_n = |t_n - y(x_n)|$.
  
@@ -448,7 +448,7 @@ Para implementar o SVM basta então resolver o problema de otimização quadrát
 acima. Isto é feito seguindo os seguintes passos
 
 \begin{enumerate}
-	\item Introduz-se multiplicadores de Lagrange $\alpha_n$ e $\mu_n$ e obtem-se o 
+	\item Introduz-se multiplicadores de Lagrange $\alpha_n$ e $\mu_n$ e obtém-se o 
 	Lagrangiano com as restrições
 		\begin{dgroup}
 			\begin{dmath}
@@ -470,7 +470,7 @@ acima. Isto é feito seguindo os seguintes passos
 				\mu_n \xi_n = 0
 			\end{dmath}
 		\end{dgroup}
-	\item Deriva-se o lagrangiano com respeito a w, b e $\xi$ e igualamos a 0 para obter 
+	\item Deriva-se o lagrangiano com respeito a w, b e $\xi$ e iguala-se a 0 para obter 
 	os valores ótimos para essas variáveis e, assim obtemos os seguintes valores:
 		\begin{gather}
 				\frac{\partial L}{\partial w} = 0 \Rightarrow w = \sum_{i = 1}^n \alpha_i t_i x_i \\
@@ -556,7 +556,7 @@ As figuras em vermelho em cada classificador são os pontos onde $t_n = -1$.
   \begin{subfigure}[b]{0.5\linewidth}
     \centering
     \includegraphics[width=0.75\linewidth]{multiclass_ova3} 
-    \caption{Classificaodr para a classe 3} 
+    \caption{Classificador para a classe 3} 
   \end{subfigure} 
 
 \end{figure}
@@ -689,7 +689,7 @@ Mechanical Turk}, porém na época do desenvolvimento do CLAM não estava dispon
 em conjunto com a falta de ferramentas gratuitas de 
 uma forma geral, uma vez que a maioria das ferramentas existentes são pagas (vide o 
 próprio \textit{Amazon Mechanical Turk}). Por isso priorizou-se construir um código simples
-para que fosse fácil a modificiação da base do sistema por colaboradores externos,
+para que fosse fácil a modificação da base do sistema por colaboradores externos,
 que fosse de fácil uso para o usuário final e também de fácil hospedagem do sistema
 em alguma plataforma como Heroku e Firebase.
 
