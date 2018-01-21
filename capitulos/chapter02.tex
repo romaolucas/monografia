@@ -7,8 +7,18 @@ híbrida) e em objetivos (classificação de sentimentos, detecção de emoçõe
 
 Em Pak (2010)\citep{pak2010} é analisado o uso de um corpus composto de tuítes para
 a realização de tarefas de análise de sentimentos e mineração de opinião. Nesse estudo
-é construído um classificador de sentimentos para as opiniões associadas aos tuítes coletados
-e são discutidos desafios encontrados na hora de desenvolver um classificador para o corpus.
+coletou-se 300000 tuítes divididos igualmente entre opiniões positivas, negativas e neutras, para
+isso é descrito um método de como coletar textos com opiniões positivas e negativas procurando
+por textos que contivessem emoticons comumente associados a opiniões positivas e negativas e para
+textos de sem nenhuma polaridade, coletou-se textos diretamente de portais de notícias.
+
+Além da descrição de como extrair tuítes de cada categoria, o trabalho realiza uma análise linguísticas
+de quais palavras são mais presentes em textos objetivos e em subjetivos, ao exemplo de 
+superlativos em textos positivos e verbos conjugados na terceira pessoa ou no passado serem 
+predominantes em textos objetivos. Para a classificação dos textos é usado o método Naive Bayes e
+o trabalho descreve algumas formas de melhorar o desempenho do algoritmo como o uso de bigramas,
+e filtrar os n-gramas na hora de treinar o modelo além de analisar como o aumento do tamanho do 
+conjunto de dados contribui para a melhora da acurácia. 
 
 Outros estudos, assim como este trabalho, têm como foco o uso de análise de sentimentos
 aplicados à política utilizando tuítes como o corpus. Em Tumasjan et. al (2010)\citep{tumasjan2010} é estudado
