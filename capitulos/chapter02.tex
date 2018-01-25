@@ -25,16 +25,42 @@ aplicados à política utilizando tuítes como o corpus. Em Tumasjan et. al (201
 se é possível utilizar o Twitter para obter uma previsão para os resultados de uma eleição
 tendo como base as eleições do parlamento alemão realizadas em 2009.
 
+Para isso, usou-se mais de 100 mil tuítes contendo referências a políticos ou aos respectivos partidos
+e extraiu-se os sentimentos associados aos textos usando a ferramenta LIWC (Linguistic Inquiry and
+Word Count), ferramenta usada para avaliar a intensidade do texto sob uma certa perspectiva (ou 
+dimensão como é chamado no texto) como emoções positivas e negativas, raiva, ansiedade, raiva entre
+outros,
+ e a partir da análise dessa extração foi estudado se:
+
+\begin{enumerate}
+	\item A atenção dada a cada partido / candidato no Twitter reflete os resultados das eleições, onde
+	utilizando o erro médio absoluto obteve-se uma taxa de erro de apenas 1,65\%, valor próximo aos
+	obtidos em outros meios de pesquisa aceitos.
+	\item Verificar se a rede social pode dar insights sobre possíveis alianças partidárias pós-eleições
+	e quais ideologias em comum existem entre os partidos.
+\end{enumerate}
+
 Risquandl e Petković (2013)\citep{petkovic2013} realizam experimentos tendo como cenário as
 eleições presidenciais estado-unidenses de 2012 para classificar sentimentos dos usuários do
-twitter, porém diferente dos outros trabalhos anteriormente mencionados, esse estudo utiliza
-técnicas de \textit{part-of-speech tagging} para identificar sobre quem os tuítes se referem e, a
-partir disso, classifica o sentimento baseado a aspectos dessa entidade, no caso pautas eleitorais
-que foram fortemente discutidas como casamento de pessoas do mesmo gênero, teaparty etc.
+Twitter, porém diferente dos outros trabalhos anteriormente mencionados, esse estudo utiliza
+técnicas de \textit{part-of-speech tagging} para realizar extração de aspecto, isto é, a quem
+o tuíte se refere. A técnica em questão extrai subjetivos que podem ser consideradas	 como
+tópicos de campanha e mede-se a correlação entre o termo e cada candidato usando uma medida
+de associação.
+
+Por último, utilizou-se um léxico de sentimentos para classificar a opinião relativa
+a cada tópico de campanha de cada candidato e, a partir disso, elaborou-se um sumário das opiniões
+acerca de cada tópico para melhor visualização das opiniões dos usuários acerca de cada tópico
+relevante para cada candidato.
 
 Bakliwal et. all (2013)\citep{bakliwal2013} realiza um estudo semelhante ao deste trabalho a classificação de opinião
 tendo como base três classes (positivo, negativo ou neutro) acerca de tuítes coletados sobre
 as eleições gerais da Irlanda em fevereiro de 2011. A diferença entre os trabalhos é que Bakliwal
 divide as classificações das opiniões entre cada partido.
 
-
+Outra diferença entre este trabalho e os demais é que neste os tuítes são analisados não só por
+meio de um método de aprendizado de máquina, mas também  utilizando um léxico de sentimentos.
+Importante comentar que neste artigo é discutido o método como a classificação manual foi feita:
+utilizando mais de um avaliador e, caso ouvesse discordância, a opinião de um terceiro seria pedida
+além de especificar mais classes para as quais os tuítes poderiam ser classificados (como tuítes
+que não estão em inglês ou que não falam sobre o tópico além de tuítes de opinião mista).

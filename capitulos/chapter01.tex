@@ -12,8 +12,8 @@ Estudos recentes do Twitter Brasil mostram que o país foi o terceiro em maior c
 de usuários no ano de 2016, avançando em 18\% o número de usuários que utilizam a rede social ao
 menos uma vez por mês em relação ao mesmo estudo realizado em 2015.\cite{twitterFolha}
 
-O uso do Twitter como plataforma de expressão de opiniões acerca de diversos temas fez com que as
-diversas empresas utilizassem os dados da rede social para análise de informações relevantes. O IBM
+O uso do Twitter como plataforma de expressão de opiniões acerca de diversos temas fez com que
+muitas empresas utilizassem os dados da rede social para análise de informações relevantes. O IBM
 Watson possui uma integração com o Twitter onde a ferramenta é capaz de coletar e analisar os dados
 e revelar insights sobre os mesmos como localização, gênero dos usuários, polaridade dos tuítes
 e palavras indicativas de cada polaridade. \cite{twitterWatson}
@@ -28,20 +28,34 @@ de obter-se dados postados na rede social decidiu-se analisar as opiniões dos u
 acerca do cenário político brasileiro atual construindo classificadores de tuítes onde cada
 tuíte era classificado como opinião positiva, negativa ou neutra e estudar como
 cada classificador e forma de representação dos dados contribui para a construção de um bom
-classificador. 
+classificador.
+
+Para conhecer o estado da arte na análise de sentimentos usando tuítes, fez-se uma revisão
+bibliográfica dos artigos mais citados e mais relacionados ao trabalho, em especial aqueles
+que tratavam do problema da análise de tuítes de política. Com os artigos pesquisados, teve-se uma
+noção de possíveis problemas que poderiam ser encontrados no trabalho como a presença de ironia
+que atrapalha a classificação e partes do texto que poderiam trazer mais informações relevantes
+como as \textit{hashtags} e emojis. Ademais os artigos forneceram uma base de como pré-processar
+o texto para então treinar os modelos.
 
 Para isso, coletou-se tuítes de julho de 2016 a julho de 2017 sobre as reformas da previdência, lei
 da terceirização, a proposta de emenda constitucional do teto dos gastos e sobre políticos
 com notoriedade no cenário brasileiro atual como os ex-presidentes Luis Inácio Lula da Silva,
 Dilma Rousseff e o senador Aécio Neves.
 
-Ao longo deste trabalho foi desenvolvido uma ferramenta para auxiliar na tarefa da classificação 
+Ao longo deste trabalho foi desenvolvido uma ferramenta (CLAM) para auxiliar na tarefa da classificação 
 manual dos dados e que estivesse disponível para ser utilizada por outras pessoas da comunidade
 se assim quisessem. Disponibilizou-se também neste trabalho um tutorial de como subir uma instância
-da ferramenta CLAM no Heroku \ref{chap:clam}.
+do CLAM no Heroku \ref{chap:clam}.
 
 Além do CLAM, implementou-se dois classificadores, um utilizando o método de regressão logística
 e outro utilizando Support Vector Machines (SVM) tanto para a versão binária da classificação quanto
 para três classes (opinião positiva, negativa e neutra) e comparou o desempenho destas implementações
 com as já disponibilizadas pelo \texttt{scikit} do Python a fim de verificar se ambas apresentavam mesma
 acurácia e precisão sobre os dados de teste.
+
+Após esta Introdução, no capítulo 2 é apresentada uma revisão bibliográfica dos artigos lidos que foram
+mais relevantes para o trabalho, no capítulo 3 é definido os modelos de classificação que serão usados
+bem como explica-se análise de sentimentos. No capítulo 4 são comentados os resultados dos experimentos
+realizados e analisa-se o conjunto de dados. Por último no capítulo 5 são discutidos os resultados e
+perspectivas futuras para o trabalho.
