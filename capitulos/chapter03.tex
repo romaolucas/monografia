@@ -1,19 +1,5 @@
 \chapter{\textit{Machine Learning} e Análise de Sentimentos}
 
-\section{Considerações}
-\label{sec:considerations}
-
-Ao longo deste capítulo será usada a letra n para se referir à quantidade de elementos
-do conjunto de entrada, a i-ésima entrada é dada pelo vetor $x_i \in \mathbb{R}^m$.
-O conjunto de entrada será referida como X
- durante as descrições do algoritmo e assim cada entrada será 
-dada tanto como $X_i$ como $x_i$.
-Para cada i associaremos duas variáveis $t_i$ e $y_i$ que se referem ao valor
-esperado e ao valor obtido através do treinamento, respectivamente.
-
-A notação $\mathds{1}_{i == j}$ é uma função indicadora que vale 1 se i é
-igual a j e 0 caso contrário.
-
 \section{Contextualização}
 \label{sec:methods}
 
@@ -23,7 +9,7 @@ geral em três tipos:
 \begin{itemize}
 	\item Aprendizado supervisionado: nesse caso tem-se os elementos de entrada e
 	para cada um desses elementos, tem-se associado um rótulo $t_i$. Nesse caso o modelo
-	deve ser treinado com base nos elementos dados para que se possa prever o rótulo %não consegui pensar numa tradução boa pra label%
+	deve ser treinado com base nos elementos dados para que se possa prever o rótulo %	não consegui pensar numa tradução boa pra label%
 	de uma nova entrada;
 	\item Aprendizado não-supervisionado: nesse caso tem-se apenas os elementos de entrada. 
 	O objetivo deste tipo de problema é tentar modelar uma distribuição ou estrutura comum
@@ -33,23 +19,34 @@ geral em três tipos:
 	de não-supervisionado.
 \end{itemize}
 
+\section{O problema da classificação}
+
 Neste trabalho será tratado um problema de aprendizado supervisionado que é o da classificação.
+No problema de classificação, tem-se K classes $\{1, \ldots, K\}$ com $K \ge 2$ e o objetivo
+é treinar um modelo que, para uma dada entrada $x \in \mathcal{R}^m$, determine qual classe ela
+pertence.
 
-Na classificação temos K classes e cada elemento $x_i$ da entrada é associado a uma classe $t_i \in \{1..K\}$.
-O objetivo do problema da classificação é dado entrada $X = (x_1, x_2, \ldots, x_n)$ 
-e $t = (t_1, \ldots, t_n)$ treinar um modelo capaz de prever classes para uma entrada
-qualquer.
+Um exemplo de problema classificação é o caso do \textit{iris dataset} onde se classifica uma
+flor iris entre três tipos \textit{Iris setosa}, \textit{Iris virginica} e \textit{Iris versicolor}
+baseado nos tamanhos das pétalas e sépalas.
 
-Há diversos algoritmos na literatura que se propõem a resolver o problema da classificação.
-Bishop (2006)\cite{bishop2006} enuncia diversos dos algoritmos comumente utilizados para a
-classificação, cada algoritmo possui seus prós e contras e utiliza diferentes abordagens.
+Para a etapa de treinamento, utiliza-se um conjunto $X = (x_1, x_2, \ldots, x_n)$ e para cada
+$x_k$ está associado um $t_k \in \{1, \ldots, K\}$. O modelo é treinado a partir dos padrões
+entre elementos de X que sejam da mesma classe.
+Os modelos de classificação que serão discutidos neste trabalho realizam a etapa de treinamento
+resolvendo um problema de otimização que tem como fim direta ou indiretamente diminuir o erro
+associado a classificação de um elemento, além disso é necessário que o modelo final tenha
+boa generalização, isto é, apresente baixo erro para a classificação de novas amostras além das
+presentes no conjunto de entrada.
 
-Para este trabalho escolheu-se implementar os algoritmos \textit{Logistic Regression} e
-\textit{Support Vector Machines}, que será chamado simplesmente de SVM por facilidade.
+Qual função objetivo a ser otimizada e como fazer isso varia para cada método uma vez que
+um método não necessariamente se aplica a demais.
 
-Tanto para o \textit{Logistic Regression} quanto SVM será explicado a princípio o problema
-a partir da classificação binária e, a partir dela, será descrito
-como estender para o problema com mais de duas classes, que é o caso deste trabalho.
+Como será discutido mais a frente no capítulo, cada modelo possui diferentes abordagens para o
+caso binário e o caso multiclasses, porém os fundamentos são os mesmos portanto será explicado
+tanto para a regressão logística quanto para o SVM o caso binário e depois irá estender para
+o problema a ser resolvido neste trabalho.
+
 
 \section{Logistic Regression}
 \label{sec:logreg} 
@@ -612,7 +609,7 @@ Dentre os domínios de aplicação da classificação de sentimentos, escolheu-s
 escopo político. Nesse caso, temos que as entidades nos documentos são constituídas por
 políticos e projetos de lei. E neste trabalho serão analisados tuítes.
 
-O twitter desde as eleições presidenciais estadunidenses de 2008 mostrou influência
+O Twitter desde as eleições presidenciais estadunidenses de 2008 mostrou influência
 na decisão das eleições evidenciado pela campanha online realizada pela equipe do
 candidato Barack Obama (Petković e Ringsquandl, 2013)\citep{petkovic2013}. Desde então, 
 a rede social tem sido usada não só para a campanha de políticos, mas também para a avaliação
