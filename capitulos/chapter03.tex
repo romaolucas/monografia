@@ -51,139 +51,137 @@ o problema a ser resolvido neste trabalho.
 \section{Logistic Regression}
 \label{sec:logreg} 
 
-O modelo será construído de forma probabilística, isto é, a partir de um 
-discriminante linear $w^Tx + w_0$ é atribuída uma probabilidade de um elemento x
-pertencer à classe $C^1$ e, consequentemente a probabilidade de pertencer à classe
-$C^2$ é dada por $1 - P(C^1 | x)$. O termo $w_0$ é chamado de viés, e para efeito
-das contas que serão feitas serão considerados vetores w' e x' da forma $x' = (x, 1)$,
-$w'= (w, w_0)$ note entretanto que serão chamados daqui pra frente simplesmente de w e x.
-
-No caso da classificação binária, tem-se que $t_n \in \{0, 1\}$ onde $t_n = 1$ se o
-elemento pertence à classe $C^1$ e $t_n = 0$ se pertence à classe $C^2$.
-
-A classificação de um elemento será a classe a qual ele tem maior probabilidade de pertencer.
-
-Para utilizar o discriminante para atribuir as probabilidades, utiliza-se a função
-sigmóide definida por:
-
+Na regressão logística o modelo de classificação é probabilístico o que significa
+que, a partir de um discriminante linear atribui-se a probabilidade do
+elemento x percenter à classe $C^1$, denotada por $P(C^1 | x)$. O discriminante
+linear é dado pela equação: 
 \begin{center}
 	\begin{equation}
-		\sigma(a) = \frac{1}{1 + exp(-a)}
+		\label{eq:lin_discriminant}
+		f(x) = w^Tx + w_0,
 	\end{equation}
 \end{center}
 
-A função sigmoide é usada devido à sua propriedade de mapear
-todo o conjunto dos números reais dentro do intervalo $[0, 1]$.
+o vetor $\tilde{w} = (w, w_0)$
+é chamado de vetor de pesos e o termo $w_0$ é chamado de viés.
+Para efeitos de contas
+será usado w para se referir ao vetor $\tilde{w}$ e o vetor x será dado por $x = (x_{original}, 1)$.
 
-Aplicando ao nosso modelo obtêm-se a expressão:
-
-\begin{center}
-	\begin{equation}
-		P(C^1 | x) = y(x) = \sigma(w^Tx)
-	\end{equation}
-\end{center}
-
-Importante notar que apesar de utilizarmos o vetor x nas equações, é possível aplicarmos uma
-transformação linear $\phi : \mathcal{R}^m \rightarrow \mathcal{R}^d$ à entrada x para obtermos
-$\phi(x)$ e usá-lo no lugar de x. O uso de transformação linear no nosso conjunto
-de entrada nos permite transformar o domínio para que se obtenha uma separação
-melhor entre as classes ou até mesmo fazer a redução da dimensão do domínio.
-
-Com essa equação em mãos, nosso objetivo é minimizar o erro na classificação dos dados.
-Para isso, iremos computar um estimador de máxima verossimilhança para a probabilidade
-$P(C^1 | x)$ que é dada pela expressão
+Utilizando \ref{eq:lin_discriminant} obtém-se a probabilidade $P(C^1 | x)$ utilizando a função sigmóide
+sobre f(x) que é dado por:
 
 \begin{center}
 	\begin{equation}
-		p(t | w) = \prod_{k = 1}^n y_k^{t_k}(1 - y_k)^{1 - t_k}	
+		\label{eq:sigmoid_y}
+		P(C^1 | x) = y(x) = \sigma(f(x)) = \frac{1}{1 + e^{-f(x)}}
 	\end{equation}
 \end{center}
+e consequentemente $P(C^2 | x) = 1 - P(C^1 | x)$.
+A classe ao qual um elemento x pertence é aquela que possui maior probabilidade. Utiliza-se
+a sigmoide, pois a função possui a propriedade de mapear o conjunto dos números reais no intervalo
+$[0, 1]$.
 
-Com $t = (t_1, \ldots, t_n)$ e $y_k = P(C^1 | x_k)$
-Maximizar a função de verossimilhança diretamente é um trabalho custoso uma vez que
-tem-se um produtório e funções exponenciais o que dificulta as derivações necessárias
-para a tarefa de maximização. Para resolver este problema será minimizada a função
-erro que corresponde ao negativo do logaritmo da verossimilhança, uma vez que
-o logaritmo transforma produtos em soma e obtém-se uma expressão mais fácil de se
-derivar e, consequentemente, minimizar. 
-A função de erro é dada pela equação 
+No caso da classificação binária, o rótulo de um elemento $t_k$ corresponde a 1 se o elemento $x_k$
+pertence à classe $C^1$ e 0 se pertence a $C^2$.
+
+O objetivo do processo de treinamento da regressão logística é obter um vetor w que minimize
+o erro da classificação. Para obter-se a função de erro, primeiro calcula-se o estimador
+de máxima verossimilhança para $P(C^1 | x)$:
 
 \begin{center}
 	\begin{equation}
-		E(w) = - \sum_{k = 1}^{n} p(t | w) = 
-		- \sum_{k = 1}^{n} \{ t_kln(y_k) + (1 - t_k) ln(1 - y_k) \}
+		\label{eq:likelihood}
+		p(t | w) = \prod_{k = 1}^n y_k^{t_k}(1 - y_k)^{1 - t_k}	,
 	\end{equation}
 \end{center}
 
-A fim de minimizar o erro, utiliza-se métodos de otimização linear (note que por mais que se use uma
-transformação linear $\phi$ sobre x nosso problema ainda é linear sobre w).
+com $t = (t_1, \ldots, t_n)$ e $y_k = P(C^1 | x_k)$.
 
-Dois métodos são comumente	usados: método do gradiente e método de Newton-Raphson.
-Esses métodos são utilizados tanto para o caso da classificação binária
-quanto o caso da classificação com $k > 2$. A diferença entre um problema e outro será abordada
-com mais detalhes a seguir.
+Uma vez que \ref{eq:likelihood} é uma função difícil de se otimizar, uma vez que possui um
+produtório de funções exponenciais, toma-se o negativo do logaritmo de \ref{eq:likelihood},
+que será a função de erro. Assim obtém-se:
+
+\begin{center}
+	\begin{equation}
+		\begin{split}
+			\label{eq:error_logistic}
+			E(w) = - log(p(t | w)) = -log(\prod_{k = 1}^n y_k^{t_k}(1 - y_k)^{1 - t_k}	) \\
+		 	& = - \sum_{k = 1}^{n} \{t_k log(y_k) + (1 - t_k) log(1 - y_k)\} 
+		\end{split}
+	\end{equation}
+\end{center}
+
+Dois métodos são comumente usados para minimizar \ref{eq:error_logistic}: 
+método do gradiente e método de Newton-Raphson. Esses métodos são utilizados tanto para o caso da classificação binária quanto o caso da classificação com $k > 2$. A diferença entre eles será explicada
+nas subseções que seguem.
 
 Uma dúvida natural que surge ao ter que resolver um problema de otimização é não
 obter um mínimizador global, entretanto, tem-se
-função $E(w)$ é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq' \lambda E(w) 
+função \ref{eq:error_logistic} é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq' \lambda E(w) 
 	+ (1 - \lambda ) w'$
- $\forall w, w' \in R^m, \lambda \in [0, 1]$, e portanto tem-se que existe um único minimizador.
+ $\forall w, w' \in R^{m + 1}, \lambda \in [0, 1]$, e portanto tem-se que existe um único minimizador.
 
 
 \subsection{Método do Gradiente}\label{subsec:grad_descent}
 
-Para este método, minimiza-se a função objetivo, no caso $E(w)$ utilizando apenas o gradiente
-da função junto de uma constante $\alpha \in \mathcal{R}$ que é chamada de passo.
-A quantidade de iterações necessárias para a convergência é influenciada fortemente pela
-escolha de $\alpha$, pois a escolha de um valor pequeno para $\alpha$ acarretaria
-em muitas iterações para convergir ao passo que um valor muito grande pode fazer
-com que o algoritmo pare num valor distante do ótimo.
+O método do gradiente, como o nome sugere, minimiza a função objetivo, no caso \ref{eq:error_logistic}
+utilizando o gradiente da função $\nabla E(w)$ e uma constante $\alpha \in \mathcal{R}$ chamada de
+passo. O valor do passo deve ser escolhido cautelosamente, pois influencia diretamente na quantidade
+de iterações necessárias para convergência. Valores baixos de $\alpha$ acarretam em muitas iterações
+ao passo que valores muito altos fariam que convergisse para um valor distante do ótimo. 
 
-Com ambos valores em mãos, o valor w é atualizado usando
-a equação:
+Por convergência entende-se como um critério de parada do algoritmo que no caso é caso o número de
+iterações passe de um limite pré-estabelecido (200 iterações neste caso) ou que a diferença do valor
+de $E(w)$ entre uma iteração e outra seja inferior a um $\epsilon$ também pré-estabelecido (no caso
+$10^{-4}$).
 
-\begin{center}
-	\begin{equation}
-		w^{ ( novo )} = w^{ (antigo) }  + \alpha \nabla E(w)\text{,}
-	\end{equation}
-\end{center}
-
-com $\nabla E(w)$ sendo o gradiente do vetor de pesos. O gradiente é calculado usando o fato de que
-a derivada da função sigmóide com respeito a um vetor a é dada por:
+O valor de $\nabla E(w)$ é calculando utilizando a derivada de \ref{eq:sigmoid_y} que é dada
+por:
 
 \begin{center}
 	\begin{equation}
-	\label{eq:sigmoid_derivative}
-		\frac{d \sigma}{d a} = \sigma (1 - \sigma )
+		\begin{split}
+		\label{eq:sigmoid_derivative}
+			\frac{d \sigma}{d a} = \frac{\left(d \frac{1}{1 + e^{-a}}\right)}{d a} \\
+				& = \frac{e^{-a}}{(1 - e^{-a})^2} = \frac{1}{1 - e^{-a}}\frac{e^{-a}}{1 - e^{-a}} \\
+				& = \sigma(a)*(1 - \sigma(a))
+		\end{split}
 	\end{equation}
 \end{center}
 
-Usando \ref{eq:sigmoid_derivative} tem-se a seguinte equação para o gradiente:
+usando \ref{eq:sigmoid_derivative} obtém-se a fórmula do gradiente de $E(w)$:
 
 \begin{center}
 	\begin{equation}\label{eq:gradient}
-		\nabla E(w) = X^T(y - t)
+		\nabla E(w) = \sum_{k = 1}^{n}(y_k - t_k)x_k \text{ ou } = X^T(y - t) \text{ em notação vetorial}
 	\end{equation}
 \end{center}
 
 Com $y = (y_1, \ldots, y_n)$ e $t = (t_1, \ldots, t_n)$ onde
 $y_n = P(C^1 | x_n) = \sigma(w^Tx)$ e $t_n$ tal qual assumido no começo da seção.
 
-O algoritmo de atualização do vetor de pesos descrito a seguir vale tanto para o método
-do gradiente quanto para o de Newton-Raphson, portanto para o segundo será focado apenas nas
-diferenças entre os dois.
+Utilizando o valor obtido em \ref{eq:gradient} atualiza-se w usando a fórmula:
 
+\begin{center}
+	\begin{equation}
+		\label{eq:uptade_weight_gradient}
+		w^{ ( novo )} = w^{ (antigo) }  + \alpha \nabla E(w)\text{,}
+	\end{equation}
+\end{center}
+
+As fórmulas \ref{eq:gradient} e \ref{eq:uptade_weight_gradient} constituem o procedimento
+realizado a cada iteração do método do gradiente, descrita no algoritmo abaixo.
 
 \begin{algorithm}[H]
 	\caption{Logistic Regression usando método do gradiente}
 	\begin{algorithmic}[1]
 		\REQUIRE Matriz $ X \in \mathbb{R}^{n \times m} $, 
 		vetor de rótulos $t \in \{0, 1\}^n$
-		\ENSURE Vetor de pesos $w \in \mathbb{R}^m$
+		\ENSURE Vetor de pesos $w \in \mathbb{R}^{m + 1}$
 		\STATE $iteracao \leftarrow 0$
 		\STATE $w \leftarrow 0$
-		\WHILE{ $|E(w)^{ (iteracao) } - E(w)^{ (iteracao - 1) } | \ge \epsilon$ \AND
-		$iteracao < maxIteracoes$ } \label{lst:line:condition}
+		\WHILE[critérios de convergência]{ $|E(w)^{ (iteracao) } - E(w)^{ (iteracao - 1) } | \ge \epsilon$ \AND
+		$iteracao < maxIteracoes$ } 
 			\STATE $y \leftarrow (\sigma(w^Tx_1), \sigma(w^Tx_2), \ldots, \sigma(w^Tx_n))^T$ \COMMENT{aplica a função discriminante sobre cada entrada de X}
 			\STATE $\nabla E(w) \leftarrow X^T(y - t)$ \COMMENT{computa o gradiente da função}
 			\STATE $w \leftarrow w - \alpha \nabla E(w)$ \COMMENT{atualização do modelo}
@@ -194,46 +192,42 @@ diferenças entre os dois.
 	\end{algorithmic}
 \end{algorithm}
 
-Importante notar que em~\ref{lst:line:condition} tem-se duas condições de paradas do algoritmo que
-são o número de iterações e a diferença da diminuição da função objetivo for menor do que
-um dado $\epsilon$. Tais condições são chamadas de condições de convergência e garantem
-que chegamou-se a um valor suficientemente próximo do ótimo, uma vez que atingir este valor
-pode exigir um número muito alto de iterações o que acarreta em grande custo computacional.
- Na implementação do algoritmo, escolheu-se valores
-padrão para $\epsilon$ e $maxIteracoes$ como $10^{-4}$ e $200$ respectivamente.
-
-
 \subsection{Método de Newton-Raphson}
 \label{subsec:newton-raphson}
 
-Viu-se em \ref{subsec:grad_descent} que o método do gradiente apesar de implementação
-simples pode levar muito tempo para convergir.
+Em \ref{subsec:grad_descent} viu-se o método do gradiente, que apesar da simplicidade de implementação,
+pode demorar para convergir e possui uma constante que deve ser cuidadosamente escolhida.
 
-O método de Newton-Raphson acaba convergindo mais rápido do que o método do gradiente,
-contudo ao custo de uma maior complexidade devido à necessidade de calcular outros
-elementos.
+O método de Newton-Raphson, em contrapartida, não utiliza constantes a serem definidas e
+converge mais rápido, ao custo de um custo computacional maior comparado ao método do gradiente.
 
-A atualização agora é feita seguindo a equação
+A atualização agora utiliza o hessiano da função erro que é dado por:
 
 \begin{center}
-	\begin{equation}\label{eq:newton-raphson}
-		w^{ (novo) } = w^{ (antigo) } - H^{-1} \nabla E(w)
+	\begin{equation}
+		\begin{split}
+			\label{eq:hessian_error}
+			H = \nabla \nabla E(w) = \frac{\partial E(w)}{\partial w} \\
+			& = \frac{\partial X^T(y - t)}{\partial w} =  X^T \frac{\partial y}{\partial w} \text{(t não depende de w)} \\
+			& = X^TRX
+		\end{split}
 	\end{equation}
 \end{center}
 
-Onde H é a matriz Hessiano da função erro, que é calculado usando $H = \nabla \nabla E(w)
-= X^TRX$ onde R é uma matriz diagonal $n \times n$ onde as entradas da diagonal principal
-valem $R_{kk} = y_k(1 - y_k)$. Substituindo os valores de H e usando
-\ref{eq:gradient} em \ref{eq:newton-raphson} obtem-se a seguinte fórmula para a atualização
-do vetor de pesos:
+com R sendo uma matriz diagonal onde $R_{kk} = y_k(1 - y_k)$.
+
+Juntando \ref{eq:gradient} e \ref{eq:hessian_error}, a nova atualização é dada pela fórmula:
 
 
 \begin{equation}
-\begin{split}
-w^{ (novo) } & = w^{ (antigo) } - (X^T R X)^{-1} \nabla E(w) \\
-	& = (X^T R X)^{-1}[(X^T R X)w^{ (antigo) } - X^T(y - t)]  
-\end{split}
+	\begin{split}
+		w^{ (novo) } & = w^{ (antigo) } - H^{-1} \nabla E(w) \\
+		& = (X^T R X)^{-1}[(X^T R X)w^{ (antigo) } - X^T(y - t)] \text{ substituindo os valores de \ref{eq:gradient} e \ref{eq:hessian_error}} 
+	\end{split}
 \end{equation}
+
+O restante do procedimento da iteração do algoritmo de treino é semelhante ao método do gradiente,
+portanto o pseudocódigo será omitido nesta parte.
 
 \subsection{Extensão para o caso de várias classes}
 
