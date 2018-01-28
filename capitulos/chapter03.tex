@@ -231,52 +231,65 @@ portanto o pseudocódigo será omitido nesta parte.
 
 \subsection{Extensão para o caso de várias classes}
 
-Diversas abordagens podem ser usadas para resolver o problema multiclasse, no
-caso serão usados diversos discriminantes $y_k$ com $k = \{1, \ldots K\}$ com K
-sendo o total de classes. Assim o vetor w agora é uma matriz
-$W \in \mathbb{R}^{m \times K}$. Outra representação que usaremos para o algoritmo
-será como um vetor $W = (w_1, \ldots, w_K)$ com $w_i \in \mathbb{R}^{1 \times mK}$.
+Para o caso multiclasse utiliza-se K discriminantes lineares $a_k$, $k = \{1, \ldots, K\}$ e,
+consequentemente, tem-se que o vetor de pesos agora é dado por $W = (w_1, \ldots, w_K)$ com
+$w_k \in \mathcal{R}^m$ e, consequentemente cada $a_k$ é definido por $a_k(x) = w_k^Tx$.
 
-Quanto à codificação do vetor de rótulos, 
-segue-se a codificação dada em Bishop (2006)\cite{bishop2006} de $1-K$,
-na codificação tem-se que $t_n \in \{0, 1\}^K$ com $t_{nk} = 1$ se o elemento
-n pertencer à classe k e 0 nas demais entradas. 
+Os rótulos também precisam de uma codificação diferente do caso binário. Será usada a codificação
+dada por Bishop (2006)\cite{bishop2006} de $1-K$ onde cada rótulo $t_k \in \{0, 1\}^K$ com
+$t_{kc} = 1$ se o k-ésimo elemento pertencer à classe c e 0 caso contrário e o vetor de rótulos
+agora é uma matriz $T \in \{0, 1\}^{n \times K}$ com cada linha $T_k$ correspondendo ao
+$t_k$ definido no começo do parágrafo.
 
 Quanto a função de probabilidade que deseja-se estimar, utiliza-se a função
 \textit{softmax} que é dada pela equação:
 
 \begin{center}
 	\begin{equation}
-		P(C^k | x_n) = y_{nk} = \frac{exp(w_k^Tx_n)}{\sum_j exp(w_j^Tx_n)} 
+		\label{eq:softmax}
+		P(C^k | x_n) = y_{nk} = \frac{exp(a_k(x_n))}{\sum_j exp(a_k(x_n))} 
 	\end{equation}
 \end{center}
 
-Que dá verossimilhança e a seguinte função de erro, obtida
-tomando o negativo do logaritmo da verossimilhança.
-
-\begin{center}
-	\begin{align*}
-				P(T | w_1, \ldots, w_k) &= \prod_{i = 1}^{n} \prod_{j = 1}^{k} P(C^j | x_i)^{t_{ij}} = \prod_{i = 1}^{n} \prod_{j = 1}^{k} y_{ij}^{t_{ij}} \\
-		E(W) &= - \sum_{i = 1}^{n} \sum_{j = 1}^{k} t_{ij} ln(y_{ij})	
-	\end{align*}
-\end{center}
-
-Novamente pode-se encontrar o valor de W que minimize $E(W)$ usando os
-dois métodos discutidos em \ref{subsec:grad_descent} e \ref{subsec:newton-raphson},
-porém agora temos que a derivada com respeito a cada $w_k^Tx$ vale:
-
-\begin{center}
-	\begin{equation}\label{eq:softmax_derivative}
-		\frac{\partial y_k}{\partial (w_j^Tx)} = y_k(\mathds{1}_{k == j} - y_j)
-	\end{equation}
-\end{center}
-
-Usando essa representação de W como um vetor, pode-se calcular o vetor gradiente onde a derivada
-com respeito a cada $w_j$ é dada pela equação:
+Assim como no caso binário, a classe de um elemento $x_k$ é dada pela que possuir maior probabilidade.
+Para derivar a função erro, novamente utiliza-se a máxima verossimilhança de \ref{eq:softmax}
 
 \begin{center}
 	\begin{equation}
-		\nabla_{w_j} E(W) = X^T(Y_j - T_j)
+				P(T | W) = \prod_{i = 1}^{n} \prod_{j = 1}^{K} P(C^j | x_i)^{t_{ij}} = \prod_{i = 1}^{n} \prod_{j = 1}^{K} y_{ij}^{t_{ij}},
+	\end{equation}
+\end{center}
+
+a partir da verossimilhança, obtém-se a função de erro,
+
+\begin{center}
+	\begin{equation}
+		\label{eq:multiclass_error}
+		E(w) = - log(P(T | W)) = - \sum_{i = 1}^{n} \sum_{j = 1}^{K} T_{ij}
+	\end{equation}
+\end{center}
+
+Os métodos para encontrar W que minimize \ref{eq:multiclass_error} são os mesmos discutidos em
+\ref{subsec:grad_descent} e \ref{subsec:newton-raphson}, porém agora tem-se que as fórmulas
+para o gradiente e hessiano são diferentes das discutidas previamente. Deriva-se o gradiente
+usando o fato de que a derivada de \ref{eq:softmax} com respeito a cada discriminante $a_j$
+é dada por:
+
+
+\begin{center}
+	\begin{equation}\label{eq:softmax_derivative}
+		\frac{\partial y_k}{\partial (a_j)} = y_k(\mathds{1}_{k == j} - y_j),
+	\end{equation}
+\end{center}
+
+com $\mathds{1}_{k == j}$ sendo uma função indicadora que vale 1 caso k seja igual a j e 0 caso
+contrário.
+
+Aplicando o valor de \ref{eq:softmax_derivative} para cada $w_k$, obtém-se a fórmula para o gradiente
+
+\begin{center}
+	\begin{equation}
+		\nabla_{w_j} E(W) = \sum_{k = 1}^n (y_{kj} - T_{kj})x_k \text{ ou } = X^T(Y_{j} - T_{j}) \text{ em notação matricial, }
 	\end{equation}
 \end{center}
 
@@ -286,7 +299,7 @@ Com o gradiente em mãos tem-se o que é necessário para o método do gradiente
 atualização seria feita da forma $W^{ (novo) } = W^{ (antigo) } - \alpha \nabla E(W)$.
 
 Para aplicar o método de Newton-Raphson, seria necessário computar o Hessiano que
-nesse caso seria uma matriz $m*k \times m*k$ com cada bloco $j, i$ contendo uma matriz
+nesse caso seria uma matriz $m*k \times m*k$ com cada bloco $(j, i)$ contendo uma matriz
 $m \times m$ calculada pela equação:
 
 \begin{center}
@@ -302,14 +315,6 @@ W seria feita usando a fórmula:
 \begin{center}
 	\begin{equation}
 		 W^{ (novo) } = W^{ (antigo) } - H^{-1}\nabla E(W)	
-	\end{equation}
-\end{center}
-
-A classificação de um novo x é dada por: 
-
-\begin{center}
-	\begin{equation}	
-		\argmax_{k} P(C^k | x) = y_k(x)
 	\end{equation}
 \end{center}
 
@@ -489,7 +494,7 @@ acima. Isto é feito seguindo os seguintes passos
 	\item Acha-se o valor de b usando a fórmula:
 		\begin{center}
 			\begin{equation}
-				b = \frac{1}{N_{\mathcal{M}}} \sum_{n \in \mathcal{M}} \left( t_n - \sum_{m \in \mathcal{S}} \alpha_m t_m k(x_n, x_m) \right)
+				b = \frac{1}{N_{\mathcal{M}}} \sum_{n \in \mathcal{M}} \left( t_n - \sum_{m \in \mathbb{S}} \alpha_m t_m k(x_n, x_m) \right)
 			\end{equation}
 		\end{center}
 	Com $\mathcal{M}$ sendo o conjunto de pontos que satisfazem $0 < \alpha_n < C$ e 
