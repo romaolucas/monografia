@@ -256,7 +256,7 @@ Para derivar a função erro, novamente utiliza-se a máxima verossimilhança de
 
 \begin{center}
 	\begin{equation}
-				P(T | W) = \prod_{i = 1}^{n} \prod_{j = 1}^{K} P(C^j | x_i)^{t_{ij}} = \prod_{i = 1}^{n} \prod_{j = 1}^{K} y_{ij}^{t_{ij}},
+				P(T | W) = \prod_{i = 1}^{n} \prod_{j = 1}^{K} P(C^j | x_i)^{T_{ij}} = \prod_{i = 1}^{n} \prod_{j = 1}^{K} y_{ij}^{T_{ij}},
 	\end{equation}
 \end{center}
 
@@ -265,7 +265,7 @@ a partir da verossimilhança, obtém-se a função de erro,
 \begin{center}
 	\begin{equation}
 		\label{eq:multiclass_error}
-		E(w) = - log(P(T | W)) = - \sum_{i = 1}^{n} \sum_{j = 1}^{K} T_{ij}
+		E(w) = - log(P(T | W)) = - \sum_{i = 1}^{n} \sum_{j = 1}^{K} T_{ij} log y_{ij}
 	\end{equation}
 \end{center}
 
@@ -277,13 +277,15 @@ usando o fato de que a derivada de \ref{eq:softmax} com respeito a cada discrimi
 
 
 \begin{center}
-	\begin{equation}\label{eq:softmax_derivative}
-		\frac{\partial y_k}{\partial (a_j)} = y_k(\mathds{1}_{k == j} - y_j),
+	\begin{equation}
+	\begin{split}\label{eq:softmax_derivative}
+		\frac{\partial y_k}{\partial a_j} = \frac{\partial \frac{e^{a_k}}{\sum_i e^{a_i}}}{\partial a_j}  \\
+	& = \frac{e^{a_k}e^{a_j}}{(\sum_i e^{a_i})^2} = \frac{e^{a_k}}{\sum_i e^{a_i}}\frac{e^{a_j}}{\sum_i e^{a_i}} = y_ky_j \text{ assumindo j } \neq k  \text{ ou,}\\
+	& = \frac{e^{a_k}(\sum_i e^{a_i}) - (e^{a_k})^2}{(\sum_i e^{a_i})^2} \text{ assumindo j == k} \\
+	& = \frac{e^{a_k}(\sum_{i \neq k} e^{a_i})}{(\sum_i e^{a_i})^2} = y_k(1 - y_k)
+	\end{split}
 	\end{equation}
 \end{center}
-
-com $\mathds{1}_{k == j}$ sendo uma função indicadora que vale 1 caso k seja igual a j e 0 caso
-contrário.
 
 Aplicando o valor de \ref{eq:softmax_derivative} para cada $w_k$, obtém-se a fórmula para o gradiente
 
@@ -351,8 +353,8 @@ Onde $I_{mK}$ é a matriz identidade com mK linhas e mK colunas.
 
 Assim como feito com a regressão logística, será dada a definição
 para o caso binário e depois iremos estender para mais de uma classe. Nesse caso
-as  classes serão $t_n \in \{-1, 1\}$ onde $t_n = 1$ se x pertence à classe $C^1$ e
-$t_n = -1$ se x pertence à classe $C^2$.
+as  classes serão $t_n \in \{-1, 1\}$ onde $t_n = 1$ se $x_n$ pertence à classe $C^1$ e
+$t_n = -1$ se pertence à classe $C^2$.
 
 No algoritmo SVM a classificação é feita a partir de um discriminante linear
 da forma 
@@ -380,9 +382,10 @@ superfície é dado pela fórmula
  
 Na descrição inicial do problema será tratado o caso em que o conjunto X linearmente separável, 
 o que indica que é possível obter uma superfície que separe sem erro todas as classes para, em
-seguida, tratarmos o caso real que é o do conjunto que não é linearmente separável.
-O fato de o conjunto ser linearmente separável garante que $t_ny(x_n) >0 \forall n$.
-
+seguida, tratar o caso real que é o do conjunto que não é linearmente separável.
+O fato de o conjunto ser linearmente separável garante que $t_ny(x_n) > 0 \forall n$.
+Como o problema em questão é maximizar a margem é equivalente a querer maximizar
+a distância do ponto mais próximo à superfície de decisão, como dado pela fórmula abaixo:
 
 \begin{center}
 	\begin{equation}
@@ -400,12 +403,12 @@ $\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
 	\begin{equation}
 		\begin{array}{ll@{}ll}
 				\argmin_{w, b} & ||w||^2 &\\
-				\textbf{sujeito a}& t_k(w^Tx_k + b), &&k = 1, \ldots ,n 
+				\textbf{sujeito a}& t_k(w^Tx_k + b) \ge 1, &&k = 1, \ldots ,n 
 		\end{array}
 	\end{equation}
 \end{center}
 
-Agora suponha que a entrada não é linearmente separável, 
+Agora supõe-se que a entrada não é linearmente separável, 
 isto é, não existe uma superfície de decisão que separe perfeitamente as duas classes. Assim
 é permitido que alguns valores estejam classificados incorretamente, para isso
 será necessário suavizar a margem penalizando cada uma das entradas incorretamente
@@ -487,10 +490,13 @@ acima. Isto é feito seguindo os seguintes passos
 				\end{aligned}
 			\end{equation}
 		\end{center}
-	No problema a cima é importante destacar a expressão $k(x_i, x_j)$, essa expressão é um
-	\textit{Kernel} que é uma função onde $k(x, x') = \phi(x)^T\phi(x')$ com $\phi$ sendo
-	alguma transformação linear. Tal qual no caso da regressão logística, essas
-	transformações são usadas para mudar o domínio da entrada x.
+	Ao resolver o dual do problema utiliza-se uma técnica que é chamado de truque do Kernel,
+	que se consiste no uso de uma função chamada kernel que transforma os elementos do conjunto
+	de entrada para elementos de outro espaço vetorial, usualmente de dimensionalidade maior.
+	A grande vantagem do uso desse truque é que o mapeamento é feito indiretamente, isto é, 
+	não se computa o valor de uma transformação linear elemento por elemento pois o que é computado
+	é apenas o produto interno de dois elementos desse novo espaço vetorial valendo que 
+	$k(x, x') = \phi(x)^T\phi(x')$ com $\phi$ sendo alguma transformação linear.
 	\item Acha-se o valor de b usando a fórmula:
 		\begin{center}
 			\begin{equation}
@@ -502,7 +508,7 @@ acima. Isto é feito seguindo os seguintes passos
 	consequentemente, contribuem para a classificação do modelo).
 \end{enumerate}
 
-Uma vez resolvido o problema dual e encontrado valor de b, podemos classificar um novo
+Uma vez resolvido o problema dual e encontrado valor de b, pode0se classificar um novo
 x usando o sinal do discriminante $y(x)$ dado por
 \begin{center}
 	\begin{equation}
@@ -512,9 +518,8 @@ x usando o sinal do discriminante $y(x)$ dado por
 
 \subsection{Extensão ao caso de multiclasses}
 
-Diversas abordagens são possíveis para o caso de multiclasses. A escolhida entre elas
-foi o método intuitivo chamado \textit{One-versus-all} (OVA). Nesse método são construídos
-K classificadores, com K sendo o número de classes. Cada classificador $y_k$ define uma
+A abordagem usada neste trabalho para o caso multiclasses do SVM foi o método intuitivo chamado \textit{One-versus-all} (OVA).
+ Nesse método são construídos K classificadores $y_k$ cada um definindo uma
 superfície de decisão que separa a classe k das demais (por isso o nome \textit{One-versus-all}).
 Um novo x tem sua classe dada pela que o classificador $y_k$ tem maior valor, isto é
 
@@ -605,15 +610,14 @@ sentença).
 \subsection{Análise de tuítes de política}
 
 Dentre os domínios de aplicação da classificação de sentimentos, escolheu-se como domínio o
-escopo político. Nesse caso, temos que as entidades nos documentos são constituídas por
+escopo político. Nesse caso, tem-se que as entidades nos documentos são constituídas por
 políticos e projetos de lei. E neste trabalho serão analisados tuítes.
 
 O Twitter desde as eleições presidenciais estadunidenses de 2008 mostrou influência
 na decisão das eleições evidenciado pela campanha online realizada pela equipe do
 candidato Barack Obama (Petković e Ringsquandl, 2013)\citep{petkovic2013}. Desde então, 
 a rede social tem sido usada não só para a campanha de políticos, mas também para a avaliação
-da opinião em relação às medidas tomadas por eles.
-
+da opinião em relação às medidas tomadas por eles. 
 A escolha foi feita tendo em vista o uso da rede social 
 para expressar opiniões sobre diversos assuntos, incluindo política.
 
@@ -662,6 +666,38 @@ Ele pode ser calculado pelas expressões:
 		\end{dmath} 	    
 	\end{dgroup}
 \end{center}
+
+Abaixo será dado um exemplo de como funciona o processo de vetorização por frequências e por
+tf-idf.
+
+O corpus em questão é constituído pelos seguintes textos:
+
+\begin{enumerate}
+	\item Eu amo cachorros
+	\item Eu odeio cachorros e costurar
+	\item Costurar é meu hobby e meu amor
+\end{enumerate}
+
+Construindo o vocabulário e realizando a vetorização, obtém-se os vetores de frequência descritos na tabela abaixo, o
+cabeçalho da tabela representa o vocaulário.
+
+\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c |}
+\hline
+& eu & amo & cachorros & odeio & e & costurar & é & meu & hobby & amor \\ \hline
+Vetor 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0  & 0  \\ \hline
+Vetor 2 & 1 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0  \\ \hline
+Vetor 3 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 2 & 1 & 1  \\ \hline
+\end{tabular}
+
+Já usando calculando o valor tf-idf para cada um, obtém-se os seguintes vetores:
+
+\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c |}
+\hline
+& eu & amo & cachorros & odeio & e & costurar & é & meu & hobby & amor \\ \hline
+Vetor 1 & 0.18 & 0.48 & 0.18 & 0 & 0 & 0 & 0 & 0 & 0  & 0  \\ \hline
+Vetor 2 & 0.18 & 0 & 0.18 & 0.48 & 0.18 & 0.18 & 0 & 0 & 0 & 0  \\ \hline
+Vetor 3 & 0 & 0 & 0 & 0 & 0.18 & 0.18 & 0.48 & 0.95 & 0.48 & 0.48  \\ \hline
+\end{tabular}
 
 O procedimento de obtenção dos vetores de \textit{features} a partir do novo \textit{corpus} pode
 ser realizado utilizando as bibliotecas \texttt{scikit-learn} e \texttt{nltk} do Python.
