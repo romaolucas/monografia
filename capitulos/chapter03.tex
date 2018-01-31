@@ -8,7 +8,7 @@ geral em três tipos:
 
 \begin{itemize}
 	\item Aprendizado supervisionado: nesse caso tem-se os elementos de entrada e
-	para cada um desses elementos, tem-se associado um rótulo $t_i$. Nesse caso o modelo
+	para cada um desses elementos, tem-se associado um rótulo. Nesse caso o modelo
 	deve ser treinado com base nos elementos dados para que se possa prever o rótulo %	não consegui pensar numa tradução boa pra label%
 	de uma nova entrada;
 	\item Aprendizado não-supervisionado: nesse caso tem-se apenas os elementos de entrada. 
@@ -22,8 +22,8 @@ geral em três tipos:
 \section{O problema da classificação}
 
 Neste trabalho será tratado um problema de aprendizado supervisionado que é o da classificação.
-No problema de classificação, tem-se K classes $\{1, \ldots, K\}$ com $K \ge 2$ e o objetivo
-é treinar um modelo que, para uma dada entrada $x \in \mathcal{R}^m$, determine qual classe ela
+No problema de classificação, tem-se $K$ classes $\{1, \ldots, K\}$ com $K \ge 2$ e o objetivo
+é treinar um modelo que, para uma dada entrada $x \in \mathbb{R}^m$, determine qual classe ela
 pertence.
 
 Um exemplo de problema classificação é o caso do \textit{iris dataset} onde se classifica uma
@@ -31,8 +31,8 @@ flor iris entre três tipos \textit{Iris setosa}, \textit{Iris virginica} e \tex
 baseado nos tamanhos das pétalas e sépalas.
 
 Para a etapa de treinamento, utiliza-se um conjunto $X = (x_1, x_2, \ldots, x_n)$ e para cada
-$x_k$ está associado um $t_k \in \{1, \ldots, K\}$. O modelo é treinado a partir dos padrões
-entre elementos de X que sejam da mesma classe.
+$x_i \in \mathbb{R}^m$ está associado um $t_i \in \{1, \ldots, K\}$. Será usado $n$ para o
+tamanho do conjunto de entrada e $m$ para o tamanho de cada vetor.
 Os modelos de classificação que serão discutidos neste trabalho realizam a etapa de treinamento
 resolvendo um problema de otimização que tem como fim direta ou indiretamente diminuir o erro
 associado a classificação de um elemento, além disso é necessário que o modelo final tenha
@@ -53,7 +53,7 @@ o problema a ser resolvido neste trabalho.
 
 Na regressão logística o modelo de classificação é probabilístico o que significa
 que, a partir de um discriminante linear atribui-se a probabilidade do
-elemento x percenter à classe $C^1$, denotada por $P(C^1 | x)$. O discriminante
+elemento $x$ percenter à classe $C^1$, denotada por $P(C^1 | x)$. O discriminante
 linear é dado pela equação: 
 \begin{center}
 	\begin{equation}
@@ -65,10 +65,10 @@ linear é dado pela equação:
 o vetor $\tilde{w} = (w, w_0)$
 é chamado de vetor de pesos e o termo $w_0$ é chamado de viés.
 Para efeitos de contas
-será usado w para se referir ao vetor $\tilde{w}$ e o vetor x será dado por $x = (x_{original}, 1)$.
+será usado $w$ para se referir ao vetor $\tilde{w}$ e o vetor x será dado por $x = (x_{original}, 1)$.
 
 Utilizando \ref{eq:lin_discriminant} obtém-se a probabilidade $P(C^1 | x)$ utilizando a função sigmóide
-sobre f(x) que é dado por:
+sobre $f(x)$ que é dado por:
 
 \begin{center}
 	\begin{equation}
@@ -77,25 +77,25 @@ sobre f(x) que é dado por:
 	\end{equation}
 \end{center}
 e consequentemente $P(C^2 | x) = 1 - P(C^1 | x)$.
-A classe ao qual um elemento x pertence é aquela que possui maior probabilidade. Utiliza-se
+A classe ao qual um elemento $x$ pertence é aquela que possui maior probabilidade. Utiliza-se
 a sigmoide, pois a função possui a propriedade de mapear o conjunto dos números reais no intervalo
 $[0, 1]$.
 
-No caso da classificação binária, o rótulo de um elemento $t_k$ corresponde a 1 se o elemento $x_k$
+No caso da classificação binária, o rótulo de um elemento $t_i$ corresponde a 1 se o elemento $x_i$
 pertence à classe $C^1$ e 0 se pertence a $C^2$.
 
-O objetivo do processo de treinamento da regressão logística é obter um vetor w que minimize
+O objetivo do processo de treinamento da regressão logística é obter um vetor $w$ que minimize
 o erro da classificação. Para obter-se a função de erro, primeiro calcula-se o estimador
 de máxima verossimilhança para $P(C^1 | x)$:
 
 \begin{center}
 	\begin{equation}
 		\label{eq:likelihood}
-		p(t | w) = \prod_{k = 1}^n y_k^{t_k}(1 - y_k)^{1 - t_k}	,
+		p(t | w) = \prod_{i = 1}^n y_i^{t_i}(1 - y_i)^{1 - t_i}	,
 	\end{equation}
 \end{center}
 
-com $t = (t_1, \ldots, t_n)$ e $y_k = P(C^1 | x_k)$.
+com $t = (t_1, \ldots, t_n)$ e $y_i = P(C^1 | x_i)$.
 
 Uma vez que \ref{eq:likelihood} é uma função difícil de se otimizar, uma vez que possui um
 produtório de funções exponenciais, toma-se o negativo do logaritmo de \ref{eq:likelihood},
@@ -105,8 +105,8 @@ que será a função de erro. Assim obtém-se:
 	\begin{equation}
 		\begin{split}
 			\label{eq:error_logistic}
-			E(w) = - log(p(t | w)) = -log(\prod_{k = 1}^n y_k^{t_k}(1 - y_k)^{1 - t_k}	) \\
-		 	& = - \sum_{k = 1}^{n} \{t_k log(y_k) + (1 - t_k) log(1 - y_k)\} 
+			E(w) = - log(p(t | w)) = -log(\prod_{i = 1}^n y_i^{t_i}(1 - y_i)^{1 - t_i}	) \\
+		 	& = - \sum_{i = 1}^{n} \{t_i log(y_i) + (1 - t_i) log(1 - y_i)\} 
 		\end{split}
 	\end{equation}
 \end{center}
@@ -125,7 +125,7 @@ função \ref{eq:error_logistic} é convexa, isto é, $E(\lambda w + (1 - \lambd
 \subsection{Método do Gradiente}\label{subsec:grad_descent}
 
 O método do gradiente, como o nome sugere, minimiza a função objetivo, no caso \ref{eq:error_logistic}
-utilizando o gradiente da função $\nabla E(w)$ e uma constante $\alpha \in \mathcal{R}$ chamada de
+utilizando o gradiente da função $\nabla E(w)$ e uma constante $\alpha \in \mathbb{R}$ chamada de
 passo. O valor do passo deve ser escolhido cautelosamente, pois influencia diretamente na quantidade
 de iterações necessárias para convergência. Valores baixos de $\alpha$ acarretam em muitas iterações
 ao passo que valores muito altos fariam que convergisse para um valor distante do ótimo. 
@@ -153,14 +153,14 @@ usando \ref{eq:sigmoid_derivative} obtém-se a fórmula do gradiente de $E(w)$:
 
 \begin{center}
 	\begin{equation}\label{eq:gradient}
-		\nabla E(w) = \sum_{k = 1}^{n}(y_k - t_k)x_k \text{ ou } = X^T(y - t) \text{ em notação vetorial}
+		\nabla E(w) = \sum_{i =  1}^{n}(y_i - t_i)x_i \text{ ou } = X^T(y - t) \text{ em notação vetorial}
 	\end{equation}
 \end{center}
 
 Com $y = (y_1, \ldots, y_n)$ e $t = (t_1, \ldots, t_n)$ onde
 $y_n = P(C^1 | x_n) = \sigma(w^Tx)$ e $t_n$ tal qual assumido no começo da seção.
 
-Utilizando o valor obtido em \ref{eq:gradient} atualiza-se w usando a fórmula:
+Utilizando o valor obtido em \ref{eq:gradient} atualiza-se $w$ usando a fórmula:
 
 \begin{center}
 	\begin{equation}
@@ -186,7 +186,7 @@ realizado a cada iteração do método do gradiente, descrita no algoritmo abaix
 			\STATE $\nabla E(w) \leftarrow X^T(y - t)$ \COMMENT{computa o gradiente da função}
 			\STATE $w \leftarrow w - \alpha \nabla E(w)$ \COMMENT{atualização do modelo}
 			\STATE $E(w)^{ (iteracao) } \leftarrow 
-			- \sum_{i = 1}^{n} \{ t_nln(y_n) + (1 - t_n) ln(1 - y_n) \}$ \COMMENT{recalcula o erro}
+			- \sum_{i = 1}^{n} \{ t_ilog(y_i) + (1 - t_i) log(1 - y_i) \}$ \COMMENT{recalcula o erro}
 			\STATE $iteracao \leftarrow iteracao + 1$
 		\ENDWHILE
 	\end{algorithmic}
@@ -214,7 +214,7 @@ A atualização agora utiliza o hessiano da função erro que é dado por:
 	\end{equation}
 \end{center}
 
-com R sendo uma matriz diagonal onde $R_{kk} = y_k(1 - y_k)$.
+com $R$ sendo uma matriz diagonal onde $R_{ii} = y_i(1 - y_i)$.
 
 Juntando \ref{eq:gradient} e \ref{eq:hessian_error}, a nova atualização é dada pela fórmula:
 
@@ -231,15 +231,15 @@ portanto o pseudocódigo será omitido nesta parte.
 
 \subsection{Extensão para o caso de várias classes}
 
-Para o caso multiclasse utiliza-se K discriminantes lineares $a_k$, $k = \{1, \ldots, K\}$ e,
+Para o caso multiclasse utiliza-se K discriminantes lineares $a_i$, $i = \{1, \ldots, K\}$ e,
 consequentemente, tem-se que o vetor de pesos agora é dado por $W = (w_1, \ldots, w_K)$ com
-$w_k \in \mathcal{R}^m$ e, consequentemente cada $a_k$ é definido por $a_k(x) = w_k^Tx$.
+$w_i \in \mathbb{R}^m$ e, consequentemente cada $a_i$ é definido por $a_i(x) = w_i^Tx$.
 
-Os rótulos também precisam de uma codificação diferente do caso binário. Será usada a codificação
-dada por Bishop (2006)\cite{bishop2006} de $1-K$ onde cada rótulo $t_k \in \{0, 1\}^K$ com
-$t_{kc} = 1$ se o k-ésimo elemento pertencer à classe c e 0 caso contrário e o vetor de rótulos
-agora é uma matriz $T \in \{0, 1\}^{n \times K}$ com cada linha $T_k$ correspondendo ao
-$t_k$ definido no começo do parágrafo.
+Os rótulos também precisam de uma codificação diferente da usada no caso binário. Usa-se a codificação
+dada por Bishop (2006)\cite{bishop2006} de $1-K$ onde cada rótulo $t_i \in \{0, 1\}^K$ com
+$t_{ic} = 1$ se o i-ésimo elemento pertencer à classe c e 0 caso contrário e o vetor de rótulos
+agora é uma matriz $T \in \{0, 1\}^{n \times K}$ com cada linha $T_i$ correspondendo ao
+$t_i$ definido no começo do parágrafo.
 
 Quanto a função de probabilidade que deseja-se estimar, utiliza-se a função
 \textit{softmax} que é dada pela equação:
@@ -247,11 +247,11 @@ Quanto a função de probabilidade que deseja-se estimar, utiliza-se a função
 \begin{center}
 	\begin{equation}
 		\label{eq:softmax}
-		P(C^k | x_n) = y_{nk} = \frac{exp(a_k(x_n))}{\sum_j exp(a_k(x_n))} 
+		P(C^i | x_n) = y_{ni} = \frac{exp(a_i(x_n))}{\sum_j exp(a_j(x_n))} 
 	\end{equation}
 \end{center}
 
-Assim como no caso binário, a classe de um elemento $x_k$ é dada pela que possuir maior probabilidade.
+Assim como no caso binário, a classe de um elemento $x_i$ é dada pela que possuir maior probabilidade.
 Para derivar a função erro, novamente utiliza-se a máxima verossimilhança de \ref{eq:softmax}
 
 \begin{center}
@@ -269,7 +269,7 @@ a partir da verossimilhança, obtém-se a função de erro,
 	\end{equation}
 \end{center}
 
-Os métodos para encontrar W que minimize \ref{eq:multiclass_error} são os mesmos discutidos em
+Os métodos para encontrar $W$ que minimize \ref{eq:multiclass_error} são os mesmos discutidos em
 \ref{subsec:grad_descent} e \ref{subsec:newton-raphson}, porém agora tem-se que as fórmulas
 para o gradiente e hessiano são diferentes das discutidas previamente. Deriva-se o gradiente
 usando o fato de que a derivada de \ref{eq:softmax} com respeito a cada discriminante $a_j$
@@ -279,19 +279,19 @@ usando o fato de que a derivada de \ref{eq:softmax} com respeito a cada discrimi
 \begin{center}
 	\begin{equation}
 	\begin{split}\label{eq:softmax_derivative}
-		\frac{\partial y_k}{\partial a_j} = \frac{\partial \frac{e^{a_k}}{\sum_i e^{a_i}}}{\partial a_j}  \\
-	& = \frac{e^{a_k}e^{a_j}}{(\sum_i e^{a_i})^2} = \frac{e^{a_k}}{\sum_i e^{a_i}}\frac{e^{a_j}}{\sum_i e^{a_i}} = y_ky_j \text{ assumindo j } \neq k  \text{ ou,}\\
-	& = \frac{e^{a_k}(\sum_i e^{a_i}) - (e^{a_k})^2}{(\sum_i e^{a_i})^2} \text{ assumindo j == k} \\
-	& = \frac{e^{a_k}(\sum_{i \neq k} e^{a_i})}{(\sum_i e^{a_i})^2} = y_k(1 - y_k)
+		\frac{\partial y_i}{\partial a_j} = \frac{\partial \frac{e^{a_i}}{\sum_l e^{a_l}}}{\partial a_j}  \\
+	& = \frac{e^{a_i}e^{a_j}}{(\sum_l e^{a_l})^2} = \frac{e^{a_i}}{\sum_l e^{a_l}}\frac{e^{a_j}}{\sum_l e^{a_l}} = y_iy_j \text{ assumindo j } \neq i  \text{ ou,}\\
+	& = \frac{e^{a_i}(\sum_l e^{a_l}) - (e^{a_i})^2}{(\sum_l e^{a_l})^2} \text{ assumindo j == i} \\
+	& = \frac{e^{a_i}(\sum_{l \neq i} e^{a_l})}{(\sum_l e^{a_l})^2} = y_i(1 - y_i)
 	\end{split}
 	\end{equation}
 \end{center}
 
-Aplicando o valor de \ref{eq:softmax_derivative} para cada $w_k$, obtém-se a fórmula para o gradiente
+Aplicando o valor de \ref{eq:softmax_derivative} para cada $w_i$, obtém-se a fórmula para o gradiente
 
 \begin{center}
 	\begin{equation}
-		\nabla_{w_j} E(W) = \sum_{k = 1}^n (y_{kj} - T_{kj})x_k \text{ ou } = X^T(Y_{j} - T_{j}) \text{ em notação matricial, }
+		\nabla_{w_j} E(W) = \sum_{i =  1}^n (y_{ij} - T_{ij})x_i \text{ ou } = X^T(Y_{j} - T_{j}) \text{ em notação matricial, }
 	\end{equation}
 \end{center}
 
@@ -306,13 +306,14 @@ $m \times m$ calculada pela equação:
 
 \begin{center}
 	\begin{equation}
-		\nabla_{w_i} \nabla_{w_j} E(W) = - \sum_{k = 1}^n y_{ki}( \mathds{1}_{i == j} - y_{kj})
-		X_k^TX_k
+		\nabla_{w_i} \nabla_{w_j} E(W) = - \sum_{l =  1}^n y_{li}( \mathds{1}_{i == j} - y_{lj})
+		X_i^TX_i
 	\end{equation}
 \end{center} 
 
-Onde $X_k$ é a k-ésima linha de X. Com essas equações em mãos a atualização de
-W seria feita usando a fórmula:
+Onde $X_i$ é a i-ésima linha de $X$ e $\mathds{1}_{i == j}$ é uma função indicadora que vale 1 se
+$i$ for igual a $j$ e 0 caso contrário. Com essas equações em mãos a atualização de
+$W$ seria feita usando a fórmula:
 
 \begin{center}
 	\begin{equation}
@@ -330,31 +331,31 @@ Para evitar que ocorra \textit{overfitting}, adiciona-se uma penalização $\lam
 à função de erro. O valor escolhido para $\lambda$ é importante para obter-se um bom modelo.
 Um $\lambda$ pequeno corresponde a baixa penalização e consequentemente risco de 
 \textit{overfitting} ao passo que valores muito altos iriam acarretar em valores muito baixos
-para cada entrada de W.
+para cada entrada de $W$.
 
 Utilizando a penalização, tem-se as seguintes funções de erro, gradiente e hessiano
 
 \begin{dgroup}
 	\begin{dmath}
-		E(W) = - \sum_{i = 1}^{n} \sum_{j = 1}^{k} t_{ij} ln(y_{ij}) + \frac{\lambda}{2} ||W||^2
+		E(W) = - \sum_{i = 1}^{n} \sum_{j = 1}^{K} t_{ij} ln(y_{ij}) + \frac{\lambda}{2} ||W||^2
 	\end{dmath}
 	\begin{dmath}
 		\nabla E(W) = X^T(Y_j - T_j) + \lambda ||W||
 	\end{dmath}
 	\begin{dmath}
-		\nabla_{w_i} \nabla_{w_j} E(W) = - \sum_{k = 1}^n y_{ki}( \mathds{1}_{i == j} - y_{kj})
-		X_k^TX_k + \lambda*I_{mK}
+		\nabla_{w_i} \nabla_{w_j} E(W) = - \sum_{l =  1}^n y_{li}( \mathds{1}_{i == j} - y_{lj})
+		X_i^TX_i + \lambda*I_{mK}
 	\end{dmath}
 \end{dgroup}
 
-Onde $I_{mK}$ é a matriz identidade com mK linhas e mK colunas.
+Onde $I_{mK}$ é a matriz identidade com $mK$ linhas e $mK$ colunas.
 
 \section{Support Vector Machine}
 
 Assim como feito com a regressão logística, será dada a definição
-para o caso binário e depois iremos estender para mais de uma classe. Nesse caso
-as  classes serão $t_n \in \{-1, 1\}$ onde $t_n = 1$ se $x_n$ pertence à classe $C^1$ e
-$t_n = -1$ se pertence à classe $C^2$.
+para o caso binário e depois se estenderá para o caso multiclasses. Nesse caso
+as  classes serão $t_i \in \{-1, 1\}$ onde $t_i = 1$ se $x_i$ pertence à classe $C^1$ e
+$t_i = -1$ se pertence à classe $C^2$.
 
 No algoritmo SVM a classificação é feita a partir de um discriminante linear
 da forma 
@@ -365,37 +366,37 @@ da forma
 	\end{equation}
 \end{center}
 
-Tal y é chamado de superfície de decisão e a classificação é baseada no sinal de
-y. Se $y(x) > 0$, x é atribuído à classe $C^1$, caso contrário é atribuído à classe
+Tal $y(x)$ é chamado de superfície de decisão e a classificação é baseada no sinal de
+$y(x)$. Se $y(x) > 0$, $x$ é atribuído à classe $C^1$, caso contrário é atribuído à classe
 $C^2$.
 
-Porém ao invés de procurar um w que separe perfeitamente todas as classes (que
+Porém ao invés de procurar um $w$ que separe perfeitamente todas as classes (que
 não necessariamente existe), o objetivo é maximizar a margem do discriminante
-linear, isto é, a menor distância de um ponto à superfície. A distância de um ponto à
+linear, isto é, a menor distância de um ponto à superfície. A distância de um ponto $x_i$ à
 superfície é dado pela fórmula
 
 \begin{center}
 	\begin{equation}
-		\frac{[t_n(w^Tx_n + b)]}{||w||}
+		\frac{[t_i(w^Tx_i + b)]}{||w||}
 	\end{equation}
 \end{center}
  
-Na descrição inicial do problema será tratado o caso em que o conjunto X linearmente separável, 
+Na descrição inicial do problema será tratado o caso em que o conjunto $X$ linearmente separável, 
 o que indica que é possível obter uma superfície que separe sem erro todas as classes para, em
 seguida, tratar o caso real que é o do conjunto que não é linearmente separável.
-O fato de o conjunto ser linearmente separável garante que $t_ny(x_n) > 0 \forall n$.
+O fato de o conjunto ser linearmente separável garante que $t_iy(x_i) > 0 \forall i$.
 Como o problema em questão é maximizar a margem é equivalente a querer maximizar
 a distância do ponto mais próximo à superfície de decisão, como dado pela fórmula abaixo:
 
 \begin{center}
 	\begin{equation}
-		\argmax_{x, b} \left\{ \frac{1}{||w||} min_n [t_n(w^Tx_n + b)] \right\}
+		\argmax_{x, b} \left\{ \frac{1}{||w||} min_i [t_i(w^Tx_i + b)] \right\}
 	\end{equation}
 \end{center}
 
 
-Pode-se ajustar w e b de forma a ter que $t_n(w^Tx_n + b) = 1$ para o ponto mais
-próximo da margem e $t_n(w^Tx_n + b) \ge 1, \forall n$. Com esse reajuste tem-se que o
+Pode-se ajustar $w$ e $b$ de forma a ter que $t_i(w^Tx_i + b) = 1$ para o ponto mais
+próximo da margem e $t_i(w^Tx_i + b) \ge 1, \forall i$. Com esse reajuste tem-se que o
 problema de encontrar um vetor de pesos de margem maximizada seria de maximizar 
 $\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
 
@@ -403,7 +404,7 @@ $\frac{1}{||w||}$ que é equivalente ao problema de otimização quadrática:
 	\begin{equation}
 		\begin{array}{ll@{}ll}
 				\argmin_{w, b} & ||w||^2 &\\
-				\textbf{sujeito a}& t_k(w^Tx_k + b) \ge 1, &&k = 1, \ldots ,n 
+				\textbf{sujeito a}& t_i(w^Tx_i + b) \ge 1, &&i = 1, \ldots ,n 
 		\end{array}
 	\end{equation}
 \end{center}
@@ -413,21 +414,21 @@ isto é, não existe uma superfície de decisão que separe perfeitamente as dua
 é permitido que alguns valores estejam classificados incorretamente, para isso
 será necessário suavizar a margem penalizando cada uma das entradas incorretamente
 classificadas. Cortes e Vapnik (1995)\cite{cortesVapnik1995} descrevem a penalização
-através da introdução de variáveis de folga $\xi_n \ge 0$ para cada elemento de X.
-Um elemento corretamente classificado terá $\xi_n = 0$, os demais pontos têm
- $\xi_n = |t_n - y(x_n)|$.
+através da introdução de variáveis de folga $\xi_i \ge 0$ para cada elemento de $X$.
+Um elemento corretamente classificado terá $\xi_i = 0$, os demais pontos têm
+ $\xi_i = |t_i - y(x_i)|$.
  
-Com isso a restrição de $t_ny(x_n) \ge 1$ é modificada e tem-se 
-$t_ny(x_n) \ge 1 - \xi_n$  $\forall n$.
+Com isso a restrição de $t_iy(x_i) \ge 1$ é modificada e tem-se 
+$t_iy(x_i) \ge 1 - \xi_i$  $\forall i$.
 
-O valor de $\xi_n$ assim nos indica três possíveis casos:
+O valor de $\xi_i$ assim nos indica três possíveis casos:
 
 \begin{itemize}
-	\item Se $\xi_n = 0$, $x_n$ está corretamente classificado e se encontra
+	\item Se $\xi_i = 0$, $x_i$ está corretamente classificado e se encontra
 	ou na margem ou do lado correto dela.
-	\item Se $0 < \xi_n \le 1$, $x_n$ está corretamente classificado e se encontra
+	\item Se $0 < \xi_i \le 1$, $x_i$ está corretamente classificado e se encontra
 	entre a margem e a superfície.
-	\item Se $\xi_n > 1$, $x_n$ não está classificado corretamente.
+	\item Se $\xi_i > 1$, $x_i$ não está classificado corretamente.
 \end{itemize}
 
 A função objetivo agora precisa conter os valores de $\xi$ e para isso coloca-se
@@ -438,7 +439,7 @@ folga e a margem. Com isso tem-se o seguinte problema de otimização quadrátic
 	\begin{equation}
 		\begin{array}{ll@{}ll}
 			\argmin_{w, b, \xi} & C\sum_{i = 1}^n\xi_i + \frac{1}{2}||w||^2 &\\
-			\text{sujeito a}& t_k(w^Tx_k + b) \ge 1 - \xi_k, && k = 1, \ldots, n
+			\text{sujeito a}& t_i(w^Tx_i + b) \ge 1 - \xi_i, && i = 1, \ldots, n
 		\end{array}
 	\end{equation}
 \end{center}
@@ -447,34 +448,34 @@ Para implementar o SVM basta então resolver o problema de otimização quadrát
 acima. Isto é feito seguindo os seguintes passos
 
 \begin{enumerate}
-	\item Introduz-se multiplicadores de Lagrange $\alpha_n$ e $\mu_n$ e obtém-se o 
+	\item Introduz-se multiplicadores de Lagrange $\alpha_i$ e $\mu_i$ e obtém-se o 
 	Lagrangiano com as restrições
 		\begin{dgroup}
 			\begin{dmath}
 				L(w, b, \xi) = \frac{1}{2}||w||^2 + C\sum_{i = 1}^n\xi_i - \sum_{i = 1}^n \alpha_i\{t_i(w^Tx_i + b) - 1 + \xi_i\} - \sum_{i = 1}^n \mu_i \xi_i
 			\end{dmath}
 			\begin{dmath}
-				\alpha_n \ge 0
+				\alpha_i \ge 0
 			\end{dmath}
 			\begin{dmath}
-				t_ny(x_n) - 1 + \xi_n \ge 0
+				t_iy(x_i) - 1 + \xi_i \ge 0
 			\end{dmath}
 			\begin{dmath}
-				\alpha_n\{t_n(w^Tx_n + b) - 1 + \xi_n\} = 0
+				\alpha_i\{t_i(w^Tx_i + b) - 1 + \xi_i\} = 0
 			\end{dmath}
 			\begin{dmath}
-				\mu_n \ge 0
+				\mu_i \ge 0
 			\end{dmath}
 			\begin{dmath}
-				\mu_n \xi_n = 0
+				\mu_i \xi_i = 0
 			\end{dmath}
 		\end{dgroup}
-	\item Deriva-se o lagrangiano com respeito a w, b e $\xi$ e iguala-se a 0 para obter 
+	\item Deriva-se o lagrangiano com respeito a $w$, $b$ e $\xi$ e iguala-se a $0$ para obter 
 	os valores ótimos para essas variáveis e, assim obtemos os seguintes valores:
 		\begin{gather}
 				\frac{\partial L}{\partial w} = 0 \Rightarrow w = \sum_{i = 1}^n \alpha_i t_i x_i \\
 				\frac{\partial L}{\partial b} = 0 \Rightarrow \sum_{i = 1}^n \alpha_i t_i  = 0 \\
-				\frac{\partial L}{\partial \xi} = 0 \Rightarrow \alpha_n = C - \mu_n 
+				\frac{\partial L}{\partial \xi} = 0 \Rightarrow \alpha_i = C - \mu_i
 		\end{gather} 
 	\item Com isso em mãos, resolve-se não o problema primal e sim o dual (utiliza-se aqui o fato 
 	de que se as condições mencionadas no item anterior são satisfeitas, tem-se que vale
@@ -497,10 +498,10 @@ acima. Isto é feito seguindo os seguintes passos
 	não se computa o valor de uma transformação linear elemento por elemento pois o que é computado
 	é apenas o produto interno de dois elementos desse novo espaço vetorial valendo que 
 	$k(x, x') = \phi(x)^T\phi(x')$ com $\phi$ sendo alguma transformação linear.
-	\item Acha-se o valor de b usando a fórmula:
+	\item Acha-se o valor de $b$ usando a fórmula:
 		\begin{center}
 			\begin{equation}
-				b = \frac{1}{N_{\mathcal{M}}} \sum_{n \in \mathcal{M}} \left( t_n - \sum_{m \in \mathbb{S}} \alpha_m t_m k(x_n, x_m) \right)
+				b = \frac{1}{N_{\mathcal{M}}} \sum_{i \in \mathcal{M}} \left( t_i - \sum_{j \in \mathbb{S}} \alpha_j t_j k(x_i, x_j) \right)
 			\end{equation}
 		\end{center}
 	Com $\mathcal{M}$ sendo o conjunto de pontos que satisfazem $0 < \alpha_n < C$ e 
@@ -508,24 +509,24 @@ acima. Isto é feito seguindo os seguintes passos
 	consequentemente, contribuem para a classificação do modelo).
 \end{enumerate}
 
-Uma vez resolvido o problema dual e encontrado valor de b, pode0se classificar um novo
-x usando o sinal do discriminante $y(x)$ dado por
+Uma vez resolvido o problema dual e encontrado valor de $b$, pode-se classificar um novo
+$x$ usando o sinal do discriminante $y(x)$ dado por
 \begin{center}
 	\begin{equation}
-		y(x) = \sum_{i = 1}^n \alpha_i t_i k(x, x_i) + b = \sum_{n \in \mathcal{S}} \alpha_n t_n l(x, x_n) + b
+		y(x) = \sum_{i = 1}^n \alpha_i t_i k(x, x_i) + b = \sum_{i \in \mathcal{S}} \alpha_i t_i k(x, x_i) + b
 	\end{equation}
 \end{center}
 
 \subsection{Extensão ao caso de multiclasses}
 
 A abordagem usada neste trabalho para o caso multiclasses do SVM foi o método intuitivo chamado \textit{One-versus-all} (OVA).
- Nesse método são construídos K classificadores $y_k$ cada um definindo uma
-superfície de decisão que separa a classe k das demais (por isso o nome \textit{One-versus-all}).
-Um novo x tem sua classe dada pela que o classificador $y_k$ tem maior valor, isto é
+ Nesse método são construídos $K$ classificadores $y_i$ cada um definindo uma
+superfície de decisão que separa a classe $i$ das demais (por isso o nome \textit{One-versus-all}).
+Um novo $x$ tem sua classe dada pela que o classificador $y_i$ tem maior valor, isto é
 
 \begin{center}
 	\begin{equation}
-		y(x) = \argmax_{k} y_k(x)
+		y(x) = \argmax_{i} y_i(x)
 	\end{equation}
 \end{center}
 
@@ -534,7 +535,7 @@ binário o que torna simples a construção do classificador.
 
 Na imagem abaixo é mostrado a ideia por trás do método OVA nele a classe $C^1$ é dada pelos círculos,
 $C^2$ pelos triângulos e $C^3$ pelas cruzes.
-As figuras em vermelho em cada classificador são os pontos onde $t_n = -1$.
+As figuras em vermelho em cada classificador são os pontos onde $t_i = -1$.
 
 \begin{figure}[ht] 
   \begin{subfigure}[b]{0.5\linewidth}
@@ -679,7 +680,7 @@ O corpus em questão é constituído pelos seguintes textos:
 \end{enumerate}
 
 Construindo o vocabulário e realizando a vetorização, obtém-se os vetores de frequência descritos na tabela abaixo, o
-cabeçalho da tabela representa o vocaulário.
+cabeçalho da tabela representa o vocabulário.
 
 \begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c |}
 \hline
