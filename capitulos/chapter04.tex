@@ -3,20 +3,21 @@
 Uma vez implementado os modelos de classificação, realizou-se experimentos sobre os tuítes
 classificados manualmente a fim de encontrar o melhor classificador. Além disso, decidiu-se
 comparar os resultados dos classificadores implementados neste trabalho com os já disponíveis
-na biblioteca \texttt{scikit} do Python para verificar obteria melhores resultados.
+na biblioteca \texttt{scikit} do Python para verificar qual obteria melhores resultados ou se
+não haveria diferença.	
 
-Para todos os experimentos, variou-se diversos parâmetros (os parâmetros em questão são descritos
+Para todos os experimentos, variou-se diversos parâmetros (que serão descritos
 em \ref{subsec:parameters}) a fim de encontrar a melhor combinação de parâmetros para cada 
 classificador. Essa variação foi feita utilizando a função \texttt{logspace} da biblioteca
 \texttt{numpy} que retorna valores igualmente espaçados (numa escala logarítimica) dentro do intervalo 
 especificado.
 
-\section{Análise exploratória}
+\section{Dataset}
 
 \subsection{Distribuição das classes}
 
-Antes de mais nada, analisaremos a composição do nosso conjunto de dados e como se dá
-a distribuição de classes. Na figura \ref{fig:classes} temos um histograma das classes associadas
+Antes de mais nada, será a composição do conjunto de dados e como se dá
+a distribuição de classes. Na figura \ref{fig:classes} tem-se um histograma das classes associadas
 a cada tuíte.
 
 \begin{table}[H]
@@ -45,11 +46,11 @@ a cada tuíte.
 	\end{figure}
 \end{center}
 
-Como podemos observar a partir da figura \ref{fig:classes} e tabela \ref{tab:distribution}, temos
-que enquanto as classes negativa e neutra possuem distribuição próxima (48,26\% e 47,29\% 
-respectivamente) a classe positiva corresponde a apenas 4,45\% de todos os tuítes. Mais a frente
-veremos que esse desbalanceamento entre as classes irá acarretar em um desempenho ruim por parte
-dos algoritmos de classificação, sejam os desenvolvidos para este trabalho quanto os da biblioteca
+Pode-se observar nas figura \ref{fig:classes} e tabela \ref{tab:distribution} 
+que , ao passo em que as classes negativa e neutra possuem distribuição próxima (48,26\% e 47,29\% 
+respectivamente), a classe positiva corresponde a apenas 4,45\% de todos os tuítes. No final da seção
+\ref{sec:first_experiments} será visto que esse desbalanceamento entre as classes acarretará um 
+desempenho ruim dos classificadores, sejam os desenvolvidos para este trabalho quanto os do
 \texttt{scipy}.
 
 \subsection{Características dos tuítes de cada classe}
@@ -78,7 +79,7 @@ A tabela abaixo mostra como exemplo alguns tuítes avaliados como neutro.
 \end{center}
 
 Já para os tuítes negativos, nota-se a presença de palavrões e xingamentos 
-junto de algumas \textit{hashtags} de cunho negativo como por exemplo \#ForaTemer,
+junto de \textit{hashtags} de teor negativo como por exemplo \#ForaTemer,
 além disso é comum a presença de tuítes onde as pessoas são convocadas para manifestações.
 Outros termos comuns são escravidão e retrocesso, referindo-se diretamente às reformas da previdência e terceirização.
 
@@ -100,8 +101,8 @@ Outros termos comuns são escravidão e retrocesso, referindo-se diretamente às
 	\end{tabular}
 \end{center}
 
-Assim como para os tuítes classificados como negativo, os tuítes positivos também eram 
-caracterizados pela presença de \textit{hashtags}. Sejam elas declarando apoio a um candidato
+Assim como para os tuítes classificados como negativo, os tuítes positivos também são 
+caracterizados pela presença de \textit{hashtags}, sejam elas declarando apoio a um candidato
 (como \#Aecio2018 ou \#Lula2018) ou simplesmente manifestando alguma opinião positiva. 
 
 \begin{center}
@@ -160,6 +161,21 @@ método.
 	\label{fig:kfold}
 \end{figure}
 
+Outro procedimento que foi analisado nos experimentos é se as diferentes escolhas de vetorização afetam
+as métricas (ver \ref{subsec:metrics}), todavia esse procedimento de vetorização é feito antes 
+do treinamento dos modelos e portanto não foi variado no procedimento de Cross-Validation. 
+Em \ref{sec:first_experiments} e \ref{sec:second_experiments} 
+os resultados são separados por vetorização e, ao fim de cada rodada, explica-se os resultados 
+observados.
+
+O fluxo da realização dos experimentos é descrita no diagrama abaixo:
+
+\begin{figure}[H]
+\label{fig:diagram}
+	\includegraphics[scale=0.5]{experimento_flow}
+	\caption{Passos dos experimentos}
+\end{figure}
+
 \subsection{Parâmetros avaliados}
 \label{subsec:parameters}
 
@@ -187,7 +203,8 @@ Importante ressaltar que $\lambda$ só é aplicado nos índices
 de $1$ a $m + 1$ do vetor de pesos, com o valor do termo $w_0$ não sendo penalizado.
 
 
-\section{Métricas avaliadas}
+\subsection{Métricas avaliadas}
+\label{subsec:metrics}
 
 Para a realização dos experimentos, levou-se em consideração quatro métricas
 para avaliar a eficiência dos classificadores.
@@ -210,6 +227,7 @@ para avaliar a eficiência dos classificadores.
 \end{itemize}
 
 \section{Primeira rodada de experimentos}
+\label{sec:first_experiments}
 
 Nesse primeiro experimento, avaliou-se o desempenho dos classificadores desenvolvidos quanto dos
 já disponíveis pela biblioteca \texttt{scikit} a fim de comparar o desempenho das implementações.
@@ -727,6 +745,7 @@ quantidade de tuítes nessa classe, rodou-se mais experimentos, porém dessa vez
 outras classes.
 
 \section{Segunda rodada de experimentos}
+\label{sec:second_experiments}
 
 Nesta segunda rodada de experimentos, removeu-se os elementos pertencentes à classe positiva.
 Assim como na primeira rodada, testou-se diferentes escolhas de parâmetros para cada um dos
@@ -1078,3 +1097,8 @@ de precisão, revocação e pontuação f1, pois todos os classificadores perfor
 melhor ao escolher essa vetorização. Isso se deve ao fato de o tf-idf de um termo
 dar maior ênfase aos termos característicos de um documento, facilitando a identificação
 de uma entrada que corresponda a um texto neutro ou a um negativo.
+
+\section{Comparação entre experimentos}
+
+Ao fim da última rodada dos experimentos, resolveu comparar os resultados vistos em 
+\ref{sec:first_experiments} e \ref{sec:second_experiments} para saber se
