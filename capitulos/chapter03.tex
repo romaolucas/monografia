@@ -61,7 +61,6 @@ linear é dado pela equação:
 		f(x) = w^Tx + w_0,
 	\end{equation}
 \end{center}
-
 o vetor $\tilde{w} = (w, w_0)$
 é chamado de vetor de pesos e o termo $w_0$ é chamado de viés.
 Para efeitos de contas
@@ -94,7 +93,6 @@ de máxima verossimilhança para $P(C^1 | x)$:
 		p(t | w) = \prod_{i = 1}^n y_i^{t_i}(1 - y_i)^{1 - t_i}	,
 	\end{equation}
 \end{center}
-
 com $t = (t_1, \ldots, t_n)$ e $y_i = P(C^1 | x_i)$.
 
 Uma vez que \ref{eq:likelihood} é uma função difícil de se otimizar, uma vez que possui um
@@ -102,13 +100,13 @@ produtório de funções exponenciais, toma-se o negativo do logaritmo de \ref{e
 que será a função de erro. Assim obtém-se:
 
 \begin{center}
-	\begin{equation}
+		\begin{align}
 		\begin{split}
 			\label{eq:error_logistic}
-			E(w) = - log(p(t | w)) = -log(\prod_{i = 1}^n y_i^{t_i}(1 - y_i)^{1 - t_i}	) \\
-		 	& = - \sum_{i = 1}^{n} \{t_i log(y_i) + (1 - t_i) log(1 - y_i)\} 
+			E(w) &= - log(p(t | w)) = -log(\prod_{i = 1}^n y_i^{t_i}(1 - y_i)^{1 - t_i}	) \\
+		 	&= - \sum_{i = 1}^{n} \{t_i log(y_i) + (1 - t_i) log(1 - y_i)\} 
 		\end{split}
-	\end{equation}
+		\end{align}
 \end{center}
 
 Dois métodos são comumente usados para minimizar \ref{eq:error_logistic}: 
@@ -117,7 +115,7 @@ nas subseções que seguem.
 
 Uma dúvida natural que surge ao ter que resolver um problema de otimização é não
 obter um mínimizador global, entretanto, tem-se
-função \ref{eq:error_logistic} é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq' \lambda E(w) 
+função \ref{eq:error_logistic} é convexa, isto é, $E(\lambda w + (1 - \lambda ) w') \leq \lambda E(w) 
 	+ (1 - \lambda ) w'$
  $\forall w, w' \in R^{m + 1}, \lambda \in [0, 1]$, e portanto tem-se que existe um único minimizador.
 
@@ -142,22 +140,20 @@ por:
 	\begin{equation}
 		\begin{split}
 		\label{eq:sigmoid_derivative}
-			\frac{d \sigma}{d a} = \frac{\left(d \frac{1}{1 + e^{-a}}\right)}{d a} \\
+			\frac{d \sigma}{d a} &= \frac{\left(d \frac{1}{1 + e^{-a}}\right)}{d a} \\
 				& = \frac{e^{-a}}{(1 - e^{-a})^2} = \frac{1}{1 - e^{-a}}\frac{e^{-a}}{1 - e^{-a}} \\
 				& = \sigma(a)*(1 - \sigma(a))
 		\end{split}
 	\end{equation}
 \end{center}
-
 usando \ref{eq:sigmoid_derivative} obtém-se a fórmula do gradiente de $E(w)$:
 
 \begin{center}
 	\begin{equation}\label{eq:gradient}
-		\nabla E(w) = \sum_{i =  1}^{n}(y_i - t_i)x_i \text{ ou } = X^T(y - t) \text{ em notação vetorial}
+		\nabla E(w) = \sum_{i =  1}^{n}(y_i - t_i)x_i \text{ ou } = X^T(y - t) \text{ em notação vetorial,}
 	\end{equation}
 \end{center}
-
-Com $y = (y_1, \ldots, y_n)$ e $t = (t_1, \ldots, t_n)$ onde
+com $y = (y_1, \ldots, y_n)$ e $t = (t_1, \ldots, t_n)$ onde
 $y_n = P(C^1 | x_n) = \sigma(w^Tx)$ e $t_n$ tal qual assumido no começo da seção.
 
 Utilizando o valor obtido em \ref{eq:gradient} atualiza-se $w$ usando a fórmula:
@@ -207,17 +203,15 @@ A atualização agora utiliza o hessiano da função erro que é dado por:
 	\begin{equation}
 		\begin{split}
 			\label{eq:hessian_error}
-			H = \nabla \nabla E(w) = \frac{\partial E(w)}{\partial w} \\
+			H &= \nabla \nabla E(w) = \frac{\partial \nabla E(w)}{\partial w} \\
 			& = \frac{\partial X^T(y - t)}{\partial w} =  X^T \frac{\partial y}{\partial w} \text{(t não depende de w)} \\
 			& = X^TRX
 		\end{split}
 	\end{equation}
 \end{center}
-
 com $R$ sendo uma matriz diagonal onde $R_{ii} = y_i(1 - y_i)$.
 
 Juntando \ref{eq:gradient} e \ref{eq:hessian_error}, a nova atualização é dada pela fórmula:
-
 
 \begin{equation}
 	\begin{split}
@@ -279,7 +273,7 @@ usando o fato de que a derivada de \ref{eq:softmax} com respeito a cada discrimi
 \begin{center}
 	\begin{equation}
 	\begin{split}\label{eq:softmax_derivative}
-		\frac{\partial y_i}{\partial a_j} = \frac{\partial \frac{e^{a_i}}{\sum_l e^{a_l}}}{\partial a_j}  \\
+		\frac{\partial y_i}{\partial a_j} &= \frac{\partial \frac{e^{a_i}}{\sum_l e^{a_l}}}{\partial a_j}  \\
 	& = \frac{e^{a_i}e^{a_j}}{(\sum_l e^{a_l})^2} = \frac{e^{a_i}}{\sum_l e^{a_l}}\frac{e^{a_j}}{\sum_l e^{a_l}} = y_iy_j \text{ assumindo j } \neq i  \text{ ou,}\\
 	& = \frac{e^{a_i}(\sum_l e^{a_l}) - (e^{a_i})^2}{(\sum_l e^{a_l})^2} \text{ assumindo j == i} \\
 	& = \frac{e^{a_i}(\sum_{l \neq i} e^{a_l})}{(\sum_l e^{a_l})^2} = y_i(1 - y_i)
@@ -310,8 +304,7 @@ $m \times m$ calculada pela equação:
 		X_i^TX_i
 	\end{equation}
 \end{center} 
-
-Onde $X_i$ é a i-ésima linha de $X$ e $\mathds{1}_{i == j}$ é uma função indicadora que vale 1 se
+onde $X_i$ é a i-ésima linha de $X$ e $\mathds{1}_{i == j}$ é uma função indicadora que vale 1 se
 $i$ for igual a $j$ e 0 caso contrário. Com essas equações em mãos a atualização de
 $W$ seria feita usando a fórmula:
 
@@ -347,8 +340,7 @@ Utilizando a penalização, tem-se as seguintes funções de erro, gradiente e h
 		X_i^TX_i + \lambda*I_{mK}
 	\end{dmath}
 \end{dgroup}
-
-Onde $I_{mK}$ é a matriz identidade com $mK$ linhas e $mK$ colunas.
+onde $I_{mK}$ é a matriz identidade com $mK$ linhas e $mK$ colunas.
 
 \section{Support Vector Machine}
 
@@ -384,7 +376,7 @@ superfície é dado pela fórmula
 Na descrição inicial do problema será tratado o caso em que o conjunto $X$ linearmente separável, 
 o que indica que é possível obter uma superfície que separe sem erro todas as classes para, em
 seguida, tratar o caso real que é o do conjunto que não é linearmente separável.
-O fato de o conjunto ser linearmente separável garante que $t_iy(x_i) > 0 \forall i$.
+O fato de o conjunto ser linearmente separável garante que $t_iy(x_i) > 0,$ $\forall i$.
 Como o problema em questão é maximizar a margem é equivalente a querer maximizar
 a distância do ponto mais próximo à superfície de decisão, como dado pela fórmula abaixo:
 
@@ -449,7 +441,7 @@ acima. Isto é feito seguindo os seguintes passos
 
 \begin{enumerate}
 	\item Introduz-se multiplicadores de Lagrange $\alpha_i$ e $\mu_i$ e obtém-se o 
-	Lagrangiano com as restrições
+	Lagrangiano com as restrições\cite{lagrange_mult}
 		\begin{dgroup}
 			\begin{dmath}
 				L(w, b, \xi) = \frac{1}{2}||w||^2 + C\sum_{i = 1}^n\xi_i - \sum_{i = 1}^n \alpha_i\{t_i(w^Tx_i + b) - 1 + \xi_i\} - \sum_{i = 1}^n \mu_i \xi_i
@@ -628,22 +620,46 @@ para expressar opiniões sobre diversos assuntos, incluindo política.
 
 Para realizar a extração das informações do texto, existe uma etapa de pré-processamento na qual
 cada texto é transformado num vetor numérico para então ser processado por algum algoritmo de
-classificação. Neste trabalho foi escolhido o modelo \textit{bag of words} (BOW). No modelo, 
-é construída uma matriz de entrada onde cada linha i representa um documento (texto sobre o qual
-quer extrair a opinião) e as colunas representam a frequência de um termo, o conjunto de todos os textos é chamado de \textit{corpus}.
+classificação, as mais famosas são o modelo \textit{bag of words} (BOW) e o n-grama. 
 
-Uma alternativa ao BOW seria o modelo de N-grama, nele os termos não são apenas as palavras, mas
-um conjunto de n palavras juntas, o que traz mais informação pelo fato de juntar substantivo e verbo, substantivo e adjetivo, por exemplo, entretanto acaba gerando um vetor de \textit{features}
-ainda maior que, consequentemente, faz com que os algoritmos demorem mais para convergir.
+
+Antes de obter um vetor de \textit{features}, é feito um pré-processamento no documento removendo 
+\textit{stop-words} (palavras muito usadas na língua portuguesa como artigos e preposições), caracteres 
+especiais, adicionando espaços antes e depois  de pontuações e transformando
+em um vetor de \textit{tokens} com cada token representando as palavras do texto. 
+Uma vez que foi obtido o vetor de \textit{tokens}, é removido todo 
+elemento que seja apenas espaço e pontuação.
+
+Na abordagem n-grama os termos não são apenas as palavras, mas
+um conjunto de $n$ palavras juntas, o que traz mais informação pelo fato de juntar substantivo e verbo, substantivo e adjetivo, por exemplo, entretanto acaba gerando um vetor de \textit{features}
+ainda maior que, consequentemente, faz com que os algoritmos demorem mais para convergir \cite{ngram}. A figura 
+\ref{fig:ngram} exemplifica o funcionamento do n-grama.
+
+
+\begin{figure}[H]
+	\centering	
+	\includegraphics[scale=0.5]{n_gram}
+	\caption{Funcionamento do n-grama para $n = 1, 2$ e $3$}
+	\label{fig:ngram}
+\end{figure}
+
+Na abordagem usando o BOW, constrói-se uma matriz de entrada onde cada linha i representa um documento 
+(texto sobre o qual quer extrair a opinião) e as colunas representam a frequência de um termo, o 
+conjunto de todos os textos é chamado de \textit{corpus} \cite{bow}. O funcionamento do BOW é ilustrado em \ref{fig:bow}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{bow}
+	\caption{Funcionamento do \textit{Bag-of-Words}}
+	\label{fig:bow}
+\end{figure}
+
 A escolha pelo BOW foi tida baseada no compromisso entre desempenho e performance do algoritmo.
 
-Antes de obter um vetor numérico, é feito um pré-processamento no documento removendo artigos, 
-adicionando espaços antes e depois de pontuações e transformando em um vetor de tokens. Uma
-vez que foi obtido o vetor de \textit{tokens}, é removido todo elemento que seja apenas espaço e pontuação.
-Em seguida, monta-se uma nova \textit{string} juntando todas as \textit{tokens} usando espaços
-para então montar um vetor de frequência a partir do novo \textit{corpus}.
+Após tokenizar os textos, monta-se uma nova \textit{string} juntando todas as \textit{tokens} usando espaços para então montar um vetor de frequência a partir do novo \textit{corpus} higienizado.
 
-A frequência pode ser uma medida simples como a quantidade de vezes em que um termo j aparece no documento
+A medida de frequência de um termo 
+pode ser uma medida simples como a quantidade de vezes em que um termo j aparece no documento
 i ou se o termo j aparece no documento i (nesse caso cada vetor de entrada seria um vetor binário) bem
 como pode ser uma medida mais complexa como tf-idf (\textit{term frequency - inverse document frequency}).
 A relação entre os métodos de computar a frequência e o desempenho dos algoritmos de classificação serão
@@ -651,7 +667,7 @@ exibidas no capítulo seguinte.
 
 O método tf-idf baseia-se na frequência de cada termo ponderada pela frequência inversa no documento,
 que é usada para mensurar o quão importante um termo é em um documento (por exemplo a palavra "um" em
-um conjunto de textos em português aparece várias vezes, apesar de ter uma baixa importância).
+um conjunto de textos em português aparece várias vezes, apesar de ter uma baixa importância) \cite{tf-idf}. 
 Ele pode ser calculado pelas expressões:
 
 \begin{center}
@@ -700,8 +716,11 @@ Vetor 2 & 0.18 & 0 & 0.18 & 0.48 & 0.18 & 0.18 & 0 & 0 & 0 & 0  \\ \hline
 Vetor 3 & 0 & 0 & 0 & 0 & 0.18 & 0.18 & 0.48 & 0.95 & 0.48 & 0.48  \\ \hline
 \end{tabular}
 
-O procedimento de obtenção dos vetores de \textit{features} a partir do novo \textit{corpus} pode
-ser realizado utilizando as bibliotecas \texttt{scikit-learn} e \texttt{nltk} do Python.
+
+O procedimento da obtenção do vocabulário utilizando o BOW e vetorização dos textos, independente da
+medida de frequência, foi feito utilizando o módulo \texttt{feature_extraction} da biblioteca
+\texttt{scikit-learn}. Um exemplo de código onde é realizado todo o processo de vetorização descrito
+nesta subseção pode ser encontrado em \url{https://github.com/romaolucas/bow}.
 
 \subsection{Classificação manual da opinião}
 
@@ -740,9 +759,7 @@ Para a modelagem de dados construiu-se dois modelos: um para tuítes e outro par
 as opiniões.
 Na modelagem, considerou-se que cada usuário irá classificar apenas textos que não 
 possuem uma classificação, não só para evitar ter que lidar com opiniões divergentes em um texto,
-mas também para garantir um maior número de dados para o treinamento. Uma possível melhoria
-do sistema seria a possibilidade de mais usuários avaliarem um mesmo conjunto de textos para
-garantir um consenso na hora de associar uma opinião a um texto.
+mas também para garantir um maior número de dados para o treinamento. 
 
 O CLAM possui o seguinte fluxo para a classificação:
 
