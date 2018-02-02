@@ -1,5 +1,17 @@
 \chapter{Considerações finais}
 
+Ao fim deste trabalho, implementou-se versões do SVM e da regressão logística
+tanto para o caso binário quanto o de várias classes e, ao fim dos experimentos,
+teve-se que os modelos apresentaram uma acurácia de $68,3\%$ para o caso
+de três classes e $70,4\%$ no caso binário, valores próximos aos
+obtidos pelas implementações da biblioteca \texttt{scikit-learn}, além de apresentar
+valores médios próximos para as outras médias avaliadas.
+
+Além da implementação dos classificadores e dos experimentos realizados, desenvolveu-se o CLAM,
+ferramenta \textit{open source} criada com o intuito de facilitar a etapa de classificação manual
+das opiniões de textos, disponível em \url{https://github.com/romaolucas/manual-classifier-helper}.
+Em \ref{chap:clam} foi escrito um tutorial de como subir uma instância do CLAM no Heroku.
+
 Ao fim das rodadas de experimentos, obteve-se um bom classificador
 para as classes mais presentes do nosso conjunto de dados que conciliava
 não só uma boa acurácia, mas também com um bom compromisso entre precisão e
@@ -15,9 +27,11 @@ da taxa de falso negativos, entretanto é importante ressaltar que consequenteme
 a precisão do algoritmo pois com mais elementos classificados como positivos, maior a chance
 de falso positivos.
 
-Uma possível melhoria
-do sistema seria a possibilidade de mais usuários avaliarem um mesmo conjunto de textos para
-garantir um consenso na hora de associar uma opinião a um texto.
+Para o CLAM uma possível melhoria a ser implementada seria a possibilidade de mais usuários avaliarem
+um mesmo conjunto de textos para garantir um consenso na hora de associar uma opinião a um texto.
+Importante ressaltar que o sistema já foi desenvolvido preparado para suportar essa funcionalidade,
+bastaria modificar a listagem de textos a serem classificados para incluir aqueles que já possuem
+uma avaliação e aqueles que não possuem ainda.
 
 Percebeu-se ao longo deste trabalho que mais importante do que um bom entendimento
 do funcionamento de cada classificador é analisar melhor os dados e achar elementos

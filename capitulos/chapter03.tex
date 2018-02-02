@@ -216,7 +216,9 @@ Juntando \ref{eq:gradient} e \ref{eq:hessian_error}, a nova atualização é dad
 \begin{equation}
 	\begin{split}
 		w^{ (novo) } & = w^{ (antigo) } - H^{-1} \nabla E(w) \\
-		& = (X^T R X)^{-1}[(X^T R X)w^{ (antigo) } - X^T(y - t)] \text{ substituindo os valores de \ref{eq:gradient} e \ref{eq:hessian_error}} 
+		& = (X^T R X)^{-1}[(X^T R X)w^{ (antigo) } - X^T(y - t)] 
+		\\		
+		&\text{ (substituindo os valores de \ref{eq:gradient} e \ref{eq:hessian_error})} 
 	\end{split}
 \end{equation}
 
@@ -661,11 +663,11 @@ Após tokenizar os textos, monta-se uma nova \textit{string} juntando todas as \
 A medida de frequência de um termo 
 pode ser uma medida simples como a quantidade de vezes em que um termo j aparece no documento
 i ou se o termo j aparece no documento i (nesse caso cada vetor de entrada seria um vetor binário) bem
-como pode ser uma medida mais complexa como tf-idf (\textit{term frequency - inverse document frequency}).
+como pode ser uma medida mais complexa como TF-IDF (\textit{term frequency - inverse document frequency}).
 A relação entre os métodos de computar a frequência e o desempenho dos algoritmos de classificação serão
 exibidas no capítulo seguinte.
 
-O método tf-idf baseia-se na frequência de cada termo ponderada pela frequência inversa no documento,
+O método TF-IDF baseia-se na frequência de cada termo ponderada pela frequência inversa no documento,
 que é usada para mensurar o quão importante um termo é em um documento (por exemplo a palavra "um" em
 um conjunto de textos em português aparece várias vezes, apesar de ter uma baixa importância) \cite{tf-idf}. 
 Ele pode ser calculado pelas expressões:
@@ -685,7 +687,7 @@ Ele pode ser calculado pelas expressões:
 \end{center}
 
 Abaixo será dado um exemplo de como funciona o processo de vetorização por frequências e por
-tf-idf.
+TF-IDF.
 
 O corpus em questão é constituído pelos seguintes textos:
 

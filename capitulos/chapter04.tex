@@ -9,7 +9,7 @@ não haveria diferença.
 Para todos os experimentos, variou-se diversos parâmetros (que serão descritos
 em \ref{subsec:parameters}) a fim de encontrar a melhor combinação de parâmetros para cada 
 classificador. Essa variação foi feita utilizando a função \texttt{logspace} da biblioteca
-\texttt{numpy} que retorna valores igualmente espaçados (numa escala logarítimica) dentro do intervalo 
+\texttt{numpy} que retorna valores igualmente espaçados (numa escala logarítmica) dentro do intervalo 
 especificado.
 
 \section{Dataset}
@@ -71,7 +71,7 @@ A tabela abaixo mostra como exemplo alguns tuítes avaliados como neutro.
 		\hline
 		andrcolett & Transposição do rio São Francisco, reforma do ensino médio/ da previdência , operação carne fraca, terceirização ... Enem vai bombar esse ano \\
 		\hline
-		VictoorAugustoo & Via @estadao : Manifestantes protestam em capitais do País contra reforma da Previdência e terceirização - http:/ln.is/estadao.com.brb29w1 \\
+		VictoorAugustoo & Via @estadao : Manifestantes protestam em capitais do País contra reforma da Previdência e terceirização - http:/ln.is/estadão.com.brb29w1 \\
 		\hline
 		EdmilsonPequeno & O meu deputado @luizcoutopt votou contra a terceirização e é contra a reforma da previdência \\
 		\hline
@@ -232,7 +232,7 @@ para avaliar a eficiência dos classificadores.
 Nesse primeiro experimento, avaliou-se o desempenho dos classificadores desenvolvidos quanto dos
 já disponíveis pela biblioteca \texttt{scikit} a fim de comparar o desempenho das implementações.
 Além disso, testou-se diferentes escolhas de parâmetro para cada abordagem de vetorizar o corpus
-que no caso foram vetor binário, vetor de frequência e vetor com os valores tf-idf conforme descrito
+que no caso foram vetor binário, vetor de frequência e vetor com os valores TF-IDF conforme descrito
 em \ref{subsec:featurization}. 
 Note que neste primeiro experimento, todos os dados foram tratados \textit{in-natura}, sem nenhum método de seleção de características ou qualquer abordagem semelhante a fim de melhorar o desempenho.
 
@@ -330,7 +330,7 @@ resultados:
 	\end{tabular}
 \end{table}
 
-\textbf{Tf-idf}
+\textbf{TF-IDF}
 
 \begin{table}[H]
 	\centering
@@ -605,7 +605,7 @@ resultados no conjunto de testes:
 	\end{tabular}
 \end{table}
 
-\textbf{Tf-idf}
+\textbf{TF-IDF}
 
 \begin{table}[H]
 	\centering
@@ -648,6 +648,8 @@ testes:
 		média / total   &    0.63   &   0.66   &   0.64   &    647 \\
 		\hline
 	\end{tabular}
+	\caption{Métricas para o melhor classificador do \texttt{scikit} no caso de três classes}
+	\label{tab:best_scikit}
 \end{table}
 
 \begin{table}[H]
@@ -689,13 +691,13 @@ $\lambda = 1$ obtendo seguintes resultados no conjunto de testes:
 \end{table}
 
 Observa-se que, para ambos os algoritmos tem-se que nenhum valor foi classificado como
-positivo quando usou-se a vetorização através do valor tf-idf de cada termo, apesar de ainda
+positivo quando usou-se a vetorização através do valor TF-IDF de cada termo, apesar de ainda
 apresentar desempenho médio aceitável. 
 
-Isso se deve ao fato de vetorização por tf-idf
+Isso se deve ao fato de vetorização por TF-IDF
 leva-se em consideração a relevância das palavras na sentença como um todo e, possivelmente
 algumas palavras associadas a documentos positivos estão também associadas
-a documentos neutros e, consequentemente, não possuem um valor tf-idf alto, aliado ao fato de o vocabulário
+a documentos neutros e, consequentemente, não possuem um valor TF-IDF alto, aliado ao fato de o vocabulário
 ser montado levando em conta apenas as 5000 palavras com melhores pontuações ou presença, portanto
 algumas palavras explicitamente associadas a documentos positivos não compuseram o vetor de
 \textit{features}.
@@ -751,7 +753,7 @@ Nesta segunda rodada de experimentos, removeu-se os elementos pertencentes à cl
 Assim como na primeira rodada, testou-se diferentes escolhas de parâmetros para cada um dos
 algoritmos e testou-se com os dados \textit{in natura}. Como viu-se na primeira rodada de experimentos
 que havia pouca diferença entre a vetorização por frequência e presença do termo, optou-se por testar
-apenas usando frequência e tf-idf.
+apenas usando frequência e TF-IDF.
 
 \subsection{Implementações próprias}
 
@@ -835,7 +837,7 @@ o classificador no conjunto de testes teve os seguintes resultados:
 	\end{tabular}
 \end{table}
 
-\textbf{Tf-Idf}
+\textbf{TF-IDF}
 
 \begin{table}[H]
 	\centering
@@ -913,10 +915,10 @@ os seguintes resultados:
 \end{table}
 
 Por fim da rodada de testes com as implementações próprias dos classificadores, chegou
-a conclusão de que o algoritmo SVM em conjunto com a vetorização por tf-idf trouxe um bom
+a conclusão de que o algoritmo SVM em conjunto com a vetorização por TF-IDF trouxe um bom
 compromisso entre acurácia, precisão e revocação tendo todas as suas médias acima de 70\%
 para todas as métricas sendo assim um classificador com alta probabilidade de trazer resultados
-relevantes para novos documentos. Além disso o procedimento de validação cruzada nos garante
+relevantes para novos documentos. Além disso o procedimento de validação cruzada garante
 que o classificador possui capacidade de generalização, uma vez que realiza o treinamento e
 validação com conjuntos diferentes mais de uma vez.
 
@@ -1008,7 +1010,7 @@ média de 69,6\% e para o conjunto de testes deu os seguintes resultados:
 \end{table}
 
 
-\textbf{Tf-idf}
+\textbf{TF-IDF}
 
 \begin{table}[H]
 	\centering
@@ -1090,15 +1092,75 @@ ao contrário das implementações próprias, o melhor classificador, no caso o 
 com kernel RBF e vetorização por frequência não obtiveram os melhores valores para
 todas as métricas avaliadas, uma vez que o melhor classificador em termos de
 precisão, revocação e pontuação f1 foi a regressão logística usando a vetorização
-com tf-idf, que por sua vez apresentou resultados acima de 70\%.
+com TF-IDF, que por sua vez apresentou resultados acima de 70\%.
 
-Percebemos também que a vetorização por tf-idf acaba sendo melhor para as métricas
+Percebemos também que a vetorização por TF-IDF acaba sendo melhor para as métricas
 de precisão, revocação e pontuação f1, pois todos os classificadores performaram
-melhor ao escolher essa vetorização. Isso se deve ao fato de o tf-idf de um termo
+melhor ao escolher essa vetorização. Isso se deve ao fato de o TF-IDF de um termo
 dar maior ênfase aos termos característicos de um documento, facilitando a identificação
 de uma entrada que corresponda a um texto neutro ou a um negativo.
 
 \section{Comparação entre experimentos}
 
 Ao fim da última rodada dos experimentos, resolveu comparar os resultados vistos em 
-\ref{sec:first_experiments} e \ref{sec:second_experiments} para saber se
+\ref{sec:first_experiments} e \ref{sec:second_experiments} para saber ver as mudanças
+efetivas nos resultados com e sem a classe positiva no \textit{dataset}.
+
+Importante ressaltar que nessa comparação serão usados apenas os melhores resultados de
+de cada rodada, separando apenas as comparações entre as implementações próprias
+e as implementações do \texttt{scikit}.
+
+\subsection{Implementações Próprias}
+
+Nas implementações próprias, comparou-se as duas versões do SVM com kernel RBF
+, uma com $\gamma = 0.1$ e $C = 1$ (caso multiclasses) e outra com $C$ e $\gamma$ iguais a 1 (caso 
+binário).  
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{l l l}
+	& Multiclasses & Binário \\
+	\hline
+	Acurácia Média & 68,3\% & 70,4\% \\
+	\hline
+	Precisão Média & 0.67 & 0.73 \\
+	\hline
+	Revocação Média & 0.65 & 0.72 \\
+	\hline
+	F1-Score Média & 0.64 & 0.72 \\
+	\hline
+	\end{tabular}
+\end{table}
+
+Nas implementações próprias, nota-se melhora significativa ao remover a classe positiva, ao passo
+em que todos os valores médios aumentaram em pelo menos 2\% em comparação com o caso multiclasses.
+Isso se deve ao fato de que, no caso multiclasses, muitos elementos da classe positiva eram
+classificados erroneamente, portanto abaixavam os valores de precisão, revocação e F1-Score médios.
+
+\subsection{Implementações do \texttt{scikit}}
+
+Já para as versões do \texttt{scikit}, comparou-se também duas versões do SVM,
+uma com kernel polinomial, $C = 1$ e grau 5 com coeficiente 5 (caso multiclasses) com
+outra utilizando o kernel RBF, $C = 1$ e $\gamma = 0.158$ (caso binário).
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{l l l}
+	& Multiclasses & Binário \\
+	\hline
+	Acurácia Média & 67,8\% & 71,3\%  \\
+	\hline
+	Precisão Média & 0.63 & 0.66  \\
+	\hline
+	Revocação Média & 0.66 & 0.66 \\
+	\hline
+	F1-Score Média & 0.64 & 0.66 \\
+	\hline
+	\end{tabular}
+\end{table}
+
+Para as implementações do \texttt{scikit}, nota-se que ao passo em que a acurácia média aumentou em
+quase 4\%, as demais métricas não obtiveram aumento significativo em relação ao caso de três classes,
+porém ao olhar para \ref{tab:best_scikit} observa-se que para a classe positiva não teve nenhum 
+elemento atribuído a ela, portanto as médias foram realizadas levando em consideração apenas as duas
+classes predominantes, justificando a semelhança de valores com a apresentada no caso binário.
