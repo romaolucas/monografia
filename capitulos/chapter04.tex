@@ -139,18 +139,15 @@ vez que uma escolha de parâmetros que tenha bons números em determinado conjun
 indica que ele possui uma boa generalização, isto é, apresentará uma boa precisão para novos dados.
 
 A fim de garantir maior generalização, utiliza-se um método de validação chamado de 
-validação cruzada, que se consiste de um modo de dividir o conjunto de dados e testá-lo com
-um conjunto de validação. Uma primeira abordagem da validação cruzada seria dividir nosso conjunto
-em três: um de treino, um de validação e outro de teste, assim testaríamos as escolhas de parâmetros
-no conjunto de validação e, por fim, mediríamos a performance do melhor no conjunto de teste.
+validação cruzada, em particular a forma k-fold foi usada. 
 
-Outra abordagem seria ainda manter a divisão do conjunto de dados em conjunto de treino e teste
-porém realizar esse procedimento diversas vezes alternando as porções que irão corresponder a
-cada conjunto. Tal método é chamado de k-fold. No k-fold divide-se o conjunto total em k partições
-e, a cada iteração, é construído um conjunto de teste usando uma das partições enquanto as k-1
-serão o de treino. O procedimento de treinamento é realizado k vezes e, a escolha de parâmetros
-com melhor desempenho médio será a escolhida. A figura \ref{fig:kfold} mostra o funcionamento do
-método.
+Nessa forma de validação cruzada, o conjunto de dados é dividido em conjunto de
+treino e de teste. O conjunto de treino, por sua vez, é dividido em $k$ partições de igual tamanho
+sendo $k - 1$ delas usadas efetivamente para treinar o modelo e a partição restante é usada para
+validá-lo. Esse procedimento de dividir o conjunto de treino em $k$ partições e separar entre partição
+de treino e validação é realizado $k$ vezes e, por último, a escolha de modelo que apresentou melhor
+desempenho é escolhida. A figura \ref{fig:kfold} mostra o funcionamento do
+método\cite{cross-validation}.
 
 \begin{figure}[H]
 	\begin{center}
@@ -190,17 +187,15 @@ parâmetros para cada um. Os seguintes kernels foram utilizados:
 	\item Kernel Polinomial: $K(x, y) = (x^Ty + c)^d$
 \end{itemize}
 
-Em comum a todos os kernels, variou-se o parâmetro C do SVM utilizado para penalizar os valores
+Em comum a todos os kernels, variou-se o parâmetro $C$ do SVM utilizado para penalizar os valores
 mal classificados. Já para o RBF, varia-se o parâmetro $\gamma$. Por último para o polinomial,
-varia-se tanto o parâmetro d que determina o grau do polinômio (aqui variamos entre 3, 4 e 5) e o coeficiente.
+varia-se tanto o parâmetro d que determina o grau do polinômio (aqui variou-se entre 3, 4 e 5) e o coeficiente.
 
 \textbf{Regressão Logística}
 
-Para a regressão logística, adicionamos um parâmetro extra $\lambda$ que será usado para penalizar
-nosso vetor de pesos e assim, evitar \textit{overfitting}, que ocorre quando um modelo apresenta
-baixo erro no conjunto de treino, porém baixa generalização. 
-Importante ressaltar que $\lambda$ só é aplicado nos índices
-de $1$ a $m + 1$ do vetor de pesos, com o valor do termo $w_0$ não sendo penalizado.
+Para a regressão logística, variou-se o parâmetro de penalização $\lambda$ responsável por evitar 
+\textit{overfitting}. Mais detalhes sobre o funcionamento da regressão logística com penalização
+pode ser encontrado em \ref{subsec:overfitting}.
 
 
 \subsection{Métricas avaliadas}
@@ -212,14 +207,14 @@ para avaliar a eficiência dos classificadores.
 \begin{itemize}
 	\item Acurácia: taxa calculada pela quantidade de dados corretamente classificados
 	sobre o total de dados. Quanto mais próximo de 1, melhor.
-	\item Precisão: taxa calculada pela expressão $\frac{tp}{tp + fp}$ onde tp corresponde
-	aos verdadeiro positivos, isto é, elementos corretamente classificados como da classe C
-	e fp são elementos erroneamente classificados na classe C. Uma classe ter precisão alta
+	\item Precisão: taxa calculada pela expressão $\frac{tp}{tp + fp}$ onde $tp$ corresponde
+	aos verdadeiro positivos, isto é, elementos corretamente classificados como da classe $C$
+	e $fp$ são elementos erroneamente classificados na classe $C$. Uma classe ter precisão alta
 	significa que possui um baixo número de amostras classificadas erroneamente nela.
-	\item Revocação: taxa calculada pela expressão $\frac{tp}{tp + fn}$ onde tp corresponde
-	aos verdadeiro positivos, como na precisão e fn corresponde
+	\item Revocação: taxa calculada pela expressão $\frac{tp}{tp + fn}$ onde $tp$ corresponde
+	aos verdadeiro positivos, como na precisão e $fn$ corresponde
 	aos falso negativos, isto é, os elementos incorretamente classificados como não pertencentes
-	a uma classe C quando na verdade pertencem. Uma alta revocação indica que muitos elementos
+	a uma classe $C$ quando na verdade pertencem. Uma alta revocação indica que muitos elementos
 	de determinada classe foram corretamente classificados como pertencentes a ela.
 	\item Pontuação F1: pode ser interpretado como uma média harmônica entre precisão e revocação é dado
 	pela expressão: $2*\frac{precis*revocação}{precis + revocação}$. Assim como as demais medidas, quanto
@@ -238,7 +233,7 @@ Note que neste primeiro experimento, todos os dados foram tratados \textit{in-na
 
 \subsection{Implementações próprias}
 
-Dos algoritmos desenvolvidos neste trabalho, testou-se o SVM variando o valor de C entre valores
+Dos algoritmos desenvolvidos neste trabalho, testou-se o SVM variando o valor de $C$ entre valores
 do intervalo $[10^{-2}, 10^5]$, kernels polinomial, RBF e linear. Para o kernel polinomial foi utilizado
 polinômios de grau 3, 4 e 5 e coeficientes 1, 10 e 100. Para o kernel RBF testou valores de $\gamma$
 dentro do intervalo $[10^{-9}, 10^3]$. Para cada escolha de vetorização, será colocado apenas os
@@ -251,7 +246,7 @@ melhores resultados para cada kernel.
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,1 & & 0,678 \\
 		\hline
@@ -264,7 +259,7 @@ melhores resultados para cada kernel.
 	\end{tabular}
 \end{table}
 
-A escolha de parâmetros que obteve maior classificação foi o kernel RBF com C = 1 e $\gamma = 0,1$
+A escolha de parâmetros que obteve maior classificação foi o kernel RBF com $C = 1$ e $\gamma = 0,1$
 com acurácia média de 68,3\%. Usando o classificador com estes parâmetros no conjunto de testes
 obteve-se o seguinte resultado:
 
@@ -292,7 +287,7 @@ obteve-se o seguinte resultado:
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,146 & & 0,675 \\
 		\hline
@@ -309,7 +304,7 @@ obteve-se o seguinte resultado:
 	\end{tabular}
 \end{table}
 
-Como melhor escolha de parâmetros, tivemos o kernel RBF com C = 464,16 e $\gamma = 0,1$ com
+Como melhor escolha de parâmetros, tivemos o kernel RBF com $C = 464,16$ e $\gamma = 0,1$ com
 67,7\% de acurácia. Utilizando os parâmetros no conjunto de testes, obteve-se os seguintes
 resultados:
 
@@ -337,7 +332,7 @@ resultados:
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,146 & & 0,651 \\
 		\hline
@@ -355,7 +350,7 @@ resultados:
 \end{table}
 
 Assim como as demais escolhas de vetorização, a melhor escolha de kernel foi o RBF.
-Com valor de C = 1778,279 e $\gamma = 2,15*10^{-4}$ conseguiu-se acurácia média de 66,7\%.
+Com valor de $C = 1778,279$ e $\gamma = 2,15*10^{-4}$ conseguiu-se acurácia média de 66,7\%.
 Utilizando esse classificador no conjunto de testes, obtiveram-se os seguintes resultados:
 
 \begin{table}[H]
@@ -375,10 +370,10 @@ Utilizando esse classificador no conjunto de testes, obtiveram-se os seguintes r
 	\end{tabular}
 \end{table} 
 
-Pelos resultados dos experimentos, tivemos que a melhor escolha de classificador e vetorização
-foi o kernel RBF com vetorização por frequência com 68,3\% de acurácia. Ao observarmos as outras
-métricas, percebemos que os valores médios para precisão, revocação e pontuação f1 estão razoáveis,
-entretanto ao olharmos para os valores de revocação e pontuação f1 da classe positiva, vemos
+Pelos resultados dos experimentos, viu-se que a melhor escolha de classificador e vetorização
+foi o kernel RBF com vetorização por frequência com 68,3\% de acurácia. Ao observar as outras
+métricas, percebe-se que os valores médios para precisão, revocação e pontuação f1 estão razoáveis,
+entretanto ao olhar para os valores de revocação e pontuação f1 da classe positiva, vê-se
 que estes são quase 0 ao passo que a precisão é 1. Isso indica que apenas poucos elementos foram
 colocados nesta classe corretamente e nenhum foi colocado incorretamente, porém a maioria dos
 elementos desta classe foram marcados nas demais classes.
@@ -409,12 +404,12 @@ o funcionamento do classificador.
 	\end{tabular}
 \end{table} 
 
-Para os tuítes negativos que foram erroneamente classificados, percebemos que o classificador os
+Para os tuítes negativos que foram erroneamente classificados, percebe-se que o classificador os
 colocou na classe neutra pela maior presença de palavras encontradas em tuítes de notícias, no segundo
-caso percebe-se que há uma ambiguidade no tuíte e, enquanto foi classificado com negativo, poderia
+caso, há uma ambiguidade no tuíte e, enquanto foi classificado com negativo, poderia
 ter sido também classificado como neutro por outra pessoa.
 
-Na classe neutra, temos que em um há uma ambiguidade no tuíte e não possui informação suficiente
+Na classe neutra, tem-se que em um há uma ambiguidade no tuíte e não possui informação suficiente
 para avaliar sua polaridade, porém no segundo caso pode-se dizer que o tuíte foi classificado corretamente
 pois o classificador levou em conta que chamou a reforma de previdência e a terceirização de desmonte
 de direitos, apesar de o tuíte em si apenas relatar o que foi dito.
@@ -426,14 +421,9 @@ de fatos.
 
 \subsection{Implementações do \texttt{scikit}}
 
-Abaixo, separaremos os testes baseados em como a obtenção do vetor de \textit{features} foi feita
-ao invés dos algoritmos, uma vez que para todos esses realizou-se os mesmos testes. Importante 
-ressaltar que só serão colocados aqui os melhores resultados de cada um, uma vez que existe uma
-grande quantidade de resultados. 
-
-Os resultados dos experimentos serão comentados apenas ao final desta subseção, após mostrar
-os valores encontrados para todas as formas de vetorização.
-
+Assim como para as implementações próprias, será separado cada teste por forma de vetorização para
+verificar qual escolha de parâmetros é melhor em cada. Ao fim será comentado os resultados gerais
+deste experimento.
 
 \textbf{Frequência}
 
@@ -442,7 +432,7 @@ os valores encontrados para todas as formas de vetorização.
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,1 & & 0,666 \\
 		\hline
@@ -529,7 +519,7 @@ Deu os seguintes resultados no conjunto de testes:
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,1 & & 0,658 \\
 		\hline
@@ -547,7 +537,7 @@ Deu os seguintes resultados no conjunto de testes:
 \end{table}
 
 Assim como para o vetor de frequências, a melhor escolha de parâmetros encontrada na validação
-cruzada foi C = 0,1 e kernel linear. Executando no conjunto de testes obtiveram-se os seguintes
+cruzada foi $C = 0,1$ e kernel linear. Executando no conjunto de testes obtiveram-se os seguintes
 resultados:
 
 \begin{table}[H]
@@ -612,7 +602,7 @@ resultados no conjunto de testes:
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 1 & & 0,658 \\
 		\hline
@@ -768,7 +758,7 @@ obtidos.
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,1 & & 0,679 \\
 		\hline
@@ -785,7 +775,7 @@ obtidos.
 	\end{tabular}
 \end{table}
 
-Nesta rodada, escolheu-se usar o kernel RBF com $\gamma = 0,1$ e C = 1 que obteve 69,8\% de acurácia média. No
+Nesta rodada, escolheu-se usar o kernel RBF com $\gamma = 0,1$ e $C = 1$ que obteve 69,8\% de acurácia média. No
 conjunto de testes teve os seguintes resultados:
 
 \begin{table}[H]
@@ -844,7 +834,7 @@ o classificador no conjunto de testes teve os seguintes resultados:
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,1 & & 0,688 \\
 		\hline
@@ -861,7 +851,7 @@ o classificador no conjunto de testes teve os seguintes resultados:
 	\end{tabular}
 \end{table}
 
-Os melhores parâmetros para esta rodada de testes foi o kernel RBF com $\gamma$ e C valendo 1 que
+Os melhores parâmetros para esta rodada de testes foi o kernel RBF com $\gamma$ e $C$ valendo 1 que
 obteve acurácia média de 70,4\%. Utilizando estes parâmetros no conjunto de testes obtiveram-se os
 seguintes valores:
 
@@ -940,7 +930,7 @@ testou o kernel RBF.
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 0,1 & & 0,699 \\
 		\hline
@@ -957,7 +947,7 @@ testou o kernel RBF.
 	\end{tabular}
 \end{table}
 
-Como melhor resultado tivemos o kernel RBF com $\gamma = 0,158$ com acurácia média
+Como melhor resultado teve-se o kernel RBF com $\gamma = 0,158$ e $C = 1$ com acurácia média
 de 71,3\%. Utilizando essa escolha de parâmetros no conjunto de testes, obtiveram-se
 os seguintes resultados:
 
@@ -1017,7 +1007,7 @@ média de 69,6\% e para o conjunto de testes deu os seguintes resultados:
 	\caption{Resultados para o SVM}
 	\begin{tabular}{l l l l}
 		\hline
-		Kernel & C & parâmetros & Acurácia média \\
+		Kernel & $C$ & parâmetros & Acurácia média \\
 		\hline
 		Linear & 1 & & 0,702 \\
 		\hline
@@ -1034,7 +1024,7 @@ média de 69,6\% e para o conjunto de testes deu os seguintes resultados:
 	\end{tabular}
 \end{table}
 
-Como melhor escolha de parâmetros tivemos o kernel RBF com $\gamma = 0,158$ com 71\% de
+Como melhor escolha de parâmetros tivemos o kernel RBF com $\gamma = 0,158$ e $C = 1$ com 71\% de
 acurácia média. Testando no conjunto de testes obtiveram-se os seguintes resultados:
 
 \begin{table}[H]
