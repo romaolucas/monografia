@@ -138,29 +138,36 @@ conjunto de treino e conjunto de testes acabaria por dar uma escolha enviesada d
 vez que uma escolha de parâmetros que tenha bons números em determinado conjunto de testes não
 indica que ele possui uma boa generalização, isto é, apresentará uma boa precisão para novos dados.
 
-A fim de garantir maior generalização, utiliza-se um método de validação chamado de 
-validação cruzada, em particular a forma k-fold foi usada. 
+Para testar o desempenho do classificador sobre as métricas, separa-se parte do conjunto de dados
+que permanecerá intocável até o final do processo de treinamento. 
+Este conjunto é denominado \textit{conjunto de testes} e será usado para medir o desempenho do
+classificador obtido ao fim do treinamento.
 
-Nessa forma de validação cruzada, o conjunto de dados é dividido em conjunto de
-treino e de teste. O conjunto de treino, por sua vez, é dividido em $k$ partições de igual tamanho
+O restante do conjunto de dados é chamado de conjunto de treino e, como o nome sugere, será usado
+na etapa de treinamento. Este, por sua vez, é dividido em $k$ partições de igual tamanho
 sendo $k - 1$ delas usadas efetivamente para treinar o modelo e a partição restante é usada para
 validá-lo. Esse procedimento de dividir o conjunto de treino em $k$ partições e separar entre partição
 de treino e validação é realizado $k$ vezes e, por último, a escolha de modelo que apresentou melhor
-desempenho é escolhida. A figura \ref{fig:kfold} mostra o funcionamento do
+desempenho, isto é menor erro no conjunto de validação, é escolhida. 
+
+No caso do trabalho, escolheu-se $k = 3$ o que indica que o modelo será 
+treinado 3 vezes para diferentes conjuntos de treino e validação e, por último, o melhor dos modelos
+será usado no conjunto de testes.
+Tal método de validação se chama validação cruzada \textit{k-fold}. A figura \ref{fig:kfold} mostra o funcionamento do
 método\cite{cross-validation}.
 
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.8]{K-fold_cross_validation}
 	\end{center}		
-	\caption{Funcionamento do método k-fold da validação cruzada \\
+	\caption{Funcionamento do método \textit{k-fold} da validação cruzada \\
 		fonte: \url{https://en.wikipedia.org/wiki/Cross-validation_(statistics)\#/media/File:K-fold_cross_validation_EN.jpg}}
 	\label{fig:kfold}
 \end{figure}
 
 Outro procedimento que foi analisado nos experimentos é se as diferentes escolhas de vetorização afetam
 as métricas (ver \ref{subsec:metrics}), todavia esse procedimento de vetorização é feito antes 
-do treinamento dos modelos e portanto não foi variado no procedimento de Cross-Validation. 
+do treinamento dos modelos e portanto não foi variado no procedimento de validação cruzada. 
 Em \ref{sec:first_experiments} e \ref{sec:second_experiments} 
 os resultados são separados por vetorização e, ao fim de cada rodada, explica-se os resultados 
 observados.
@@ -168,9 +175,10 @@ observados.
 O fluxo da realização dos experimentos é descrita no diagrama abaixo:
 
 \begin{figure}[H]
-\label{fig:diagram}
-	\includegraphics[scale=0.5]{experimento_flow}
+	\centering
+	\includegraphics[scale=0.5]{experiment_flow}
 	\caption{Passos dos experimentos}
+	\label{fig:diagram}
 \end{figure}
 
 \subsection{Parâmetros avaliados}
@@ -267,7 +275,7 @@ obteve-se o seguinte resultado:
 	\centering
 	\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
          -1   &    0.65  &    0.66   &   0.66   &    306 \\
          \hline
@@ -312,7 +320,7 @@ resultados:
 	\centering
 	\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
          -1   &    0.69  &    0.72   &   0.70   &    307 \\
          \hline
@@ -357,7 +365,7 @@ Utilizando esse classificador no conjunto de testes, obtiveram-se os seguintes r
 	\centering
 	\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
          -1   &    0.68  &    0.73   &   0.70   &    322 \\
          \hline
@@ -372,8 +380,8 @@ Utilizando esse classificador no conjunto de testes, obtiveram-se os seguintes r
 
 Pelos resultados dos experimentos, viu-se que a melhor escolha de classificador e vetorização
 foi o kernel RBF com vetorização por frequência com 68,3\% de acurácia. Ao observar as outras
-métricas, percebe-se que os valores médios para precisão, revocação e pontuação f1 estão razoáveis,
-entretanto ao olhar para os valores de revocação e pontuação f1 da classe positiva, vê-se
+métricas, percebe-se que os valores médios para precisão, revocação e pontuação F1 estão razoáveis,
+entretanto ao olhar para os valores de revocação e pontuação F1 da classe positiva, vê-se
 que estes são quase 0 ao passo que a precisão é 1. Isso indica que apenas poucos elementos foram
 colocados nesta classe corretamente e nenhum foi colocado incorretamente, porém a maioria dos
 elementos desta classe foram marcados nas demais classes.
@@ -457,7 +465,7 @@ seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline		
 		 -1     &  0.70  &    0.73   &   0.71   &    324 \\
 		  \hline
@@ -499,7 +507,7 @@ Deu os seguintes resultados no conjunto de testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
          -1   &    0.70  &    0.68   &   0.69   &    320 \\
          \hline
@@ -544,7 +552,7 @@ resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
          -1    &   0.66   &   0.76  &    0.71    &   310 \\
          \hline
@@ -582,7 +590,7 @@ resultados no conjunto de testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
 		 -1    &   0.68   &   0.73  &    0.71   &    305 \\
 		 \hline
@@ -627,7 +635,7 @@ testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
 		 -1    &   0.64   &   0.79   &   0.71   &    311 \\
 		 \hline
@@ -667,7 +675,7 @@ $\lambda = 1$ obtendo seguintes resultados no conjunto de testes:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1\-score &  support \\
+		classe  	&	precisão  &  revocação &  F1\-score &  support \\
 		\hline
 		 -1    &   0.66   &   0.75   &   0.70   &    312 \\
 		 \hline
@@ -727,8 +735,8 @@ negativos costumam ser classificados erroneamente como neutros pelo texto se ass
 constatação de um fato, mesmo que possua a presença de termos negativos.
 
 Comum a todos os experimentos foram resultados ruins associados à classe positiva. No caso do SVM
-obtiveram-se alta precisão em alguns casos, porém as taxas de revocação e f1-score foram baixas. Valores
-baixos para revocação e f1-score podem ser interpretados como um sinal de que os classificadores
+obtiveram-se alta precisão em alguns casos, porém as taxas de revocação e F1-score foram baixas. Valores
+baixos para revocação e F1-score podem ser interpretados como um sinal de que os classificadores
 são ruins para detectar opiniões positivas. A exemplo do melhor classificador, tem-se uma taxa
 de revocação de 0,08 que indica que 92\% das amostras positivas não são detectadas pelo algoritmo.
 
@@ -782,7 +790,7 @@ conjunto de testes teve os seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.73   &   0.62   &   0.67   &    343 \\
 		 \hline
@@ -816,7 +824,7 @@ o classificador no conjunto de testes teve os seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.68   &   0.69   &   0.68   &    301 \\
 		 \hline
@@ -859,7 +867,7 @@ seguintes valores:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.69   &   0.79   &   0.74   &    305 \\
 		 \hline
@@ -893,7 +901,7 @@ os seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.70   &   0.68   &   0.69   &    323 \\
 		 \hline
@@ -914,7 +922,7 @@ validação com conjuntos diferentes mais de uma vez.
 
 Interessante comentar que ao passo que a regressão logística não chegou a ter
 acurácia melhor em nenhuma vetorização, porém ao olharmos para os valores médios de precisão,
-revocação e pontuação f1 vemos que, com exceção da melhor versão do SVM, foi superior indicando
+revocação e pontuação F1 vemos que, com exceção da melhor versão do SVM, foi superior indicando
 que este algoritmo possui robustez ao trazer valores relevantes.
 
 \subsection{Implementações do \texttt{scitkit}}
@@ -955,7 +963,7 @@ os seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.69   &   0.63   &   0.66   &    327 \\
 		 \hline
@@ -988,7 +996,7 @@ média de 69,6\% e para o conjunto de testes deu os seguintes resultados:
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.65   &   0.68   &   0.66   &    300 \\
 		 \hline
@@ -1031,7 +1039,7 @@ acurácia média. Testando no conjunto de testes obtiveram-se os seguintes resul
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.68   &   0.75   &   0.71   &    326 \\
 		 \hline
@@ -1065,7 +1073,7 @@ Utilizando este parâmetro para classificar o conjunto de testes, obtiveram-se o
 	\centering
 		\begin{tabular}{l | l | l | l | l}
 		\hline
-		classe  	&	precisão  &  revocação &  f1-score &  support \\
+		classe  	&	precisão  &  revocação &  F1-score &  support \\
 		\hline
 		 -1    &   0.71   &   0.77   &   0.74   &    313 \\
 		 \hline
@@ -1081,11 +1089,11 @@ desenvolvidas, apesar de a diferença não ser expressiva. Interessante notar qu
 ao contrário das implementações próprias, o melhor classificador, no caso o SVM
 com kernel RBF e vetorização por frequência não obtiveram os melhores valores para
 todas as métricas avaliadas, uma vez que o melhor classificador em termos de
-precisão, revocação e pontuação f1 foi a regressão logística usando a vetorização
+precisão, revocação e pontuação F1 foi a regressão logística usando a vetorização
 com TF-IDF, que por sua vez apresentou resultados acima de 70\%.
 
 Percebemos também que a vetorização por TF-IDF acaba sendo melhor para as métricas
-de precisão, revocação e pontuação f1, pois todos os classificadores performaram
+de precisão, revocação e pontuação F1, pois todos os classificadores performaram
 melhor ao escolher essa vetorização. Isso se deve ao fato de o TF-IDF de um termo
 dar maior ênfase aos termos característicos de um documento, facilitando a identificação
 de uma entrada que corresponda a um texto neutro ou a um negativo.
